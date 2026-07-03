@@ -26,6 +26,23 @@ export function formatPercentChange(value: number): string {
   return `${sign}${value.toLocaleString('ru-RU', { maximumFractionDigits: 1 })}%`;
 }
 
+import type { MoneyAmount } from '@/types/domain';
+
+/** Форматирование суммы в произвольной валюте: 45 300 USDT, $12 500, 8,2 млн ₽ */
+export function formatMoney({ currency, amount }: MoneyAmount): string {
+  const formatted = amount.toLocaleString('ru-RU', { maximumFractionDigits: 3 });
+  switch (currency) {
+    case 'RUB':
+      return `${formatted} ₽`;
+    case 'USD':
+      return `$${formatted}`;
+    case 'EUR':
+      return `€${formatted}`;
+    default:
+      return `${formatted} ${currency}`;
+  }
+}
+
 export function formatMinutesAgo(minutes: number): string {
   if (minutes < 60) return `${minutes} мин назад`;
   const hours = Math.floor(minutes / 60);

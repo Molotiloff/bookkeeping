@@ -1,0 +1,23 @@
+.badge {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.vip {
+  background: var(--status-waiting-bg);
+  color: var(--status-waiting-fg);
+}
+
+.regular {
+  background: var(--status-check-bg);
+  color: var(--status-check-fg);
+}
+
+.fresh {
+  background: var(--status-done-bg);
+  color: var(--status-done-fg);
+}

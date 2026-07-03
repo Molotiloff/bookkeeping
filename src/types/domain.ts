@@ -28,6 +28,22 @@ export interface Deal {
   updatedMinutesAgo: number;
   /** Ссылка на транзакцию — появляется при завершении сделки */
   tronscanUrl?: string;
+  /** Объём в активе, например «3 500 USDT» */
+  assetAmount?: string;
+  /** Зафиксированный курс сделки */
+  rate?: number;
+}
+
+/** Завершённая/отменённая сделка в истории за период */
+export interface DealHistoryItem {
+  id: string;
+  clientName: string;
+  operation: string;
+  direction: DealDirection;
+  amountRub: number;
+  profitRub: number;
+  completedAt: string;
+  outcome: 'completed' | 'cancelled';
 }
 
 export interface KpiStat {
@@ -68,6 +84,54 @@ export interface AppNotification {
   title: string;
   subtitle: string;
   minutesAgo: number;
+}
+
+export type CurrencyCode = 'RUB' | 'USDT' | 'USD' | 'EUR' | 'BTC' | 'ETH';
+
+export interface MoneyAmount {
+  currency: CurrencyCode;
+  amount: number;
+}
+
+export type ClientGroup = 'VIP' | 'Постоянный' | 'Новый';
+
+/** Карточка клиента: балансы, прибыль, связка с Telegram (chat_id и группа) */
+export interface Client {
+  id: string;
+  name: string;
+  group: ClientGroup;
+  telegramChatName: string;
+  telegramChatId: string;
+  balances: MoneyAmount[];
+  profitRub: number;
+  dealsCount: number;
+  recentDeals: DealHistoryItem[];
+}
+
+/** Касса города с балансами по валютам */
+export interface CashDesk {
+  id: string;
+  city: string;
+  balances: MoneyAmount[];
+}
+
+/** Перемещение средств между кассами */
+export interface CashTransfer {
+  id: string;
+  fromCity: string;
+  toCity: string;
+  amount: MoneyAmount;
+  date: string;
+  comment?: string;
+}
+
+/** P&L за период (для экспорта PDF-отчёта) */
+export interface PnLReport {
+  periodLabel: string;
+  clientIncome: number;
+  fixedExpenses: number;
+  variableExpenses: number;
+  profit: number;
 }
 
 /** Роли из ТЗ: кассир и менеджер не видят статистику и отчёты */

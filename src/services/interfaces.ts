@@ -1,9 +1,14 @@
 import type {
   AppNotification,
+  CashDesk,
+  CashTransfer,
+  Client,
   CurrentUser,
   Deal,
+  DealHistoryItem,
   DealStructure,
   KpiStat,
+  PnLReport,
   ProfitPoint,
 } from '@/types/domain';
 
@@ -20,6 +25,17 @@ export interface IStatsService {
 
 export interface IDealsService {
   getActiveDeals(): Promise<Deal[]>;
+  getHistory(): Promise<DealHistoryItem[]>;
+}
+
+export interface IClientsService {
+  getClients(): Promise<Client[]>;
+}
+
+export interface IAccountingService {
+  getCashDesks(): Promise<CashDesk[]>;
+  getTransfers(): Promise<CashTransfer[]>;
+  getPnL(): Promise<PnLReport>;
 }
 
 export interface IChartDataService {

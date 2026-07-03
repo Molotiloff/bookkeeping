@@ -1,5 +1,7 @@
 import type {
+  IAccountingService,
   IChartDataService,
+  IClientsService,
   IDealsService,
   INotificationsService,
   IStatsService,
@@ -10,6 +12,8 @@ import { MockDealsService } from './DealsService';
 import { MockChartDataService } from './ChartDataService';
 import { MockNotificationsService } from './NotificationsService';
 import { MockUserService } from './UserService';
+import { MockClientsService } from './ClientsService';
+import { MockAccountingService } from './AccountingService';
 
 /**
  * Composition root: единственное место, где выбираются реализации сервисов.
@@ -20,3 +24,5 @@ export const dealsService: IDealsService = new MockDealsService();
 export const chartDataService: IChartDataService = new MockChartDataService();
 export const notificationsService: INotificationsService = new MockNotificationsService();
 export const userService: IUserService = new MockUserService();
+export const clientsService: IClientsService = new MockClientsService();
+export const accountingService: IAccountingService = new MockAccountingService();
