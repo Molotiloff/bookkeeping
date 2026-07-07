@@ -1,14 +1,14 @@
 import type { IUserService } from './interfaces';
 import type { CurrentUser } from '@/types/domain';
 
-/** Мок-реализация текущего пользователя (роль ограничивает доступ к отчётам) */
+/** Мок-реализация текущего пользователя для локальной демонстрации всех разделов CRM */
 export class MockUserService implements IUserService {
   async getCurrentUser(): Promise<CurrentUser> {
     return {
-      name: 'Иван Петров',
-      role: 'manager',
-      roleLabel: 'Менеджер',
-      initials: 'ИП',
+      name: 'Алексей Смирнов',
+      role: 'admin',
+      roleLabel: 'Администратор',
+      initials: 'АС',
     };
   }
 }
