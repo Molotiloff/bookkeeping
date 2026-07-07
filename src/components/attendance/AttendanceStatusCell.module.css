@@ -1,0 +1,30 @@
+.cell {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+button.cell:hover {
+  transform: scale(1.04);
+  background-color: var(--surface-hover);
+}
+
+.present { color: var(--att-present-fg); background: var(--att-present-bg); }
+.overtime { color: var(--att-overtime-fg); background: var(--att-overtime-bg); }
+.absent { color: var(--att-absent-fg); background: var(--att-absent-bg); }
+.dayOff { color: var(--att-dayoff-fg); background: var(--att-dayoff-bg); }
+.vacation { color: var(--att-vacation-fg); background: transparent; }
+
+button.present:hover { background-color: var(--att-present-bg); }
+button.overtime:hover { background-color: var(--att-overtime-bg); }
+button.absent:hover { background-color: var(--att-absent-bg); }
+button.dayOff:hover { background-color: var(--att-dayoff-bg); }
+
+.empty {
+  color: var(--text-muted);
+  opacity: 0.45;
+}

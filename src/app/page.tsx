@@ -1,62 +1,36 @@
-import { Header } from '@/components/layout/Header';
-import { StatCard } from '@/components/ui/StatCard';
-import { ChartCard } from '@/components/ui/ChartCard';
-import { DealsTable } from '@/components/dashboard/DealsTable';
-import { NotificationsPanel } from '@/components/dashboard/NotificationsPanel';
-import { ProfitLineChart } from '@/components/charts/ProfitLineChart';
-import { DealsDonut } from '@/components/charts/DealsDonut';
-import {
-  chartDataService,
-  dealsService,
-  notificationsService,
-  statsService,
-} from '@/services';
+import { MainHeader } from '@/components/main/MainHeader';
+import { TopMetricsGrid } from '@/components/main/TopMetricsGrid';
+import { DailyIndicatorsCard } from '@/components/main/DailyIndicatorsCard';
+import { CurrenciesPanel } from '@/components/main/CurrenciesPanel';
+import { FinancePanel } from '@/components/main/FinancePanel';
+import { CitySummariesGrid } from '@/components/main/CitySummariesGrid';
+import { SystemMetricsSection } from '@/components/main/SystemMetricsSection';
+import { DashboardFooter } from '@/components/main/DashboardFooter';
+import { mainDashboardService } from '@/services';
 import styles from './page.module.css';
 
-export default async function DashboardPage() {
-  const [kpiStats, deals, profitPoints, dealStructure, notifications] = await Promise.all([
-    statsService.getKpiStats(),
-    dealsService.getActiveDeals(),
-    chartDataService.getProfitDynamics(),
-    chartDataService.getDealStructure(),
-    notificationsService.getRecent(),
-  ]);
+export default async function MainPage() {
+  const data = await mainDashboardService.getDashboard();
 
   return (
     <>
-      <Header
-        title="Главная"
-        subtitle="Сводная статистика"
-        period="01.05.2024 – 31.05.2024"
-        hasUnread
+      <MainHeader
+        dateLabel={data.dateLabel}
+        weekdayLabel={data.weekdayLabel}
+        cities={data.cities}
       />
 
-      <div className={styles.kpiGrid}>
-        {kpiStats.map((stat) => (
-          <StatCard key={stat.id} stat={stat} />
-        ))}
+      <TopMetricsGrid metrics={data.topMetrics} />
+
+      <div className={styles.mainGrid}>
+        <DailyIndicatorsCard indicators={data.dailyIndicators} />
+        <CurrenciesPanel currencies={data.currencies} />
+        <FinancePanel indicators={data.finance} />
       </div>
 
-      <div className={styles.analyticsGrid}>
-        <ChartCard title="Динамика прибыли" subtitle="По дням">
-          <ProfitLineChart points={profitPoints} />
-        </ChartCard>
-        <ChartCard title="Структура сделок" subtitle="Все направления за период">
-          <DealsDonut structure={dealStructure} />
-        </ChartCard>
-      </div>
-
-      <div className={styles.bottomGrid}>
-        <ChartCard
-          title="Активные сделки"
-          subtitle={`В работе: ${deals.length}`}
-        >
-          <DealsTable deals={deals} />
-        </ChartCard>
-        <ChartCard title="Уведомления">
-          <NotificationsPanel notifications={notifications} />
-        </ChartCard>
-      </div>
+      <CitySummariesGrid summaries={data.citySummaries} />
+      <SystemMetricsSection metrics={data.systemMetrics} />
+      <DashboardFooter lastUpdatedLabel={data.lastUpdatedLabel} />
     </>
   );
 }

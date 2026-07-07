@@ -1,47 +1,50 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { Client } from '@/types/domain';
-import { ChartCard } from '@/components/ui/ChartCard';
-import { ClientList } from './ClientList';
-import { ClientDetail } from './ClientDetail';
+import type { ClientsPageData } from '@/types/clients';
+import { ClientsHeader } from './ClientsHeader';
+import { ClientsMetricGrid } from './ClientsMetricGrid';
+import { ClientsTable } from './ClientsTable';
+import { ClientInfoPanel } from './ClientInfoPanel';
 import styles from './ClientsView.module.css';
 
-/** Master-detail: список клиентов слева, карточка выбранного справа */
-export function ClientsView({ clients }: { clients: Client[] }) {
+/** Список + карточка: выбор клиента в таблице показывает его в правой панели */
+export function ClientsView({ data }: { data: ClientsPageData }) {
   const [query, setQuery] = useState('');
-  const [selectedId, setSelectedId] = useState(clients[0]?.id ?? '');
+  const [selectedId, setSelectedId] = useState<string | null>(data.clients[0]?.id ?? null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return clients;
-    return clients.filter((client) => client.name.toLowerCase().includes(q));
-  }, [clients, query]);
+    if (!q) return data.clients;
+    return data.clients.filter(
+      (client) =>
+        client.name.toLowerCase().includes(q) ||
+        client.telegramUsername.toLowerCase().includes(q) ||
+        client.telegramChatId.includes(q) ||
+        client.clientNumber.toLowerCase().includes(q),
+    );
+  }, [data.clients, query]);
 
-  const selected =
-    clients.find((client) => client.id === selectedId) ?? filtered[0] ?? clients[0];
+  const selected = data.clients.find((client) => client.id === selectedId) ?? null;
+
+  const handleSelect = (clientId: string) => setSelectedId(clientId);
 
   return (
-    <div className={styles.grid}>
-      <ChartCard title="Клиенты" subtitle={`Всего: ${clients.length}`}>
-        <input
-          type="search"
-          className={styles.search}
-          placeholder="Поиск по имени…"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          aria-label="Поиск клиента"
-        />
-        <ClientList clients={filtered} selectedId={selected?.id ?? ''} onSelect={setSelectedId} />
-      </ChartCard>
+    <>
+      <ClientsHeader query={query} onQueryChange={setQuery} />
+      <ClientsMetricGrid metrics={data.metrics} />
 
-      <ChartCard title="Карточка клиента">
+      <div className={`${styles.grid} ${selected ? '' : styles.gridNoPanel}`}>
+        <ClientsTable
+          clients={filtered}
+          totalClients={data.totalClients}
+          selectedId={selectedId}
+          onSelect={handleSelect}
+        />
         {selected ? (
-          <ClientDetail client={selected} />
-        ) : (
-          <p className={styles.empty}>Клиент не найден</p>
-        )}
-      </ChartCard>
-    </div>
+          <ClientInfoPanel client={selected} onClose={() => setSelectedId(null)} />
+        ) : null}
+      </div>
+    </>
   );
 }

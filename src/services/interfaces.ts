@@ -1,16 +1,20 @@
 import type {
-  AppNotification,
   CashDesk,
   CashTransfer,
-  Client,
   CurrentUser,
   Deal,
-  DealHistoryItem,
   DealStructure,
-  KpiStat,
   PnLReport,
   ProfitPoint,
 } from '@/types/domain';
+import type { ClientsPageData } from '@/types/clients';
+import type { AttendanceMonth } from '@/types/attendance';
+import type { BalancesSnapshot } from '@/types/balances';
+import type { DealsPageData } from '@/types/deals';
+import type { NewDealContext } from '@/types/newDeal';
+import type { TurnoverPageData } from '@/types/turnover';
+import type { MainDashboardData } from '@/types/mainDashboard';
+import type { ExpensesPageData } from '@/types/expenses';
 
 /**
  * Контракты слоя данных (Dependency Inversion):
@@ -19,17 +23,23 @@ import type {
  * достаточно заменить реализацию в composition root (services/index.ts).
  */
 
-export interface IStatsService {
-  getKpiStats(): Promise<KpiStat[]>;
+export interface IMainDashboardService {
+  /** Все блоки страницы «Главная»: KPI, валюты, финансы, города, системные показатели */
+  getDashboard(): Promise<MainDashboardData>;
 }
 
 export interface IDealsService {
+  /** Компактный список активных сделок для дашборда «Главная» */
   getActiveDeals(): Promise<Deal[]>;
-  getHistory(): Promise<DealHistoryItem[]>;
+  /** Полные данные страницы «Сделки»: сводка, kanban и реестр */
+  getDealsPage(): Promise<DealsPageData>;
+  /** Справочники формы создания сделки: города, контрагенты, клиенты, курсы */
+  getNewDealContext(): Promise<NewDealContext>;
 }
 
 export interface IClientsService {
-  getClients(): Promise<Client[]>;
+  /** Клиентская база: KPI и список клиентов с полными карточками */
+  getClientsPage(): Promise<ClientsPageData>;
 }
 
 export interface IAccountingService {
@@ -43,10 +53,23 @@ export interface IChartDataService {
   getDealStructure(): Promise<DealStructure>;
 }
 
-export interface INotificationsService {
-  getRecent(): Promise<AppNotification[]>;
-}
-
 export interface IUserService {
   getCurrentUser(): Promise<CurrentUser>;
+}
+
+export interface IAttendanceService {
+  getMonth(): Promise<AttendanceMonth>;
+}
+
+export interface IBalancesService {
+  getSnapshot(): Promise<BalancesSnapshot>;
+}
+
+export interface ITurnoverService {
+  getTurnover(): Promise<TurnoverPageData>;
+}
+
+export interface IExpensesService {
+  /** Данные страницы «Расходы»: KPI и обе таблицы (постоянные/переменные) */
+  getExpensesPage(): Promise<ExpensesPageData>;
 }

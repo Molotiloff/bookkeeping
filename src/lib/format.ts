@@ -8,24 +8,6 @@ export function formatRub(amount: number): string {
   return `${rubFormatter.format(amount)} ₽`;
 }
 
-/** Компактный формат для KPI: 12,45 млн ₽ / 950 тыс. ₽ */
-export function formatRubCompact(amount: number): string {
-  if (Math.abs(amount) >= 1_000_000) {
-    const millions = amount / 1_000_000;
-    return `${millions.toLocaleString('ru-RU', { maximumFractionDigits: 2 })} млн ₽`;
-  }
-  if (Math.abs(amount) >= 1_000) {
-    const thousands = amount / 1_000;
-    return `${thousands.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} тыс. ₽`;
-  }
-  return formatRub(amount);
-}
-
-export function formatPercentChange(value: number): string {
-  const sign = value > 0 ? '+' : '';
-  return `${sign}${value.toLocaleString('ru-RU', { maximumFractionDigits: 1 })}%`;
-}
-
 import type { MoneyAmount } from '@/types/domain';
 
 /** Форматирование суммы в произвольной валюте: 45 300 USDT, $12 500, 8,2 млн ₽ */
@@ -43,8 +25,54 @@ export function formatMoney({ currency, amount }: MoneyAmount): string {
   }
 }
 
-export function formatMinutesAgo(minutes: number): string {
-  if (minutes < 60) return `${minutes} мин назад`;
-  const hours = Math.floor(minutes / 60);
-  return `${hours} ч назад`;
+import type { CurrencyCode } from '@/types/balances';
+
+/** 378 945.00 ₽ — пробел между разрядами, точка в дробной части */
+export function formatMoneyRub(value: number): string {
+  return `${groupDigits(value, 2, 2)} ₽`;
 }
+
+const CRYPTO_DECIMALS: Record<CurrencyCode, number> = {
+  USDT: 2,
+  RUB: 2,
+  BTC: 5,
+  ETH: 4,
+};
+
+/** 3 789.45 (USDT) / 0.04560 (BTC) / 1.5500 (ETH) / 782 450.00 (RUB) */
+export function formatCrypto(value: number, currency: CurrencyCode): string {
+  const decimals = CRYPTO_DECIMALS[currency];
+  return groupDigits(value, decimals, decimals);
+}
+
+/** +3.2% / -1.5% */
+export function formatPercent(value: number): string {
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${value.toFixed(1)}%`;
+}
+
+/** 43 396 362 — целое с разделением разрядов */
+export function formatNumber(value: number): string {
+  return rubFormatter.format(value);
+}
+
+/** 128 $ */
+export function formatUsd(value: number): string {
+  return `${rubFormatter.format(value)} $`;
+}
+
+/** -6 ₽ / +515 328 ₽ — рубли со знаком */
+export function formatSignedRub(value: number): string {
+  const sign = value > 0 ? '+' : '';
+  return `${sign}${formatRub(value)}`;
+}
+
+function groupDigits(value: number, minFraction: number, maxFraction: number): string {
+  return value
+    .toLocaleString('en-US', {
+      minimumFractionDigits: minFraction,
+      maximumFractionDigits: maxFraction,
+    })
+    .replace(/,/g, ' ');
+}
+

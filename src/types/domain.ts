@@ -34,26 +34,6 @@ export interface Deal {
   rate?: number;
 }
 
-/** Завершённая/отменённая сделка в истории за период */
-export interface DealHistoryItem {
-  id: string;
-  clientName: string;
-  operation: string;
-  direction: DealDirection;
-  amountRub: number;
-  profitRub: number;
-  completedAt: string;
-  outcome: 'completed' | 'cancelled';
-}
-
-export interface KpiStat {
-  id: 'cash_balance' | 'city_balance' | 'profit_day' | 'profit_month';
-  label: string;
-  amountRub: number;
-  /** Изменение к прошлому периоду, в процентах */
-  changePercent: number;
-}
-
 export interface ProfitPoint {
   /** Подпись по оси X, например «1 мая» */
   label: string;
@@ -72,40 +52,11 @@ export interface DealStructure {
   slices: DealStructureSlice[];
 }
 
-export type NotificationKind =
-  | 'new_deal'
-  | 'insufficient_usdt'
-  | 'status_change'
-  | 'deal_completed';
-
-export interface AppNotification {
-  id: string;
-  kind: NotificationKind;
-  title: string;
-  subtitle: string;
-  minutesAgo: number;
-}
-
 export type CurrencyCode = 'RUB' | 'USDT' | 'USD' | 'EUR' | 'BTC' | 'ETH';
 
 export interface MoneyAmount {
   currency: CurrencyCode;
   amount: number;
-}
-
-export type ClientGroup = 'VIP' | 'Постоянный' | 'Новый';
-
-/** Карточка клиента: балансы, прибыль, связка с Telegram (chat_id и группа) */
-export interface Client {
-  id: string;
-  name: string;
-  group: ClientGroup;
-  telegramChatName: string;
-  telegramChatId: string;
-  balances: MoneyAmount[];
-  profitRub: number;
-  dealsCount: number;
-  recentDeals: DealHistoryItem[];
 }
 
 /** Касса города с балансами по валютам */

@@ -3,14 +3,18 @@ import { ChartCard } from '@/components/ui/ChartCard';
 import { CashDesksGrid } from '@/components/accounting/CashDesksGrid';
 import { TransfersList } from '@/components/accounting/TransfersList';
 import { PnLCard } from '@/components/accounting/PnLCard';
-import { accountingService } from '@/services';
+import { ProfitLineChart } from '@/components/charts/ProfitLineChart';
+import { DealsDonut } from '@/components/charts/DealsDonut';
+import { accountingService, chartDataService } from '@/services';
 import styles from './page.module.css';
 
 export default async function AccountingPage() {
-  const [desks, transfers, pnl] = await Promise.all([
+  const [desks, transfers, pnl, profitPoints, dealStructure] = await Promise.all([
     accountingService.getCashDesks(),
     accountingService.getTransfers(),
     accountingService.getPnL(),
+    chartDataService.getProfitDynamics(),
+    chartDataService.getDealStructure(),
   ]);
 
   return (
@@ -21,6 +25,16 @@ export default async function AccountingPage() {
         period={pnl.periodLabel}
         hasUnread
       />
+
+      {/* Аналитика прибыли перенесена сюда с главной страницы */}
+      <div className={styles.analyticsGrid}>
+        <ChartCard title="Динамика прибыли" subtitle="По дням">
+          <ProfitLineChart points={profitPoints} />
+        </ChartCard>
+        <ChartCard title="Структура сделок" subtitle="Все направления за период">
+          <DealsDonut structure={dealStructure} />
+        </ChartCard>
+      </div>
 
       <div className={styles.grid}>
         <div className={styles.mainColumn}>
