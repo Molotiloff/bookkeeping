@@ -5,13 +5,15 @@
  * при завершении фиксируются прибыль, касса и ссылка Tronscan.
  */
 
-/** Статусы обменной заявки (status_event в backend) */
+/** Статусы сделки из backend deal_status_events */
 export type DealStatus =
-  | 'fixed' // Фикс с клиентом (курс зафиксирован)
-  | 'awaiting_payment' // Ожидание оплаты
-  | 'balance_check' // Сверка баланса (баланс Теза с учётом активных заявок)
-  | 'completed' // Сделка завершена (данные сделки + ссылка Tronscan)
-  | 'insufficient_usdt'; // Недостаточно USDT (плашка «на откуп», вывод в чат заявок)
+  | 'new'
+  | 'fixed'
+  | 'balance_check'
+  | 'awaiting_payment'
+  | 'in_delivery'
+  | 'done'
+  | 'canceled';
 
 /** Валютное направление обмена */
 export type DealDirection = 'USDT/RUB' | 'BTC/RUB' | 'ETH/RUB' | 'OTHER';
@@ -24,6 +26,8 @@ export interface Deal {
   direction: DealDirection;
   amountRub: number;
   status: DealStatus;
+  /** Derived alert from act_request_transactions; not a status. */
+  insufficientUsdt?: boolean;
   /** Минуты с момента последнего status_event */
   updatedMinutesAgo: number;
   /** Ссылка на транзакцию — появляется при завершении сделки */
@@ -52,7 +56,16 @@ export interface DealStructure {
   slices: DealStructureSlice[];
 }
 
-export type CurrencyCode = 'RUB' | 'USDT' | 'USD' | 'EUR' | 'BTC' | 'ETH';
+export type CurrencyCode =
+  | 'RUB'
+  | 'USDT'
+  | 'USD'
+  | 'USD_BL'
+  | 'USD_WH'
+  | 'EUR'
+  | 'BTC'
+  | 'ETH'
+  | 'CNY';
 
 export interface MoneyAmount {
   currency: CurrencyCode;
@@ -85,8 +98,8 @@ export interface PnLReport {
   profit: number;
 }
 
-/** Роли из ТЗ: кассир и менеджер не видят статистику и отчёты */
-export type UserRole = 'admin' | 'manager' | 'cashier';
+/** Роли CRM из backend RBAC */
+export type UserRole = 'cashier' | 'manager' | 'accountant' | 'owner' | 'admin';
 
 export interface CurrentUser {
   name: string;

@@ -24,9 +24,9 @@
   margin-bottom: 6px;
 }
 
-.toneBlue { background: var(--att-vacation-bg); color: var(--att-vacation-fg); }
-.toneGreen { background: var(--att-present-bg); color: var(--att-present-fg); }
-.toneOrange { background: var(--att-overtime-bg); color: var(--att-overtime-fg); }
+.toneBlue { background: var(--att-flight-bg); color: var(--att-flight-fg); }
+.toneGreen { background: var(--att-work-bg); color: var(--att-work-fg); }
+.toneOrange { background: var(--att-remote-bg); color: var(--att-remote-fg); }
 .toneRed { background: var(--att-absent-bg); color: var(--att-absent-fg); }
 
 .title {

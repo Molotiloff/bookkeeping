@@ -33,4 +33,7 @@ export const OWNER_COLORS: Record<string, string> = {
   'o-2': 'var(--series-eth)',
   'o-3': 'var(--series-btc)',
   'o-4': 'var(--series-other)',
+  'o-5': '#14b8a6',
+  'o-6': '#a855f7',
+  'o-7': '#64748b',
 };

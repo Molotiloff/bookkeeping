@@ -1,28 +1,29 @@
 import type { IChartDataService } from './interfaces';
 import type { DealStructure, ProfitPoint } from '@/types/domain';
 
-/** Мок-реализация данных аналитики за период 01.05–31.05 */
+/** Мок-реализация данных аналитики за период 01.06–30.06 из Google Sheets */
 export class MockChartDataService implements IChartDataService {
   async getProfitDynamics(): Promise<ProfitPoint[]> {
-    const values = [
-      420, 510, 470, 620, 580, 700, 660, 750, 690, 830,
-      780, 900, 860, 940, 880, 1010, 960, 1100, 1040, 1180,
-      1120, 1230, 1160, 1300, 1260, 1380, 1330, 1450, 1400, 1520, 1490,
-    ];
-    return values.map((value, i) => ({
-      label: `${i + 1} мая`,
-      value: value * 1000,
-    }));
+    const points = [
+      ['1 июня', 277_463],
+      ['2 июня', 112_843],
+      ['3 июня', 232_908],
+      ['4 июня', 158_531],
+      ['5 июня', 161_276],
+      ['6 июня', 151_126],
+      ['7 июня', 7_917],
+    ] as const;
+    return points.map(([label, value]) => ({ label, value }));
   }
 
   async getDealStructure(): Promise<DealStructure> {
     return {
-      totalDeals: 1324,
+      totalDeals: 5_929,
       slices: [
-        { direction: 'USDT/RUB', label: 'USDT / RUB', percent: 45 },
-        { direction: 'BTC/RUB', label: 'BTC / RUB', percent: 25 },
-        { direction: 'ETH/RUB', label: 'ETH / RUB', percent: 20 },
-        { direction: 'OTHER', label: 'Другие', percent: 10 },
+        { direction: 'USDT/RUB', label: 'USDT / RUB', percent: 99.8 },
+        { direction: 'OTHER', label: 'USD / RUB', percent: 0.2 },
+        { direction: 'BTC/RUB', label: 'BTC / RUB', percent: 0 },
+        { direction: 'ETH/RUB', label: 'ETH / RUB', percent: 0 },
       ],
     };
   }

@@ -53,26 +53,26 @@ function makeClient(seed: ClientSeed, index: number): Client {
 
 const SEEDS: ClientSeed[] = [
   {
-    id: 'c-1', clientNumber: '#13245', name: 'Алексей Смирнов',
-    telegramUsername: '@alexey_smirnov', telegramChatId: '-1001234567890',
-    dealsCount: 24, turnoverRub: 1_250_000, managerName: 'Иван П.',
-    registrationDate: '12.03.2024', counterpartyName: 'Алексей Смирнов (КТ)',
-    counterpartyPercent: 0.5, comment: 'Постоянный клиент, крупные суммы.',
+    id: 'c-1', clientNumber: 'GS-001', name: 'Gikk',
+    telegramUsername: '@sheet_gikk', telegramChatId: 'sheet:Gikk',
+    dealsCount: 18, turnoverRub: 7_800_000, managerName: 'Google Sheet',
+    registrationDate: '01.06.2026', counterpartyName: 'Gikk',
+    counterpartyPercent: 0, comment: 'Продажа USDT: 103 654.485 по выходу 75.25.',
   },
-  { id: 'c-2', clientNumber: '#13246', name: 'Мария Кузнецова', telegramUsername: '@maria_k', telegramChatId: '-1002345678901', dealsCount: 18, turnoverRub: 980_000, managerName: 'Мария К.', registrationDate: '25.03.2024' },
-  { id: 'c-3', clientNumber: '#13247', name: 'Дмитрий Волков', telegramUsername: '@dmitry_volkov', telegramChatId: '-1003456789012', dealsCount: 32, turnoverRub: 1_870_000, managerName: 'Дмитрий В.', registrationDate: '02.02.2024', counterpartyName: 'Дмитрий Волков (КТ)', counterpartyPercent: 0.4 },
-  { id: 'c-4', clientNumber: '#13248', name: 'Олег Лебедев', telegramUsername: '@oleg_l', telegramChatId: '-1004567890123', dealsCount: 15, turnoverRub: 750_000, managerName: 'Олег Л.', registrationDate: '14.04.2024' },
-  { id: 'c-5', clientNumber: '#13249', name: 'Анна Лазарева', telegramUsername: '@anna_l', telegramChatId: '-1005678901234', dealsCount: 12, turnoverRub: 620_000, managerName: 'Анна Л.', registrationDate: '20.04.2024' },
-  { id: 'c-6', clientNumber: '#13250', name: 'Иван Петров', telegramUsername: '@ivan_petrov', telegramChatId: '-1006789012345', dealsCount: 28, turnoverRub: 1_420_000, managerName: 'Иван П.', registrationDate: '18.01.2024' },
-  { id: 'c-7', clientNumber: '#13251', name: 'Сергей Волынец', telegramUsername: '@sergey_v', telegramChatId: '-1007890123456', dealsCount: 20, turnoverRub: 1_100_000, managerName: 'Сергей В.', registrationDate: '05.03.2024' },
-  { id: 'c-8', clientNumber: '#13252', name: 'Егор Пахомов', telegramUsername: '@egor_p', telegramChatId: '-1008901234567', dealsCount: 8, turnoverRub: 410_000, managerName: 'Мария К.', registrationDate: '28.04.2024' },
-  { id: 'c-9', clientNumber: '#13253', name: 'Наталья Ковалева', telegramUsername: '@natalia_k', telegramChatId: '-1009012345678', dealsCount: 6, turnoverRub: 320_000, managerName: 'Олег Л.', registrationDate: '03.05.2024' },
-  { id: 'c-10', clientNumber: '#13254', name: 'Владислав Соколов', telegramUsername: '@vlad_sokolov', telegramChatId: '-1000123456789', dealsCount: 5, turnoverRub: 280_000, managerName: 'Дмитрий В.', registrationDate: '10.05.2024' },
+  { id: 'c-2', clientNumber: 'GS-002', name: 'Кит Бокс', telegramUsername: '@sheet_kit_box', telegramChatId: 'sheet:Кит Бокс', dealsCount: 12, turnoverRub: 49_602_500, managerName: 'Google Sheet', registrationDate: '01.06.2026', counterpartyName: 'Алексей М', counterpartyPercent: 0.2 },
+  { id: 'c-3', clientNumber: 'GS-003', name: 'Bs', telegramUsername: '@sheet_bs', telegramChatId: 'sheet:Bs', dealsCount: 20, turnoverRub: 18_158_312, managerName: 'Google Sheet', registrationDate: '01.06.2026', counterpartyName: 'Bs', comment: 'Баланс USDT: -16 309.' },
+  { id: 'c-4', clientNumber: 'GS-004', name: 'Александр New', telegramUsername: '@sheet_alex_new', telegramChatId: 'sheet:Александр New', dealsCount: 24, turnoverRub: 107_294_656, managerName: 'Google Sheet', registrationDate: '01.06.2026' },
+  { id: 'c-5', clientNumber: 'GS-005', name: 'Blato', telegramUsername: '@sheet_blato', telegramChatId: 'sheet:Blato', dealsCount: 8, turnoverRub: 2_390_505, managerName: 'Google Sheet', registrationDate: '01.06.2026', counterpartyName: 'От Вани', counterpartyPercent: 0.3 },
+  { id: 'c-6', clientNumber: 'GS-006', name: 'BestChange', telegramUsername: '@sheet_bestchange', telegramChatId: 'sheet:BestChange', dealsCount: 14, turnoverRub: 84_166, managerName: 'Google Sheet', registrationDate: '01.06.2026', counterpartyName: 'DANIYAR', counterpartyPercent: 0.3 },
+  { id: 'c-7', clientNumber: 'GS-007', name: 'Андрей PE', telegramUsername: '@sheet_andrey_pe', telegramChatId: 'sheet:Андрей PE', dealsCount: 9, turnoverRub: 280_900, managerName: 'Google Sheet', registrationDate: '01.06.2026', comment: 'Баланс USDT: 36 391.' },
+  { id: 'c-8', clientNumber: 'GS-008', name: 'Сергей С', telegramUsername: '@sheet_sergey_s', telegramChatId: 'sheet:Сергей С', dealsCount: 6, turnoverRub: 2_120_000, managerName: 'Google Sheet', registrationDate: '01.06.2026', comment: 'Баланс USDT: 26 061.4.' },
+  { id: 'c-9', clientNumber: 'GS-009', name: 'Байбит Влада', telegramUsername: '@sheet_bybit_vlad', telegramChatId: 'sheet:Байбит Влада', dealsCount: 4, turnoverRub: 922_800, managerName: 'Google Sheet', registrationDate: '01.06.2026', comment: 'Баланс USDT: -11 338.' },
+  { id: 'c-10', clientNumber: 'GS-010', name: 'Алипей Ви чат долг', telegramUsername: '@sheet_alipay_debt', telegramChatId: 'sheet:Алипей Ви чат долг', dealsCount: 2, turnoverRub: 5_498_000, managerName: 'Google Sheet', registrationDate: '01.06.2026', comment: 'Крупный отрицательный баланс USDT: -67 569.5.' },
 ];
 
 /** Мок-реализация клиентской базы */
 export class MockClientsService implements IClientsService {
-  async getClientsPage(): Promise<ClientsPageData> {
+  private buildClients(): Client[] {
     const first = makeClient(SEEDS[0], 0);
     // Комментарии первого клиента — как в утверждённом референсе
     first.comments = [
@@ -81,16 +81,25 @@ export class MockClientsService implements IClientsService {
       { id: 'cm-c-1-3', date: '01.04.2024', author: 'Иван Петров', text: 'Проверить лимиты перед крупной сделкой.' },
     ];
 
+    return [first, ...SEEDS.slice(1).map((seed, i) => makeClient(seed, i + 1))];
+  }
+
+  async getClientsPage(): Promise<ClientsPageData> {
     return {
       metrics: [
-        { id: 'total', title: 'Всего клиентов', value: '1 248', changePercent: 12.5, subtitle: 'к апрелю', tone: 'purple', icon: 'clients' },
-        { id: 'active', title: 'Активных клиентов', value: 842, changePercent: 8.3, subtitle: 'к апрелю', tone: 'green', icon: 'check-circle' },
-        { id: 'new', title: 'Новых клиентов', value: 156, changePercent: 15.2, subtitle: 'к апрелю', tone: 'blue', icon: 'plus' },
-        { id: 'deals', title: 'Сделок всего', value: '3 682', changePercent: 10.7, subtitle: 'к апрелю', tone: 'orange', icon: 'deals' },
-        { id: 'turnover', title: 'Оборот клиентов', value: '15 420 000 ₽', changePercent: 11.4, subtitle: 'к апрелю', tone: 'purple', icon: 'coins' },
+        { id: 'total', title: 'Клиентов в срезе', value: 218, changePercent: 0, subtitle: 'лист «Контрагенты»', tone: 'purple', icon: 'clients' },
+        { id: 'active', title: 'Клиентов с балансом', value: 19, changePercent: 0, subtitle: 'Главная / USDT', tone: 'green', icon: 'check-circle' },
+        { id: 'new', title: 'КТ-связок', value: 7, changePercent: 0, subtitle: 'правая таблица', tone: 'blue', icon: 'plus' },
+        { id: 'deals', title: 'Строк продаж', value: '3 949', changePercent: 0, subtitle: 'лист «Продажа»', tone: 'orange', icon: 'deals' },
+        { id: 'turnover', title: 'Продажа USDT', value: '641 786 991 ₽', changePercent: 0, subtitle: 'лист «Статиситка»', tone: 'purple', icon: 'coins' },
       ],
-      clients: [first, ...SEEDS.slice(1).map((seed, i) => makeClient(seed, i + 1))],
-      totalClients: 1248,
+      clients: this.buildClients(),
+      totalClients: 218,
     };
+  }
+
+  async getClientById(id: string): Promise<Client | null> {
+    const decodedId = decodeURIComponent(id);
+    return this.buildClients().find((client) => client.id === decodedId) ?? null;
   }
 }

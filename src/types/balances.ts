@@ -1,9 +1,9 @@
+import type { CurrencyCode as DomainCurrencyCode } from './domain';
+
 /**
  * Типы раздела «Балансы»: клиенты с ненулевыми остатками,
  * сводка по валютам и параметры сортировки таблицы.
  */
-
-export type CurrencyCode = 'USDT' | 'RUB' | 'BTC' | 'ETH';
 
 /** Значение фильтра валют: конкретная валюта или все сразу */
 export type CurrencyFilterValue = CurrencyCode | 'ALL';
@@ -38,3 +38,4 @@ export interface BalancesSnapshot {
   clients: BalanceClient[];
   summaries: CurrencySummary[];
 }
+export type CurrencyCode = DomainCurrencyCode;

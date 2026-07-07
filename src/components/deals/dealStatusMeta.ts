@@ -9,18 +9,22 @@ export const DEAL_STATUS_META: Record<
   DealStatus,
   { label: string; icon: IconName; modifier: 'fixed' | 'waiting' | 'check' | 'done' | 'alert' }
 > = {
+  new: { label: 'Новая', icon: 'plus', modifier: 'fixed' },
   fixed: { label: 'Фикс с клиентом', icon: 'deals', modifier: 'fixed' },
-  awaiting_payment: { label: 'Ожидание оплаты', icon: 'clock', modifier: 'waiting' },
   balance_check: { label: 'Сверка баланса', icon: 'scale', modifier: 'check' },
-  completed: { label: 'Сделка завершена', icon: 'check-circle', modifier: 'done' },
-  insufficient_usdt: { label: 'Недостаточно USDT', icon: 'alert', modifier: 'alert' },
+  awaiting_payment: { label: 'Ожидание оплаты', icon: 'clock', modifier: 'waiting' },
+  in_delivery: { label: 'В доставке', icon: 'plane', modifier: 'waiting' },
+  done: { label: 'Сделка завершена', icon: 'check-circle', modifier: 'done' },
+  canceled: { label: 'Отменена', icon: 'x-circle', modifier: 'alert' },
 };
 
 /** Порядок статусов в сводке и на kanban-доске */
 export const DEAL_STATUS_ORDER: DealStatus[] = [
+  'new',
   'fixed',
-  'awaiting_payment',
   'balance_check',
-  'completed',
-  'insufficient_usdt',
+  'awaiting_payment',
+  'in_delivery',
+  'done',
+  'canceled',
 ];

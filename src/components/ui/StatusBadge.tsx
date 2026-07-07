@@ -6,11 +6,13 @@ import styles from './StatusBadge.module.css';
  * записью в map без изменения разметки компонента.
  */
 const STATUS_CONFIG: Record<DealStatus, { label: string; className: string; alert?: boolean }> = {
+  new: { label: 'Новая', className: styles.fixed },
   fixed: { label: 'Фикс с клиентом', className: styles.fixed },
-  awaiting_payment: { label: 'Ожидание оплаты', className: styles.waiting },
   balance_check: { label: 'Сверка баланса', className: styles.check },
-  completed: { label: 'Сделка завершена', className: styles.done },
-  insufficient_usdt: { label: 'Недостаточно USDT', className: styles.alert, alert: true },
+  awaiting_payment: { label: 'Ожидание оплаты', className: styles.waiting },
+  in_delivery: { label: 'В доставке', className: styles.waiting },
+  done: { label: 'Сделка завершена', className: styles.done },
+  canceled: { label: 'Отменена', className: styles.alert, alert: true },
 };
 
 export function StatusBadge({ status }: { status: DealStatus }) {

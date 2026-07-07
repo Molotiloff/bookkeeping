@@ -73,6 +73,16 @@ td.firstCol {
   color: var(--text-muted);
 }
 
+.link {
+  color: var(--accent);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.link:hover {
+  color: var(--accent-strong);
+}
+
 td.clientCol {
   font-weight: 600;
   color: var(--text-primary);

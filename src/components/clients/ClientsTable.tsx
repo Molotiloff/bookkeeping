@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type MouseEvent } from 'react';
+import Link from 'next/link';
 import type { Client } from '@/types/clients';
 import { formatRub } from '@/lib/format';
 import { avatarGradient } from '@/lib/avatar';
@@ -64,7 +65,9 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
                       {client.initials}
                     </span>
                     <div className={styles.clientInfo}>
-                      <span className={styles.clientName}>{client.name}</span>
+                      <Link href={`/clients/${encodeURIComponent(client.id)}`} className={styles.clientName}>
+                        {client.name}
+                      </Link>
                       <span className={styles.clientNumber}>{client.clientNumber}</span>
                     </div>
                   </div>

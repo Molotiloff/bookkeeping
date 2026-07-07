@@ -4,8 +4,13 @@ import styles from './CurrencyBadge.module.css';
 const CURRENCY_VISUALS: Record<CurrencyCode, { symbol: string; className: string }> = {
   USDT: { symbol: '₮', className: styles.usdt },
   RUB: { symbol: '₽', className: styles.rub },
+  USD: { symbol: '$', className: styles.usd },
+  USD_BL: { symbol: '$', className: styles.usd },
+  USD_WH: { symbol: '$', className: styles.usd },
+  EUR: { symbol: '€', className: styles.eur },
   BTC: { symbol: '₿', className: styles.btc },
   ETH: { symbol: 'Ξ', className: styles.eth },
+  CNY: { symbol: '¥', className: styles.cny },
 };
 
 interface CurrencyBadgeProps {

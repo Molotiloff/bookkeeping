@@ -25,7 +25,7 @@ export function formatMoney({ currency, amount }: MoneyAmount): string {
   }
 }
 
-import type { CurrencyCode } from '@/types/balances';
+import type { CurrencyCode } from '@/types/domain';
 
 /** 378 945.00 ₽ — пробел между разрядами, точка в дробной части */
 export function formatMoneyRub(value: number): string {
@@ -35,8 +35,13 @@ export function formatMoneyRub(value: number): string {
 const CRYPTO_DECIMALS: Record<CurrencyCode, number> = {
   USDT: 2,
   RUB: 2,
+  USD: 2,
+  USD_BL: 2,
+  USD_WH: 2,
+  EUR: 2,
   BTC: 5,
   ETH: 4,
+  CNY: 2,
 };
 
 /** 3 789.45 (USDT) / 0.04560 (BTC) / 1.5500 (ETH) / 782 450.00 (RUB) */
@@ -75,4 +80,3 @@ function groupDigits(value: number, minFraction: number, maxFraction: number): s
     })
     .replace(/,/g, ' ');
 }
-

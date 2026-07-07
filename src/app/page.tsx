@@ -7,9 +7,11 @@ import { CitySummariesGrid } from '@/components/main/CitySummariesGrid';
 import { SystemMetricsSection } from '@/components/main/SystemMetricsSection';
 import { DashboardFooter } from '@/components/main/DashboardFooter';
 import { mainDashboardService } from '@/services';
+import { requireRouteAccess } from '@/lib/requireRouteAccess';
 import styles from './page.module.css';
 
 export default async function MainPage() {
+  await requireRouteAccess('/');
   const data = await mainDashboardService.getDashboard();
 
   return (

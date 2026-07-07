@@ -1,4 +1,4 @@
-import type { DealStatus } from './domain';
+import type { CurrencyCode, DealStatus } from './domain';
 
 /**
  * Типы страницы «Сделки»: kanban текущих сделок, сводка по статусам
@@ -20,6 +20,8 @@ export interface DealItem {
   amountRub: number;
   city: string;
   status: DealStatus;
+  /** Плашка «на откуп» для balance_check, считается backend поверх act-остатка */
+  insufficientUsdt?: boolean;
   /** Человекочитаемое время обновления: «2 мин назад», «Сегодня 10:30» */
   updatedLabel: string;
   createdBy: string;
@@ -48,4 +50,37 @@ export interface DealsPageData {
   summaries: DealStatusSummary[];
   cities: string[];
   deals: DealItem[];
+}
+
+export interface DealLeg {
+  id: string;
+  direction: 'IN' | 'OUT';
+  currency: CurrencyCode;
+  amount: number;
+  rate?: number;
+  status: 'ACTIVE' | 'CANCELED';
+}
+
+export interface DealStatusEvent {
+  id: string;
+  oldStatus: DealStatus | null;
+  newStatus: DealStatus;
+  actorName: string;
+  createdAt: string;
+  comment?: string;
+}
+
+export interface DealDetails {
+  deal: DealItem;
+  dealNo: string;
+  createdAt: string;
+  updatedAt: string;
+  source: 'tg_bot' | 'crm' | 'sheets';
+  counterpartyName?: string;
+  counterpartyPercent?: number;
+  profitRub: number;
+  comment?: string;
+  tronscanUrl?: string;
+  legs: DealLeg[];
+  statusEvents: DealStatusEvent[];
 }

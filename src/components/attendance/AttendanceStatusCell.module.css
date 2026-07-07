@@ -13,16 +13,15 @@ button.cell:hover {
   background-color: var(--surface-hover);
 }
 
-.present { color: var(--att-present-fg); background: var(--att-present-bg); }
-.overtime { color: var(--att-overtime-fg); background: var(--att-overtime-bg); }
+.work { color: var(--att-work-fg); background: var(--att-work-bg); }
 .absent { color: var(--att-absent-fg); background: var(--att-absent-bg); }
-.dayOff { color: var(--att-dayoff-fg); background: var(--att-dayoff-bg); }
-.vacation { color: var(--att-vacation-fg); background: transparent; }
+.flight { color: var(--att-flight-fg); background: var(--att-flight-bg); }
+.remote { color: var(--att-remote-fg); background: var(--att-remote-bg); }
 
-button.present:hover { background-color: var(--att-present-bg); }
-button.overtime:hover { background-color: var(--att-overtime-bg); }
+button.work:hover { background-color: var(--att-work-bg); }
 button.absent:hover { background-color: var(--att-absent-bg); }
-button.dayOff:hover { background-color: var(--att-dayoff-bg); }
+button.flight:hover { background-color: var(--att-flight-bg); }
+button.remote:hover { background-color: var(--att-remote-bg); }
 
 .empty {
   color: var(--text-muted);

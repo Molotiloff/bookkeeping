@@ -8,6 +8,7 @@ const CATEGORY_META: Record<FixedExpenseCategory, { icon: IconName; className: s
   Бензин: { icon: 'expenses', className: styles.catAmber },
   Доставка: { icon: 'plane', className: styles.catGreen },
   Такси: { icon: 'deals', className: styles.catAmber },
+  'Инкас члб': { icon: 'cash', className: styles.catSlate },
   'Инкассация ЧЛБ': { icon: 'cash', className: styles.catSlate },
   'Инкассация ЧПБ': { icon: 'cash', className: styles.catSlate },
   Интернет: { icon: 'chat', className: styles.catAmber },

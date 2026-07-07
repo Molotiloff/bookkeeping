@@ -1,5 +1,6 @@
 import type { IconName } from '@/components/ui/Icon';
 import type { UserRole } from '@/types/domain';
+import { ROLES } from '@/lib/accessPolicy';
 
 export interface NavItem {
   href: string;
@@ -9,22 +10,15 @@ export interface NavItem {
   roles: UserRole[];
 }
 
-const ALL: UserRole[] = ['admin', 'manager', 'cashier'];
-const ADMIN_ONLY: UserRole[] = ['admin'];
-
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Главная', icon: 'home', roles: ALL },
-  { href: '/deals', label: 'Сделки', icon: 'deals', roles: ALL },
-  { href: '/clients', label: 'Клиенты', icon: 'clients', roles: ALL },
-  { href: '/balances', label: 'Балансы', icon: 'wallet', roles: ALL },
-  { href: '/accounting', label: 'Бухгалтерия', icon: 'accounting', roles: ADMIN_ONLY },
-  { href: '/cash', label: 'Кассы', icon: 'cash', roles: ALL },
-  { href: '/expenses', label: 'Расходы', icon: 'expenses', roles: ALL },
-  { href: '/attendance', label: 'Посещаемость', icon: 'attendance', roles: ALL },
-  { href: '/turnover', label: 'Оборот', icon: 'pie', roles: ALL },
-  { href: '/income', label: 'Доходы', icon: 'income', roles: ADMIN_ONLY },
-  { href: '/reports', label: 'Отчёты', icon: 'reports', roles: ADMIN_ONLY },
-  { href: '/settings', label: 'Настройки', icon: 'settings', roles: ALL },
+  { href: '/', label: 'Главная', icon: 'home', roles: [...ROLES.all] },
+  { href: '/deals', label: 'Сделки', icon: 'deals', roles: [...ROLES.all] },
+  { href: '/clients', label: 'Клиенты', icon: 'clients', roles: [...ROLES.all] },
+  { href: '/balances', label: 'Балансы', icon: 'wallet', roles: [...ROLES.all] },
+  { href: '/accounting', label: 'Бухгалтерия', icon: 'accounting', roles: [...ROLES.accountantPlus] },
+  { href: '/expenses', label: 'Расходы', icon: 'expenses', roles: [...ROLES.managerPlus] },
+  { href: '/attendance', label: 'Посещаемость', icon: 'attendance', roles: [...ROLES.managerPlus] },
+  { href: '/turnover', label: 'Оборот', icon: 'pie', roles: [...ROLES.ownerPlus] },
 ];
 
 export function navItemsForRole(role: UserRole): NavItem[] {

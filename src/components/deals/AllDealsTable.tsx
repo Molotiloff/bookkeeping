@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { DealItem } from '@/types/deals';
 import { dealDirection } from '@/types/deals';
 import { formatRub } from '@/lib/format';
@@ -13,11 +14,6 @@ const PAGE_SIZES = [10, 20, 50];
 export function AllDealsTable({ deals }: { deals: DealItem[] }) {
   const [pageSize, setPageSize] = useState(20);
   const [page, setPage] = useState(1);
-
-  const handleRowClick = (dealId: string) => {
-    // TODO: открыть карточку сделки
-    console.log(dealId);
-  };
 
   const totalPages = Math.max(1, Math.ceil(deals.length / pageSize));
   const currentPage = Math.min(page, totalPages);
@@ -45,8 +41,12 @@ export function AllDealsTable({ deals }: { deals: DealItem[] }) {
           </thead>
           <tbody>
             {visible.map((deal) => (
-              <tr key={deal.id} className={styles.row} onClick={() => handleRowClick(deal.id)}>
-                <td className={styles.firstCol}>{deal.id}</td>
+              <tr key={deal.id} className={styles.row}>
+                <td className={styles.firstCol}>
+                  <Link href={`/deals/${encodeURIComponent(deal.id)}`} className={styles.link}>
+                    {deal.id}
+                  </Link>
+                </td>
                 <td className={styles.clientCol}>{deal.clientName}</td>
                 <td>{deal.dealType}</td>
                 <td>{dealDirection(deal)}</td>

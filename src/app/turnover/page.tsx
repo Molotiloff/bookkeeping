@@ -11,9 +11,11 @@ import { OwnerTransactionsTable } from '@/components/turnover/OwnerTransactionsT
 import { RecentDealsTable } from '@/components/turnover/RecentDealsTable';
 import { PeriodSummaryRows } from '@/components/turnover/PeriodSummaryCard';
 import { turnoverService } from '@/services';
+import { requireRouteAccess } from '@/lib/requireRouteAccess';
 import styles from './page.module.css';
 
 export default async function TurnoverPage() {
+  await requireRouteAccess('/turnover');
   const data = await turnoverService.getTurnover();
   const totalChangePercent =
     data.metrics.find((metric) => metric.id === 'turnover')?.changePercent ?? 0;

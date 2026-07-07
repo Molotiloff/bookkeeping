@@ -6,11 +6,10 @@ import type { IconName } from '@/components/ui/Icon';
  */
 
 export type AttendanceStatus =
-  | 'present'
-  | 'overtime'
+  | 'work'
   | 'absent'
-  | 'day_off'
-  | 'vacation';
+  | 'flight'
+  | 'remote';
 
 export type EmployeeRole = 'Менеджер' | 'Оператор' | 'Кассир';
 

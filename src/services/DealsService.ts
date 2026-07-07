@@ -1,29 +1,21 @@
 import type { IDealsService } from './interfaces';
 import type { Deal } from '@/types/domain';
-import type { DealItem, DealsPageData } from '@/types/deals';
+import type { DealDetails, DealItem, DealsPageData } from '@/types/deals';
 import type { NewDealContext } from '@/types/newDeal';
 
 /** Сделки kanban-доски и первой страницы реестра — как в утверждённом референсе */
 const REFERENCE_DEALS: DealItem[] = [
-  // Фикс с клиентом
-  { id: '#13245', clientName: 'Алексей Смирнов', clientShortName: 'Алексей С.', dealType: 'Продажа', asset: 'USDT', amountRub: 350_000, city: 'Екатеринбург', status: 'fixed', updatedLabel: '2 мин назад', createdBy: 'Иван П.', onKanban: true },
-  { id: '#13231', clientName: 'Олег Лебедев', clientShortName: 'Олег Л.', dealType: 'Покупка', asset: 'BTC', amountRub: 780_000, city: 'Екатеринбург', status: 'fixed', updatedLabel: '5 мин назад', createdBy: 'Олег Л.', onKanban: true },
-  { id: '#13217', clientName: 'Мария Кузнецова', clientShortName: 'Мария К.', dealType: 'Покупка', asset: 'ETH', amountRub: 450_000, city: 'Екатеринбург', status: 'fixed', updatedLabel: '15 мин назад', createdBy: 'Мария К.', onKanban: true },
-  // Ожидание оплаты
-  { id: '#13244', clientName: 'Мария Кузнецова', clientShortName: 'Мария К.', dealType: 'Продажа', asset: 'BTC', amountRub: 1_250_000, city: 'Екатеринбург', status: 'awaiting_payment', updatedLabel: '3 мин назад', createdBy: 'Мария К.', onKanban: true },
-  { id: '#13230', clientName: 'Иван Петров', clientShortName: 'Иван П.', dealType: 'Покупка', asset: 'USDT', amountRub: 220_000, city: 'Екатеринбург', status: 'awaiting_payment', updatedLabel: '7 мин назад', createdBy: 'Иван П.', onKanban: true },
-  { id: '#13218', clientName: 'Сергей Волынец', clientShortName: 'Сергей В.', dealType: 'Продажа', asset: 'USDT', amountRub: 640_000, city: 'Екатеринбург', status: 'awaiting_payment', updatedLabel: '18 мин назад', createdBy: 'Сергей В.', onKanban: true },
-  // Сверка баланса
-  { id: '#13247', clientName: 'Дмитрий Волков', clientShortName: 'Дмитрий В.', dealType: 'Покупка', asset: 'USDT', amountRub: 950_000, city: 'Екатеринбург', status: 'balance_check', updatedLabel: '10 мин назад', createdBy: 'Дмитрий В.', onKanban: true },
-  { id: '#13228', clientName: 'Анна Лазарева', clientShortName: 'Анна Л.', dealType: 'Покупка', asset: 'BTC', amountRub: 330_000, city: 'Екатеринбург', status: 'balance_check', updatedLabel: '20 мин назад', createdBy: 'Анна Л.', onKanban: true },
-  { id: '#13201', clientName: 'Алексей Смирнов', clientShortName: 'Алексей С.', dealType: 'Покупка', asset: 'ETH', amountRub: 600_000, city: 'Екатеринбург', status: 'balance_check', updatedLabel: '1 час назад', createdBy: 'Алексей С.', onKanban: true },
-  // Сделка завершена
-  { id: '#13243', clientName: 'Дмитрий Волков', clientShortName: 'Дмитрий В.', dealType: 'Продажа', asset: 'ETH', amountRub: 550_000, city: 'Екатеринбург', status: 'completed', updatedLabel: 'Сегодня 10:30', createdBy: 'Дмитрий В.', onKanban: true },
-  { id: '#13227', clientName: 'Павел Соколов', clientShortName: 'Павел С.', dealType: 'Продажа', asset: 'BTC', amountRub: 120_000, city: 'Екатеринбург', status: 'completed', updatedLabel: 'Сегодня 09:15', createdBy: 'Павел С.', onKanban: true },
-  { id: '#13202', clientName: 'Мария Кузнецова', clientShortName: 'Мария К.', dealType: 'Продажа', asset: 'USDT', amountRub: 990_000, city: 'Екатеринбург', status: 'completed', updatedLabel: 'Вчера 18:40', createdBy: 'Мария К.', onKanban: true },
-  // Недостаточно USDT
-  { id: '#13250', clientName: 'Олег Лебедев', clientShortName: 'Олег Л.', dealType: 'Покупка', asset: 'USDT', amountRub: 270_000, city: 'Екатеринбург', status: 'insufficient_usdt', updatedLabel: 'Сегодня 11:20', createdBy: 'Олег Л.', onKanban: true },
-  { id: '#13249', clientName: 'Анна Лазарева', clientShortName: 'Анна Л.', dealType: 'Покупка', asset: 'ETH', amountRub: 210_000, city: 'Екатеринбург', status: 'insufficient_usdt', updatedLabel: 'Сегодня 10:05', createdBy: 'Анна Л.', onKanban: true },
+  { id: '#S-001', clientName: 'от Саши', clientShortName: 'от Саши', dealType: 'Продажа', asset: 'USDT', amountRub: 173_771, city: 'Челябинск', status: 'new', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#S-002', clientName: 'TAJO', clientShortName: 'TAJO', dealType: 'Продажа', asset: 'USDT', amountRub: 121_364, city: 'Челябинск', status: 'fixed', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#S-003', clientName: 'Blato', clientShortName: 'Blato', dealType: 'Продажа', asset: 'USDT', amountRub: 2_390_505, city: 'Екатеринбург', status: 'balance_check', insufficientUsdt: true, updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#S-004', clientName: 'BestChange', clientShortName: 'BestChange', dealType: 'Продажа', asset: 'USDT', amountRub: 84_166, city: 'Челябинск', status: 'awaiting_payment', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#S-005', clientName: 'Gikk', clientShortName: 'Gikk', dealType: 'Продажа', asset: 'USDT', amountRub: 7_800_000, city: 'Москва', status: 'done', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#S-006', clientName: 'Кит Бокс', clientShortName: 'Кит Бокс', dealType: 'Продажа', asset: 'USDT', amountRub: 7_535_000, city: 'Екатеринбург', status: 'done', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#P-001', clientName: 'Саша члб', clientShortName: 'Саша члб', dealType: 'Покупка', asset: 'USDT', amountRub: 69_375, city: 'Челябинск', status: 'fixed', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#P-002', clientName: 'Поэты', clientShortName: 'Поэты', dealType: 'Покупка', asset: 'USDT', amountRub: 2_370_375, city: 'Москва', status: 'awaiting_payment', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#P-003', clientName: 'Андрей PE', clientShortName: 'Андрей PE', dealType: 'Покупка', asset: 'USDT', amountRub: 280_900, city: 'Екатеринбург', status: 'balance_check', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#P-004', clientName: 'B Ekb', clientShortName: 'B Ekb', dealType: 'Покупка', asset: 'USDT', amountRub: 19_989_900, city: 'Екатеринбург', status: 'in_delivery', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
+  { id: '#D-005', clientName: 'Ярослав П', clientShortName: 'Ярослав П', dealType: 'Покупка', asset: 'USDT', amountRub: 8_658, city: 'Другой город', status: 'canceled', updatedLabel: '01.06.2026', createdBy: 'Google Sheet', onKanban: true },
 ];
 
 /** Детерминированная генерация «хвоста» реестра до 50 сделок */
@@ -41,7 +33,7 @@ function generateArchiveDeals(count: number): DealItem[] {
   ];
   const cities = ['Екатеринбург', 'Москва', 'Казань', 'Сочи'];
   const assets = ['USDT', 'USDT', 'BTC', 'ETH'] as const;
-  const statuses = ['completed', 'completed', 'fixed', 'awaiting_payment', 'balance_check'] as const;
+  const statuses = ['done', 'done', 'fixed', 'awaiting_payment', 'balance_check'] as const;
   const updatedLabels = ['Вчера 16:20', 'Вчера 12:05', '29.05.2024', '28.05.2024', '27.05.2024'];
   const managers = ['Иван П.', 'Мария К.', 'Олег Л.', 'Дмитрий В.', 'Сергей В.'];
 
@@ -65,146 +57,174 @@ function generateArchiveDeals(count: number): DealItem[] {
 
 /** Мок-реализация сделок: компактный список для дашборда + данные страницы «Сделки» */
 export class MockDealsService implements IDealsService {
+  private async allDeals(): Promise<DealItem[]> {
+    return [...REFERENCE_DEALS, ...generateArchiveDeals(50 - REFERENCE_DEALS.length)];
+  }
+
   async getActiveDeals(): Promise<Deal[]> {
     return [
       {
-        id: '#13245',
-        clientName: 'Алексей С.',
-        operation: 'Покупка USDT',
+        id: '#S-005',
+        clientName: 'Gikk',
+        operation: 'Продажа USDT',
         direction: 'USDT/RUB',
-        amountRub: 350_000,
-        assetAmount: '3 507 USDT',
-        rate: 99.8,
-        status: 'awaiting_payment',
+        amountRub: 7_800_000,
+        assetAmount: '103 654.485 USDT',
+        rate: 75.25,
+        status: 'done',
         updatedMinutesAgo: 2,
       },
       {
-        id: '#13244',
-        clientName: 'Мария К.',
-        operation: 'Продажа BTC',
-        direction: 'BTC/RUB',
-        amountRub: 1_250_000,
-        assetAmount: '0,214 BTC',
-        rate: 5_841_000,
+        id: '#P-004',
+        clientName: 'B Ekb',
+        operation: 'Покупка USDT',
+        direction: 'USDT/RUB',
+        amountRub: 19_989_900,
+        assetAmount: '266 000 USDT',
+        rate: 75.15,
         status: 'fixed',
         updatedMinutesAgo: 5,
       },
       {
-        id: '#13243',
-        clientName: 'Дмитрий В.',
-        operation: 'Покупка ETH',
-        direction: 'ETH/RUB',
-        amountRub: 550_000,
-        assetAmount: '1,74 ETH',
-        rate: 316_000,
-        status: 'completed',
+        id: '#S-003',
+        clientName: 'Blato',
+        operation: 'Продажа USDT',
+        direction: 'USDT/RUB',
+        amountRub: 2_390_505,
+        assetAmount: '31 537 USDT',
+        rate: 75.8,
+        status: 'balance_check',
+        insufficientUsdt: true,
         updatedMinutesAgo: 15,
-        tronscanUrl: 'https://tronscan.org/#/transaction/demo',
       },
       {
-        id: '#13242',
-        clientName: 'Игорь Н.',
+        id: '#P-002',
+        clientName: 'Поэты',
         operation: 'Покупка USDT',
         direction: 'USDT/RUB',
-        amountRub: 2_100_000,
-        assetAmount: '21 042 USDT',
-        rate: 99.8,
-        status: 'insufficient_usdt',
+        amountRub: 2_370_375,
+        assetAmount: '31 500 USDT',
+        rate: 75.25,
+        status: 'awaiting_payment',
         updatedMinutesAgo: 21,
       },
       {
-        id: '#13241',
-        clientName: 'Ольга Т.',
+        id: '#S-006',
+        clientName: 'Кит Бокс',
         operation: 'Продажа USDT',
         direction: 'USDT/RUB',
-        amountRub: 780_000,
-        assetAmount: '7 795 USDT',
-        rate: 100.1,
-        status: 'balance_check',
+        amountRub: 7_535_000,
+        assetAmount: '100 000 USDT',
+        rate: 75.35,
+        status: 'done',
         updatedMinutesAgo: 34,
-      },
-      {
-        id: '#13240',
-        clientName: 'ООО «Гранит»',
-        operation: 'Покупка USDT',
-        direction: 'USDT/RUB',
-        amountRub: 4_800_000,
-        assetAmount: '48 100 USDT',
-        rate: 99.8,
-        status: 'fixed',
-        updatedMinutesAgo: 48,
-      },
-      {
-        id: '#13239',
-        clientName: 'Сергей П.',
-        operation: 'Покупка BTC',
-        direction: 'BTC/RUB',
-        amountRub: 920_000,
-        assetAmount: '0,157 BTC',
-        rate: 5_860_000,
-        status: 'awaiting_payment',
-        updatedMinutesAgo: 52,
-      },
-      {
-        id: '#13238',
-        clientName: 'Анна Л.',
-        operation: 'Продажа USDT',
-        direction: 'USDT/RUB',
-        amountRub: 430_000,
-        assetAmount: '4 295 USDT',
-        rate: 100.1,
-        status: 'completed',
-        updatedMinutesAgo: 73,
-        tronscanUrl: 'https://tronscan.org/#/transaction/demo2',
-      },
-      {
-        id: '#13237',
-        clientName: 'Виктор Ш.',
-        operation: 'Покупка USDT',
-        direction: 'USDT/RUB',
-        amountRub: 1_640_000,
-        assetAmount: '16 430 USDT',
-        rate: 99.8,
-        status: 'balance_check',
-        updatedMinutesAgo: 95,
       },
     ];
   }
 
   async getDealsPage(): Promise<DealsPageData> {
-    const deals = [...REFERENCE_DEALS, ...generateArchiveDeals(50 - REFERENCE_DEALS.length)];
+    const deals = await this.allDeals();
 
     return {
       summaries: [
-        { status: 'fixed', count: 12, totalRub: 1_350_000 },
-        { status: 'awaiting_payment', count: 8, totalRub: 980_000 },
-        { status: 'balance_check', count: 3, totalRub: 640_000 },
-        { status: 'completed', count: 25, totalRub: 4_320_000 },
-        { status: 'insufficient_usdt', count: 2, totalRub: null },
+        { status: 'new', count: 1, totalRub: 173_771 },
+        { status: 'fixed', count: 2, totalRub: 190_739 },
+        { status: 'balance_check', count: 2, totalRub: 2_671_405 },
+        { status: 'awaiting_payment', count: 2, totalRub: 2_454_541 },
+        { status: 'in_delivery', count: 1, totalRub: 19_989_900 },
+        { status: 'done', count: 2, totalRub: 15_335_000 },
+        { status: 'canceled', count: 1, totalRub: 8_658 },
       ],
-      cities: ['Екатеринбург', 'Москва', 'Казань', 'Сочи'],
+      cities: ['Екатеринбург', 'Челябинск', 'Москва', 'Тюмень', 'Другой город'],
       deals,
+    };
+  }
+
+  async getDealById(id: string): Promise<DealDetails | null> {
+    const decodedId = decodeURIComponent(id);
+    const deal = (await this.allDeals()).find((item) => item.id === decodedId);
+    if (!deal) return null;
+
+    const qty = Math.max(1, Math.round(deal.amountRub / 75.5));
+    const rate = Number((deal.amountRub / qty).toFixed(2));
+    const isSale = deal.dealType === 'Продажа';
+
+    return {
+      deal,
+      dealNo: decodedId.replace('#', ''),
+      createdAt: deal.updatedLabel,
+      updatedAt: deal.updatedLabel,
+      source: deal.createdBy === 'Google Sheet' ? 'sheets' : 'crm',
+      counterpartyName: deal.clientName,
+      counterpartyPercent: deal.clientName === 'Gikk' ? 0 : 0.3,
+      profitRub: Math.round(deal.amountRub * (isSale ? 0.012 : 0.007)),
+      comment: deal.insufficientUsdt
+        ? 'Сделка требует сверки баланса: недостаточно USDT с учетом активных заявок.'
+        : 'Карточка собрана из текущего mock-среза Google Sheets.',
+      tronscanUrl: deal.status === 'done' ? 'https://tronscan.org/#/transaction/mock' : undefined,
+      legs: [
+        {
+          id: `${decodedId}-in`,
+          direction: 'IN',
+          currency: isSale ? 'USDT' : 'RUB',
+          amount: isSale ? qty : deal.amountRub,
+          rate,
+          status: 'ACTIVE',
+        },
+        {
+          id: `${decodedId}-out`,
+          direction: 'OUT',
+          currency: isSale ? 'RUB' : 'USDT',
+          amount: isSale ? deal.amountRub : qty,
+          rate,
+          status: deal.status === 'canceled' ? 'CANCELED' : 'ACTIVE',
+        },
+      ],
+      statusEvents: [
+        {
+          id: `${decodedId}-created`,
+          oldStatus: null,
+          newStatus: 'new',
+          actorName: deal.createdBy,
+          createdAt: deal.updatedLabel,
+          comment: 'Создана заявка.',
+        },
+        ...(deal.status !== 'new'
+          ? [
+              {
+                id: `${decodedId}-current`,
+                oldStatus: 'new' as const,
+                newStatus: deal.status,
+                actorName: deal.createdBy,
+                createdAt: deal.updatedLabel,
+                comment: 'Текущий статус из mock-среза.',
+              },
+            ]
+          : []),
+      ],
     };
   }
 
   async getNewDealContext(): Promise<NewDealContext> {
     return {
-      cities: ['Екатеринбург', 'Москва', 'Казань', 'Сочи'],
+      cities: ['Екатеринбург', 'Челябинск', 'Москва', 'Санкт-Петербург', 'Тюмень', 'Краснодар', 'Новосибирск', 'Уфа'],
       counterparties: [
-        { id: 'ct-1', name: 'Алексей Смирнов (КТ)' },
-        { id: 'ct-2', name: 'Мария Кузнецова (КТ)' },
-        { id: 'ct-3', name: 'Павел Соколов (КТ)' },
+        { id: 'ct-1', name: 'Алексей М' },
+        { id: 'ct-2', name: 'Ренат' },
+        { id: 'ct-3', name: '1exch|crypto' },
+        { id: 'ct-4', name: 'Илхом' },
+        { id: 'ct-5', name: 'Cassa Cassa' },
       ],
       clients: [
-        { id: 'c-1', name: 'Алексей Смирнов' },
-        { id: 'c-2', name: 'Мария Кузнецова' },
-        { id: 'c-3', name: 'Дмитрий Волков' },
-        { id: 'c-4', name: 'Олег Лебедев' },
-        { id: 'c-5', name: 'Анна Лазарева' },
-        { id: 'c-6', name: 'Сергей Волынец' },
+        { id: 'c-1', name: 'Gikk' },
+        { id: 'c-2', name: 'Кит Бокс' },
+        { id: 'c-3', name: 'Blato' },
+        { id: 'c-4', name: 'BestChange' },
+        { id: 'c-5', name: 'Андрей PE' },
+        { id: 'c-6', name: 'Сергей С' },
       ],
       companyRates: {
-        USDT: 90.25,
+        USDT: 81.377,
         BTC: 5_841_000,
         ETH: 316_000,
         CNY: 12.4,

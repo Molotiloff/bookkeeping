@@ -7,7 +7,7 @@
 
 export type DashboardCity = 'Все города' | 'Екатеринбург' | 'Челябинск' | 'Москва';
 
-export type DashboardCurrencyCode = 'EUR' | 'USDT' | 'USD_WH' | 'USD_BL';
+export type DashboardCurrencyCode = 'EUR' | 'USDT' | 'USD_WH' | 'USD_BL' | 'CNY';
 
 export type MetricTone = 'blue' | 'green' | 'red' | 'orange' | 'purple' | 'neutral';
 

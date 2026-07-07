@@ -7,10 +7,10 @@ import type {
   PnLReport,
   ProfitPoint,
 } from '@/types/domain';
-import type { ClientsPageData } from '@/types/clients';
+import type { Client, ClientsPageData } from '@/types/clients';
 import type { AttendanceMonth } from '@/types/attendance';
 import type { BalancesSnapshot } from '@/types/balances';
-import type { DealsPageData } from '@/types/deals';
+import type { DealDetails, DealsPageData } from '@/types/deals';
 import type { NewDealContext } from '@/types/newDeal';
 import type { TurnoverPageData } from '@/types/turnover';
 import type { MainDashboardData } from '@/types/mainDashboard';
@@ -33,6 +33,8 @@ export interface IDealsService {
   getActiveDeals(): Promise<Deal[]>;
   /** Полные данные страницы «Сделки»: сводка, kanban и реестр */
   getDealsPage(): Promise<DealsPageData>;
+  /** Карточка сделки: шапка, legs, события статусов, чек */
+  getDealById(id: string): Promise<DealDetails | null>;
   /** Справочники формы создания сделки: города, контрагенты, клиенты, курсы */
   getNewDealContext(): Promise<NewDealContext>;
 }
@@ -40,6 +42,8 @@ export interface IDealsService {
 export interface IClientsService {
   /** Клиентская база: KPI и список клиентов с полными карточками */
   getClientsPage(): Promise<ClientsPageData>;
+  /** Карточка клиента: балансы, сделки, комментарии */
+  getClientById(id: string): Promise<Client | null>;
 }
 
 export interface IAccountingService {

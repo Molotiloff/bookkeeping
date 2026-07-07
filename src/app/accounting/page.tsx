@@ -6,9 +6,11 @@ import { PnLCard } from '@/components/accounting/PnLCard';
 import { ProfitLineChart } from '@/components/charts/ProfitLineChart';
 import { DealsDonut } from '@/components/charts/DealsDonut';
 import { accountingService, chartDataService } from '@/services';
+import { requireRouteAccess } from '@/lib/requireRouteAccess';
 import styles from './page.module.css';
 
 export default async function AccountingPage() {
+  await requireRouteAccess('/accounting');
   const [desks, transfers, pnl, profitPoints, dealStructure] = await Promise.all([
     accountingService.getCashDesks(),
     accountingService.getTransfers(),

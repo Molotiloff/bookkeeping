@@ -7,35 +7,34 @@ export class MockAccountingService implements IAccountingService {
     return [
       {
         id: 'd1',
-        city: 'Москва',
+        city: 'Екатеринбург',
         balances: [
-          { currency: 'RUB', amount: 8_200_000 },
-          { currency: 'USDT', amount: 45_300 },
-          { currency: 'USD', amount: 12_500 },
+          { currency: 'RUB', amount: 2_206_000 },
+          { currency: 'USDT', amount: 123.1258 },
+          { currency: 'EUR', amount: 56 },
         ],
       },
       {
         id: 'd2',
-        city: 'Санкт-Петербург',
+        city: 'Москва',
         balances: [
-          { currency: 'RUB', amount: 2_650_000 },
-          { currency: 'USDT', amount: 18_700 },
+          { currency: 'RUB', amount: 17_815_825 },
+          { currency: 'USD_WH', amount: 0 },
+          { currency: 'USD_BL', amount: 0 },
         ],
       },
       {
         id: 'd3',
-        city: 'Казань',
+        city: 'Челябинск',
         balances: [
-          { currency: 'RUB', amount: 1_600_000 },
-          { currency: 'USDT', amount: 6_200 },
+          { currency: 'RUB', amount: 30_600 },
         ],
       },
       {
         id: 'd4',
-        city: 'Дубай',
+        city: 'Тюмень',
         balances: [
-          { currency: 'USD', amount: 34_800 },
-          { currency: 'USDT', amount: 61_450 },
+          { currency: 'RUB', amount: 5_025_500 },
         ],
       },
     ];
@@ -43,20 +42,20 @@ export class MockAccountingService implements IAccountingService {
 
   async getTransfers(): Promise<CashTransfer[]> {
     return [
-      { id: 't1', fromCity: 'Москва', toCity: 'Санкт-Петербург', amount: { currency: 'RUB', amount: 1_500_000 }, date: 'сегодня, 14:20' },
-      { id: 't2', fromCity: 'Дубай', toCity: 'Москва', amount: { currency: 'USDT', amount: 25_000 }, date: 'вчера, 18:05', comment: 'Пополнение под заявку #13240' },
-      { id: 't3', fromCity: 'Москва', toCity: 'Казань', amount: { currency: 'RUB', amount: 600_000 }, date: '29.05.2024' },
-      { id: 't4', fromCity: 'Санкт-Петербург', toCity: 'Москва', amount: { currency: 'USD', amount: 8_000 }, date: '28.05.2024' },
+      { id: 't1', fromCity: 'Екатеринбург', toCity: 'Челябинск', amount: { currency: 'RUB', amount: 8_658 }, date: '01.06.2026', comment: 'Перестановка: Ярослав П / Cassa Cassa' },
+      { id: 't2', fromCity: 'Москва', toCity: 'Екатеринбург', amount: { currency: 'USDT', amount: 31_500 }, date: '01.06.2026', comment: 'Покупка у Поэты' },
+      { id: 't3', fromCity: 'Екатеринбург', toCity: 'Москва', amount: { currency: 'USDT', amount: 103_654.485 }, date: '01.06.2026', comment: 'Продажа Gikk' },
+      { id: 't4', fromCity: 'Москва', toCity: 'Тюмень', amount: { currency: 'RUB', amount: 5_000 }, date: '08.06.2026', comment: 'Доставка / инкасс' },
     ];
   }
 
   async getPnL(): Promise<PnLReport> {
     return {
-      periodLabel: '01.05.2024 – 31.05.2024',
-      clientIncome: 26_550_000,
-      fixedExpenses: 1_200_000,
-      variableExpenses: 850_000,
-      profit: 24_500_000,
+      periodLabel: '01.06.2026 – 30.06.2026',
+      clientIncome: 4_400_346,
+      fixedExpenses: 4_301_489,
+      variableExpenses: 98_857,
+      profit: -1,
     };
   }
 }

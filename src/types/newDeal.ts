@@ -6,10 +6,10 @@
 export type NewDealType =
   | 'sale'
   | 'purchase'
-  | 'cash_in'
-  | 'cash_out'
+  | 'deposit'
+  | 'withdrawal'
   | 'delivery'
-  | 'rearrangement'
+  | 'transfer_city'
   | 'conversion'
   | 'yuan'
   | 'invoice'
@@ -48,7 +48,7 @@ export interface DeliveryDealFields {
   feePercent: number;
 }
 
-export interface RearrangementDealFields {
+export interface TransferCityDealFields {
   fromCity: string;
   toCity: string;
   amount: number;
@@ -85,7 +85,7 @@ export interface CreateDealPayload {
     | PurchaseDealFields
     | CashOperationFields
     | DeliveryDealFields
-    | RearrangementDealFields
+    | TransferCityDealFields
     | ConversionDealFields
     | YuanDealFields
     | InvoiceDealFields

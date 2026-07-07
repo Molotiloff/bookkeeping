@@ -10,10 +10,10 @@ import { formatCrypto, formatMoneyRub } from '@/lib/format';
 export const NEW_DEAL_TYPES: { type: NewDealType; label: string; icon: IconName }[] = [
   { type: 'sale', label: 'Продажа', icon: 'deals' },
   { type: 'purchase', label: 'Покупка', icon: 'wallet' },
-  { type: 'cash_in', label: 'Внесение', icon: 'income' },
-  { type: 'cash_out', label: 'Выдача', icon: 'expenses' },
+  { type: 'deposit', label: 'Внесение', icon: 'income' },
+  { type: 'withdrawal', label: 'Выдача', icon: 'expenses' },
   { type: 'delivery', label: 'Доставка', icon: 'plane' },
-  { type: 'rearrangement', label: 'Перестановка', icon: 'shuffle' },
+  { type: 'transfer_city', label: 'Перестановка', icon: 'shuffle' },
   { type: 'conversion', label: 'Конвертация', icon: 'repeat' },
   { type: 'yuan', label: 'Юань', icon: 'yuan' },
   { type: 'invoice', label: 'Инвойс', icon: 'file-text' },
@@ -46,11 +46,11 @@ const SALE_FIELDS: FieldConfig[] = [
 export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
   sale: SALE_FIELDS,
   purchase: SALE_FIELDS,
-  cash_in: [
+  deposit: [
     { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
   ],
-  cash_out: [
+  withdrawal: [
     { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
   ],
@@ -58,7 +58,7 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'RUB', required: true },
     { name: 'feePercent', label: 'Комиссия', kind: 'number', suffix: '%', defaultValue: '1' },
   ],
-  rearrangement: [
+  transfer_city: [
     { name: 'fromCity', label: 'Из города', kind: 'select', optionsFrom: 'cities' },
     { name: 'toCity', label: 'В город', kind: 'select', optionsFrom: 'cities' },
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'RUB', required: true },
@@ -149,14 +149,14 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
         rubRow('profit', 'Прибыль', profit, profit >= 0 ? 'up' : 'down'),
       ];
     }
-    case 'cash_in':
-    case 'cash_out': {
+    case 'deposit':
+    case 'withdrawal': {
       const amount = num(values, 'amount');
       const currency = values.currency ?? 'USDT';
       return [
         {
           key: 'amount',
-          label: type === 'cash_in' ? 'К внесению' : 'К выдаче',
+          label: type === 'deposit' ? 'К внесению' : 'К выдаче',
           text: `${formatCrypto(amount, currency === 'BTC' || currency === 'ETH' ? (currency as 'BTC' | 'ETH') : 'USDT')} ${currency}`,
           value: amount,
         },
@@ -171,7 +171,7 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
         rubRow('total', 'Итого к оплате', amount + fee),
       ];
     }
-    case 'rearrangement': {
+    case 'transfer_city': {
       const amount = num(values, 'amount');
       const fee = (amount * num(values, 'feePercent')) / 100;
       return [

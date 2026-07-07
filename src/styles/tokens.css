@@ -62,11 +62,11 @@
   --focus-ring: 0 0 0 3px rgba(42, 120, 214, 0.28);
 
   /* Посещаемость: статусы календаря */
-  --att-present-fg: #16a34a;  --att-present-bg: #e4f6ec;
-  --att-overtime-fg: #d97706; --att-overtime-bg: #fdf3e2;
+  --att-work-fg: #16a34a;     --att-work-bg: #e4f6ec;
   --att-absent-fg: #dc2626;   --att-absent-bg: #fdebea;
+  --att-flight-fg: #3b82f6;   --att-flight-bg: #e8f1fd;
+  --att-remote-fg: #d97706;   --att-remote-bg: #fdf3e2;
   --att-dayoff-fg: #94a3b8;   --att-dayoff-bg: #f1f5f9;
-  --att-vacation-fg: #3b82f6; --att-vacation-bg: #e8f1fd;
   --att-weekend: #dc2626;
 
   /* Glass-эффект (в светлой теме поверхности непрозрачные) */
@@ -128,11 +128,11 @@
   --focus-ring: 0 0 0 3px rgba(122, 114, 232, 0.4);
 
   /* Посещаемость: статусы календаря (утверждённая палитра) */
-  --att-present-fg: #22c55e;  --att-present-bg: rgba(34, 197, 94, 0.14);
-  --att-overtime-fg: #f59e0b; --att-overtime-bg: rgba(245, 158, 11, 0.14);
+  --att-work-fg: #22c55e;     --att-work-bg: rgba(34, 197, 94, 0.14);
   --att-absent-fg: #ef4444;   --att-absent-bg: rgba(239, 68, 68, 0.14);
+  --att-flight-fg: #3b82f6;   --att-flight-bg: rgba(59, 130, 246, 0.16);
+  --att-remote-fg: #f59e0b;   --att-remote-bg: rgba(245, 158, 11, 0.14);
   --att-dayoff-fg: #64748b;   --att-dayoff-bg: rgba(100, 116, 139, 0.18);
-  --att-vacation-fg: #3b82f6; --att-vacation-bg: rgba(59, 130, 246, 0.16);
   --att-weekend: #ef4444;
 
   /* Аккуратный glassmorphism: полупрозрачная поверхность + мягкая внутренняя подсветка */
