@@ -8,7 +8,16 @@ function CurrencyFactCard({ currency }: { currency: CurrencyFactCardData }) {
     { label: 'Курс', value: currency.rate.toLocaleString('ru-RU', { maximumFractionDigits: 3 }) },
     { label: `${currency.label} в рубле`, value: formatRub(currency.rubValue) },
     { label: `${currency.label} клиент.`, value: formatNumber(currency.clientAmount) },
+    ...(currency.code === 'USDT'
+      ? [{ label: 'Прибыль со сделок', value: formatNumber(currency.dealProfitAmount) }]
+      : []),
     { label: `${currency.label} факт`, value: formatNumber(currency.factAmount) },
+    ...(currency.observedAmount === undefined
+      ? []
+      : [{ label: 'Наблюдаемый остаток', value: formatNumber(currency.observedAmount) }]),
+    ...(currency.gap === undefined
+      ? []
+      : [{ label: 'Разрыв', value: formatNumber(currency.gap) }]),
   ];
 
   return (

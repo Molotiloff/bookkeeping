@@ -11,7 +11,7 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Главная', icon: 'home', roles: [...ROLES.all] },
+  { href: '/', label: 'Главная', icon: 'home', roles: [...ROLES.accountantPlus] },
   { href: '/deals', label: 'Сделки', icon: 'deals', roles: [...ROLES.all] },
   { href: '/clients', label: 'Клиенты', icon: 'clients', roles: [...ROLES.all] },
   { href: '/balances', label: 'Балансы', icon: 'wallet', roles: [...ROLES.all] },

@@ -3,7 +3,7 @@ import { Icon, type IconName } from '@/components/ui/Icon';
 import { TONE_TEXT_CLASS } from './toneStyles';
 import styles from './CitySummariesGrid.module.css';
 
-const CITY_ICONS: Record<CitySummary['city'], IconName> = {
+const CITY_ICONS: Readonly<Record<string, IconName>> = {
   ЕКБ: 'building',
   ЧЛБ: 'home',
   МСК: 'trend-up',
@@ -16,7 +16,7 @@ export function CitySummariesGrid({ summaries }: { summaries: CitySummary[] }) {
         <section key={summary.id} className={styles.card}>
           <div className={styles.head}>
             <span className={styles.iconWrap}>
-              <Icon name={CITY_ICONS[summary.city]} size={14} />
+              <Icon name={CITY_ICONS[summary.city] ?? 'building'} size={14} />
             </span>
             <h2 className={styles.heading}>{summary.city}</h2>
           </div>

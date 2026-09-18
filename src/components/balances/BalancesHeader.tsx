@@ -9,6 +9,7 @@ import styles from './BalancesHeader.module.css';
 
 interface BalancesHeaderProps {
   currency: CurrencyFilterValue;
+  currencies: string[];
   onCurrencyChange: (value: CurrencyFilterValue) => void;
   query: string;
   onQueryChange: (value: string) => void;
@@ -18,6 +19,7 @@ interface BalancesHeaderProps {
 
 export function BalancesHeader({
   currency,
+  currencies,
   onCurrencyChange,
   query,
   onQueryChange,
@@ -32,7 +34,11 @@ export function BalancesHeader({
       </div>
 
       <div className={styles.controls}>
-        <CurrencyFilter value={currency} onChange={onCurrencyChange} />
+        <CurrencyFilter
+          value={currency}
+          currencies={currencies}
+          onChange={onCurrencyChange}
+        />
         <SearchInput value={query} onChange={onQueryChange} placeholder="Поиск по клиентам" />
         <SortButton sort={sort} onToggle={onSortToggle} />
         <ThemeSwitcher />

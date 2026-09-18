@@ -7,7 +7,7 @@
 
 export type DashboardCity = 'Все города' | 'Екатеринбург' | 'Челябинск' | 'Москва';
 
-export type DashboardCurrencyCode = 'EUR' | 'USDT' | 'USD_WH' | 'USD_BL' | 'CNY';
+export type DashboardCurrencyCode = 'EUR' | 'USDT' | 'USD_WH' | 'USD_BL';
 
 export type MetricTone = 'blue' | 'green' | 'red' | 'orange' | 'purple' | 'neutral';
 
@@ -35,7 +35,11 @@ export interface CurrencyFactCard {
   rate: number;
   rubValue: number;
   clientAmount: number;
+  dealProfitAmount: number;
   factAmount: number;
+  observedAmount?: number;
+  gap?: number;
+  observedAt?: string;
   tone: MetricTone;
 }
 
@@ -49,7 +53,7 @@ export interface FinanceIndicator {
 
 export interface CitySummary {
   id: string;
-  city: 'ЕКБ' | 'ЧЛБ' | 'МСК';
+  city: string;
   rows: {
     label: string;
     value: string | number;
@@ -65,7 +69,43 @@ export interface SystemMetric {
   tone: MetricTone;
 }
 
+export interface DashboardShadowComparison {
+  status: 'matched' | 'mismatched' | 'unavailable';
+  comparedFields: number;
+  mismatchCount: number;
+  reportId?: number;
+}
+
+export interface DashboardShadowDifference {
+  path: string;
+  sheet?: string;
+  database?: string;
+  absoluteDelta?: string;
+  relativeDelta?: string;
+  classification: string;
+}
+
+export interface DashboardShadowReport {
+  id: number;
+  businessDate: string;
+  primarySource: string;
+  status: string;
+  comparedFields: number;
+  mismatchCount: number;
+  absoluteTolerance: string;
+  relativeTolerance: string;
+  sheetsDataAsOf: string;
+  dbDataAsOf: string;
+  createdAt: string;
+  differences: DashboardShadowDifference[];
+}
+
 export interface MainDashboardData {
+  source: string;
+  calculatedAt: string;
+  dataAsOf: string;
+  warnings: string[];
+  shadowComparison?: DashboardShadowComparison;
   dateLabel: string;
   weekdayLabel: string;
   cities: string[];

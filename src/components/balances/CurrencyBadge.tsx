@@ -1,7 +1,7 @@
 import type { CurrencyCode } from '@/types/balances';
 import styles from './CurrencyBadge.module.css';
 
-const CURRENCY_VISUALS: Record<CurrencyCode, { symbol: string; className: string }> = {
+const CURRENCY_VISUALS: Readonly<Record<string, { symbol: string; className: string }>> = {
   USDT: { symbol: '₮', className: styles.usdt },
   RUB: { symbol: '₽', className: styles.rub },
   USD: { symbol: '$', className: styles.usd },
@@ -19,7 +19,10 @@ interface CurrencyBadgeProps {
 }
 
 export function CurrencyBadge({ currency, size = 26 }: CurrencyBadgeProps) {
-  const { symbol, className } = CURRENCY_VISUALS[currency];
+  const { symbol, className } = CURRENCY_VISUALS[currency] ?? {
+    symbol: currency.slice(0, 1).toUpperCase() || '?',
+    className: styles.other,
+  };
   return (
     <span
       className={`${styles.badge} ${className}`}

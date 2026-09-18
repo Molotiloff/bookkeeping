@@ -25,14 +25,12 @@ export function formatMoney({ currency, amount }: MoneyAmount): string {
   }
 }
 
-import type { CurrencyCode } from '@/types/domain';
-
 /** 378 945.00 ₽ — пробел между разрядами, точка в дробной части */
 export function formatMoneyRub(value: number): string {
   return `${groupDigits(value, 2, 2)} ₽`;
 }
 
-const CRYPTO_DECIMALS: Record<CurrencyCode, number> = {
+const CURRENCY_DECIMALS: Readonly<Record<string, number>> = {
   USDT: 2,
   RUB: 2,
   USD: 2,
@@ -45,8 +43,8 @@ const CRYPTO_DECIMALS: Record<CurrencyCode, number> = {
 };
 
 /** 3 789.45 (USDT) / 0.04560 (BTC) / 1.5500 (ETH) / 782 450.00 (RUB) */
-export function formatCrypto(value: number, currency: CurrencyCode): string {
-  const decimals = CRYPTO_DECIMALS[currency];
+export function formatCrypto(value: number, currency: string): string {
+  const decimals = CURRENCY_DECIMALS[currency] ?? 2;
   return groupDigits(value, decimals, decimals);
 }
 

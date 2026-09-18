@@ -23,15 +23,10 @@ import { MockBalancesService } from './BalancesService';
 import { MockTurnoverService } from './TurnoverService';
 import { MockExpensesService } from './ExpensesService';
 import {
-  ApiAccountingService,
-  ApiAttendanceService,
   ApiBalancesService,
-  ApiChartDataService,
   ApiClientsService,
   ApiDealsService,
-  ApiExpensesService,
   ApiMainDashboardService,
-  ApiTurnoverService,
   ApiUserService,
 } from './api/ApiServices';
 
@@ -63,26 +58,20 @@ const api = config.useMocks
 export const mainDashboardService: IMainDashboardService = api
   ? new ApiMainDashboardService(api)
   : new MockMainDashboardService();
-export const dealsService: IDealsService = api ? new ApiDealsService(api) : new MockDealsService();
-export const chartDataService: IChartDataService = api
-  ? new ApiChartDataService(api)
-  : new MockChartDataService();
+// CRM-backed screens use API implementations as their migration stages land.
+// Screens outside the current backend scope keep isolated read-only mocks.
+export const dealsService: IDealsService = api
+  ? new ApiDealsService(api)
+  : new MockDealsService();
+export const chartDataService: IChartDataService = new MockChartDataService();
 export const userService: IUserService = api ? new ApiUserService(api) : new MockUserService();
 export const clientsService: IClientsService = api
   ? new ApiClientsService(api)
   : new MockClientsService();
-export const accountingService: IAccountingService = api
-  ? new ApiAccountingService(api)
-  : new MockAccountingService();
-export const attendanceService: IAttendanceService = api
-  ? new ApiAttendanceService(api)
-  : new MockAttendanceService();
+export const accountingService: IAccountingService = new MockAccountingService();
+export const attendanceService: IAttendanceService = new MockAttendanceService();
 export const balancesService: IBalancesService = api
   ? new ApiBalancesService(api)
   : new MockBalancesService();
-export const turnoverService: ITurnoverService = api
-  ? new ApiTurnoverService(api)
-  : new MockTurnoverService();
-export const expensesService: IExpensesService = api
-  ? new ApiExpensesService(api)
-  : new MockExpensesService();
+export const turnoverService: ITurnoverService = new MockTurnoverService();
+export const expensesService: IExpensesService = new MockExpensesService();

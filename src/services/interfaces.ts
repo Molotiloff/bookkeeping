@@ -10,11 +10,16 @@ import type {
 import type { Client, ClientsPageData } from '@/types/clients';
 import type { AttendanceMonth } from '@/types/attendance';
 import type { BalancesSnapshot } from '@/types/balances';
-import type { DealDetails, DealsPageData } from '@/types/deals';
+import type { DealDetails, DealSourceEditPayload, DealsPageData } from '@/types/deals';
 import type { NewDealContext } from '@/types/newDeal';
 import type { TurnoverPageData } from '@/types/turnover';
-import type { MainDashboardData } from '@/types/mainDashboard';
+import type { DashboardShadowReport, MainDashboardData } from '@/types/mainDashboard';
 import type { ExpensesPageData } from '@/types/expenses';
+import type {
+  ManualCashSnapshot,
+  RecordManualCashPayload,
+  ReverseManualCashPayload,
+} from '@/types/manualCash';
 
 /**
  * Контракты слоя данных (Dependency Inversion):
@@ -26,6 +31,10 @@ import type { ExpensesPageData } from '@/types/expenses';
 export interface IMainDashboardService {
   /** Все блоки страницы «Главная»: KPI, валюты, финансы, города, системные показатели */
   getDashboard(): Promise<MainDashboardData>;
+  getShadowReport(reportId: number): Promise<DashboardShadowReport | null>;
+  getManualCash(): Promise<ManualCashSnapshot>;
+  recordManualCash(payload: RecordManualCashPayload): Promise<void>;
+  reverseManualCash(moveId: number, payload: ReverseManualCashPayload): Promise<void>;
 }
 
 export interface IDealsService {
@@ -37,6 +46,8 @@ export interface IDealsService {
   getDealById(id: string): Promise<DealDetails | null>;
   /** Справочники формы создания сделки: города, контрагенты, клиенты, курсы */
   getNewDealContext(): Promise<NewDealContext>;
+  editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails>;
+  cancel(id: string, comment?: string): Promise<DealDetails>;
 }
 
 export interface IClientsService {

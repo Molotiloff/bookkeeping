@@ -20,7 +20,7 @@ export interface ClientComment {
 
 export interface ClientRecentDeal {
   id: string;
-  type: 'Продажа' | 'Покупка' | 'Конвертация' | 'Инвойс';
+  type: 'Продажа' | 'Покупка' | 'Конвертация' | 'Инвойс' | 'Пополнение' | 'Списание';
   direction: string;
   amountRub: number;
   time: string;

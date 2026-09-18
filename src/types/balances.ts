@@ -1,9 +1,10 @@
-import type { CurrencyCode as DomainCurrencyCode } from './domain';
-
 /**
  * Типы раздела «Балансы»: клиенты с ненулевыми остатками,
  * сводка по валютам и параметры сортировки таблицы.
  */
+
+/** Код валюты или счёта из учётной базы. */
+export type CurrencyCode = string;
 
 /** Значение фильтра валют: конкретная валюта или все сразу */
 export type CurrencyFilterValue = CurrencyCode | 'ALL';
@@ -38,4 +39,3 @@ export interface BalancesSnapshot {
   clients: BalanceClient[];
   summaries: CurrencySummary[];
 }
-export type CurrencyCode = DomainCurrencyCode;

@@ -17,16 +17,7 @@
   border-color: var(--border-strong);
 }
 
-.iconLight,
-.iconDark {
-  display: none;
+.icon {
+  display: inline-flex;
   line-height: 0;
-}
-
-:global(:root[data-theme='light']) .iconLight {
-  display: inline-flex;
-}
-
-:global(:root[data-theme='dark']) .iconDark {
-  display: inline-flex;
 }

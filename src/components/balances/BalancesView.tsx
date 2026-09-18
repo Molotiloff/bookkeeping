@@ -15,6 +15,11 @@ export function BalancesView({ snapshot }: { snapshot: BalancesSnapshot }) {
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortState>({ key: 'balanceRub', direction: 'desc' });
 
+  const currencies = useMemo(
+    () => [...new Set(snapshot.clients.map((client) => client.currency))].sort(),
+    [snapshot.clients],
+  );
+
   const visibleClients = useMemo(() => {
     const q = query.trim().toLowerCase();
     const filtered = snapshot.clients.filter((client) => {
@@ -36,6 +41,7 @@ export function BalancesView({ snapshot }: { snapshot: BalancesSnapshot }) {
     <>
       <BalancesHeader
         currency={currency}
+        currencies={currencies}
         onCurrencyChange={setCurrency}
         query={query}
         onQueryChange={setQuery}

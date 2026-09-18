@@ -1,6 +1,6 @@
 import type { IDealsService } from './interfaces';
 import type { Deal } from '@/types/domain';
-import type { DealDetails, DealItem, DealsPageData } from '@/types/deals';
+import type { DealDetails, DealItem, DealSourceEditPayload, DealsPageData } from '@/types/deals';
 import type { NewDealContext } from '@/types/newDeal';
 
 /** Сделки kanban-доски и первой страницы реестра — как в утверждённом референсе */
@@ -231,5 +231,20 @@ export class MockDealsService implements IDealsService {
       },
       defaultCounterpartyPercent: 0.5,
     };
+  }
+
+  async editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails> {
+    void payload;
+    const details = await this.getDealById(id);
+    if (!details) throw new Error(`Deal ${id} was not found`);
+    return details;
+  }
+
+  async cancel(id: string, comment?: string): Promise<DealDetails> {
+    void comment;
+    const details = await this.getDealById(id);
+    if (!details) throw new Error(`Deal ${id} was not found`);
+    details.deal.status = 'canceled';
+    return details;
   }
 }

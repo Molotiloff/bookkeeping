@@ -1,11 +1,28 @@
 import type { IMainDashboardService } from './interfaces';
-import type { MainDashboardData } from '@/types/mainDashboard';
+import type { DashboardShadowReport, MainDashboardData } from '@/types/mainDashboard';
+import type { ManualCashSnapshot } from '@/types/manualCash';
 import { formatSignedRub, formatUsd } from '@/lib/format';
 
 /** Мок-реализация главного дашборда: цифры — как в утверждённом референсе */
 export class MockMainDashboardService implements IMainDashboardService {
+  async getShadowReport(): Promise<DashboardShadowReport | null> {
+    return null;
+  }
+
+  async getManualCash(): Promise<ManualCashSnapshot> {
+    return { accounts: [], moves: [] };
+  }
+
+  async recordManualCash(): Promise<void> {}
+
+  async reverseManualCash(): Promise<void> {}
+
   async getDashboard(): Promise<MainDashboardData> {
     return {
+      source: 'mock',
+      calculatedAt: '2026-07-03T00:00:00Z',
+      dataAsOf: '2026-07-03T00:00:00Z',
+      warnings: [],
       dateLabel: '03.07.2026',
       weekdayLabel: 'Пятница',
       cities: ['Екатеринбург', 'Челябинск', 'Москва', 'Тюмень'],
@@ -23,11 +40,10 @@ export class MockMainDashboardService implements IMainDashboardService {
         { id: 'gap', label: 'Разрыв', value: formatSignedRub(43), tone: 'orange' },
       ],
       currencies: [
-        { code: 'EUR', label: 'EUR', amount: 56, rate: 88.514, rubValue: 4_957, clientAmount: 644, factAmount: 700, tone: 'blue' },
-        { code: 'USDT', label: 'USDT', amount: 123.1258, rate: 81.377, rubValue: 10_020, clientAmount: 18_843.22, factAmount: 18_966.35, tone: 'green' },
-        { code: 'USD_WH', label: 'USD WH', amount: 0, rate: 0, rubValue: 0, clientAmount: 0, factAmount: 0, tone: 'orange' },
-        { code: 'USD_BL', label: 'USD BL', amount: 0, rate: 0, rubValue: 0, clientAmount: 0, factAmount: 0, tone: 'purple' },
-        { code: 'CNY', label: 'CNY', amount: 0, rate: 12.4, rubValue: 0, clientAmount: 0, factAmount: 0, tone: 'neutral' },
+        { code: 'EUR', label: 'EUR', amount: 56, rate: 88.514, rubValue: 4_957, clientAmount: 644, dealProfitAmount: 0, factAmount: 700, tone: 'blue' },
+        { code: 'USDT', label: 'USDT', amount: 123.1258, rate: 81.377, rubValue: 10_020, clientAmount: 18_843.22, dealProfitAmount: 0, factAmount: 18_966.35, tone: 'green' },
+        { code: 'USD_WH', label: 'USD WH', amount: 0, rate: 0, rubValue: 0, clientAmount: 0, dealProfitAmount: 0, factAmount: 0, tone: 'orange' },
+        { code: 'USD_BL', label: 'USD BL', amount: 0, rate: 0, rubValue: 0, clientAmount: 0, dealProfitAmount: 0, factAmount: 0, tone: 'purple' },
       ],
       finance: [
         { id: 'total-rub', label: 'Общий RUB', value: '25 092 901 ₽' },

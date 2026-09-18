@@ -65,6 +65,32 @@
   gap: 12px;
 }
 
+.bestChangeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.correction {
+  display: grid;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.correction strong {
+  color: var(--text-primary);
+}
+
+.correction a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
 .fact {
   display: grid;
   gap: 4px;
@@ -150,6 +176,16 @@
   }
 
   .facts {
+    grid-template-columns: 1fr;
+  }
+
+  .bestChangeGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .bestChangeGrid {
     grid-template-columns: 1fr;
   }
 }

@@ -24,11 +24,28 @@ import type {
 import type { AttendanceMonth } from '@/types/attendance';
 import type { BalancesSnapshot } from '@/types/balances';
 import type { Client, ClientsPageData } from '@/types/clients';
-import type { DealDetails, DealsPageData } from '@/types/deals';
+import type { DealDetails, DealSourceEditPayload, DealsPageData } from '@/types/deals';
 import type { ExpensesPageData } from '@/types/expenses';
-import type { MainDashboardData } from '@/types/mainDashboard';
+import type {
+  ManualCashSnapshot,
+  RecordManualCashPayload,
+  ReverseManualCashPayload,
+} from '@/types/manualCash';
+import type { DashboardShadowReport, MainDashboardData } from '@/types/mainDashboard';
 import type { NewDealContext } from '@/types/newDeal';
 import type { TurnoverPageData } from '@/types/turnover';
+import {
+  adaptBalancesSnapshot,
+  adaptClient,
+  adaptClientsPage,
+  adaptDashboard,
+  adaptUser,
+  type ApiBalancesSnapshot,
+  type ApiClientDetails,
+  type ApiClientsPage,
+  type ApiDashboard,
+  type ApiUser,
+} from './adapters';
 
 /**
  * API implementations are intentionally thin. During the transition from mocks
@@ -39,8 +56,24 @@ import type { TurnoverPageData } from '@/types/turnover';
 export class ApiMainDashboardService implements IMainDashboardService {
   constructor(private readonly api: ApiClient) {}
 
-  getDashboard(): Promise<MainDashboardData> {
-    return this.api.get(crmApi.dashboard.root);
+  async getDashboard(): Promise<MainDashboardData> {
+    return adaptDashboard(await this.api.get<ApiDashboard>(crmApi.dashboard.root));
+  }
+
+  getShadowReport(reportId: number): Promise<DashboardShadowReport> {
+    return this.api.get(crmApi.dashboard.shadowReport(reportId));
+  }
+
+  getManualCash(): Promise<ManualCashSnapshot> {
+    return this.api.get(crmApi.dashboard.manualCash);
+  }
+
+  async recordManualCash(payload: RecordManualCashPayload): Promise<void> {
+    await this.api.post(crmApi.dashboard.manualCashMoves, payload);
+  }
+
+  async reverseManualCash(moveId: number, payload: ReverseManualCashPayload): Promise<void> {
+    await this.api.post(crmApi.dashboard.reverseManualCash(moveId), payload);
   }
 }
 
@@ -62,17 +95,25 @@ export class ApiDealsService implements IDealsService {
   getNewDealContext(): Promise<NewDealContext> {
     return this.api.get(crmApi.deals.schema);
   }
+
+  editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails> {
+    return this.api.patch(crmApi.deals.source(id), payload);
+  }
+
+  cancel(id: string, comment?: string): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.cancel(id), { comment: comment || null });
+  }
 }
 
 export class ApiClientsService implements IClientsService {
   constructor(private readonly api: ApiClient) {}
 
-  getClientsPage(): Promise<ClientsPageData> {
-    return this.api.get(crmApi.clients.list());
+  async getClientsPage(): Promise<ClientsPageData> {
+    return adaptClientsPage(await this.api.get<ApiClientsPage>(crmApi.clients.list()));
   }
 
-  getClientById(id: string): Promise<Client | null> {
-    return this.api.get(crmApi.clients.byId(id));
+  async getClientById(id: string): Promise<Client | null> {
+    return adaptClient(await this.api.get<ApiClientDetails>(crmApi.clients.byId(id)));
   }
 }
 
@@ -107,8 +148,8 @@ export class ApiChartDataService implements IChartDataService {
 export class ApiUserService implements IUserService {
   constructor(private readonly api: ApiClient) {}
 
-  getCurrentUser(): Promise<CurrentUser> {
-    return this.api.get(crmApi.auth.me);
+  async getCurrentUser(): Promise<CurrentUser> {
+    return adaptUser(await this.api.get<ApiUser>(crmApi.auth.me));
   }
 }
 
@@ -123,8 +164,10 @@ export class ApiAttendanceService implements IAttendanceService {
 export class ApiBalancesService implements IBalancesService {
   constructor(private readonly api: ApiClient) {}
 
-  getSnapshot(): Promise<BalancesSnapshot> {
-    return this.api.get(crmApi.balances.list());
+  async getSnapshot(): Promise<BalancesSnapshot> {
+    return adaptBalancesSnapshot(
+      await this.api.get<ApiBalancesSnapshot>(crmApi.balances.list()),
+    );
   }
 }
 

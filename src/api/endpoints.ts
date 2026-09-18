@@ -25,7 +25,11 @@ export const crmApi = {
   },
   dashboard: {
     root: '/dashboard',
+    shadowReport: (id: number) => `/dashboard/shadow-reports/${id}`,
     rates: '/dashboard/rates',
+    manualCash: '/dashboard/manual-cash',
+    manualCashMoves: '/dashboard/manual-cash/moves',
+    reverseManualCash: (id: number) => `/dashboard/manual-cash/moves/${id}/reverse`,
   },
   deals: {
     list: (params?: QueryParams) => withQuery('/deals', params),
@@ -33,6 +37,8 @@ export const crmApi = {
     schema: '/deals/schema',
     byId: (id: string | number) => `/deals/${id}`,
     status: (id: string | number) => `/deals/${id}/status`,
+    source: (id: string | number) => `/deals/${id}/source`,
+    cancel: (id: string | number) => `/deals/${id}/cancel`,
   },
   clients: {
     list: (params?: QueryParams) => withQuery('/clients', params),

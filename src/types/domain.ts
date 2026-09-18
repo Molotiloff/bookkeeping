@@ -12,6 +12,7 @@ export type DealStatus =
   | 'balance_check'
   | 'awaiting_payment'
   | 'in_delivery'
+  | 'ready_for_cash_settlement'
   | 'done'
   | 'canceled';
 

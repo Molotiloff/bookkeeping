@@ -14,6 +14,11 @@ export const DEAL_STATUS_META: Record<
   balance_check: { label: 'Сверка баланса', icon: 'scale', modifier: 'check' },
   awaiting_payment: { label: 'Ожидание оплаты', icon: 'clock', modifier: 'waiting' },
   in_delivery: { label: 'В доставке', icon: 'plane', modifier: 'waiting' },
+  ready_for_cash_settlement: {
+    label: 'Готова к выдаче',
+    icon: 'check-circle',
+    modifier: 'check',
+  },
   done: { label: 'Сделка завершена', icon: 'check-circle', modifier: 'done' },
   canceled: { label: 'Отменена', icon: 'x-circle', modifier: 'alert' },
 };
@@ -25,6 +30,7 @@ export const DEAL_STATUS_ORDER: DealStatus[] = [
   'balance_check',
   'awaiting_payment',
   'in_delivery',
+  'ready_for_cash_settlement',
   'done',
   'canceled',
 ];

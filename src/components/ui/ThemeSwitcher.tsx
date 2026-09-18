@@ -4,26 +4,20 @@ import { useTheme } from '@/theme/ThemeProvider';
 import { Icon } from './Icon';
 import styles from './ThemeSwitcher.module.css';
 
-/**
- * Иконка выбирается через CSS по data-theme на <html>,
- * поэтому серверный и клиентский рендер всегда совпадают.
- */
 export function ThemeSwitcher() {
-  const { toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
+  const label = theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему';
 
   return (
     <button
       type="button"
       className={styles.switcher}
       onClick={toggleTheme}
-      aria-label="Переключить тему"
-      title="Переключить тему"
+      aria-label={label}
+      title={label}
     >
-      <span className={styles.iconLight}>
-        <Icon name="moon" size={16} />
-      </span>
-      <span className={styles.iconDark}>
-        <Icon name="sun" size={16} />
+      <span className={styles.icon}>
+        <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={16} />
       </span>
     </button>
   );

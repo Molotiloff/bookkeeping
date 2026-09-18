@@ -1,11 +1,18 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { ThemeProvider, themeInitScript } from '@/theme/ThemeProvider';
+import Script from 'next/script';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { ThemeProvider } from '@/theme/ThemeProvider';
+import { themeInitScript } from '@/theme/config';
 import { Sidebar } from '@/components/layout/Sidebar';
-import { NAV_ITEMS } from '@/components/layout/navigation';
+import { navItemsForRole } from '@/components/layout/navigation';
 import { userService } from '@/services';
 import styles from './layout.module.css';
 import './globals.css';
+import { ApiError } from '@/api/httpClient';
+import { getApiRuntimeConfig } from '@/api/config';
+import { DealsRealtimeRefresh } from '@/components/deals/DealsRealtimeRefresh';
 
 export const metadata: Metadata = {
   title: 'SkyEx CRM',
@@ -13,20 +20,40 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-  const user = await userService.getCurrentUser();
+  const pathname = (await headers()).get('x-crm-pathname') ?? '';
+  const isPublicPage = pathname === '/login';
+
+  let content = children;
+  if (!isPublicPage) {
+    let user;
+    try {
+      user = await userService.getCurrentUser();
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 401) redirect('/login');
+      throw error;
+    }
+
+    const apiConfig = getApiRuntimeConfig();
+    content = (
+      <>
+        {!apiConfig.useMocks && <DealsRealtimeRefresh wsUrl={apiConfig.wsUrl} />}
+        <div className={styles.shell}>
+          <Sidebar items={navItemsForRole(user.role)} user={user} />
+          <main className={styles.main}>{children}</main>
+        </div>
+      </>
+    );
+  }
 
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" data-theme="dark" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <Script id="theme-init" strategy="beforeInteractive">
+          {themeInitScript}
+        </Script>
       </head>
       <body>
-        <ThemeProvider>
-          <div className={styles.shell}>
-            <Sidebar items={NAV_ITEMS} user={user} />
-            <main className={styles.main}>{children}</main>
-          </div>
-        </ThemeProvider>
+        <ThemeProvider>{content}</ThemeProvider>
       </body>
     </html>
   );

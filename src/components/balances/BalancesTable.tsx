@@ -33,7 +33,11 @@ export function BalancesTable({ clients }: BalancesTableProps) {
           </thead>
           <tbody>
             {clients.map((client) => (
-              <BalanceTableRow key={client.id} client={client} onRowClick={handleRowClick} />
+              <BalanceTableRow
+                key={`${client.id}:${client.currency}`}
+                client={client}
+                onRowClick={handleRowClick}
+              />
             ))}
             {clients.length === 0 ? (
               <tr>

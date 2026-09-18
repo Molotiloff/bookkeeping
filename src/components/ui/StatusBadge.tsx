@@ -11,6 +11,7 @@ const STATUS_CONFIG: Record<DealStatus, { label: string; className: string; aler
   balance_check: { label: 'Сверка баланса', className: styles.check },
   awaiting_payment: { label: 'Ожидание оплаты', className: styles.waiting },
   in_delivery: { label: 'В доставке', className: styles.waiting },
+  ready_for_cash_settlement: { label: 'Готова к выдаче', className: styles.check },
   done: { label: 'Сделка завершена', className: styles.done },
   canceled: { label: 'Отменена', className: styles.alert, alert: true },
 };

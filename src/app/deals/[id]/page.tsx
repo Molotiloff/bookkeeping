@@ -3,8 +3,9 @@ import { notFound } from 'next/navigation';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { dealsService } from '@/services';
 import { requireRouteAccess } from '@/lib/requireRouteAccess';
-import { formatMoney, formatRub } from '@/lib/format';
+import { formatMoney, formatMoneyRub, formatRub } from '@/lib/format';
 import { dealDirection, dealOperation } from '@/types/deals';
+import { DealSourceActions } from '@/components/deals/DealSourceActions';
 import styles from './page.module.css';
 
 export default async function DealDetailsPage({
@@ -98,6 +99,90 @@ export default async function DealDetailsPage({
         </div>
       </section>
 
+      {details.bestChange ? (
+        <section className={styles.card}>
+          <h2 className={styles.cardTitle}>Детализация BestChange</h2>
+          <div className={styles.bestChangeGrid}>
+            <BestChangeFact
+              label="Операция"
+              value={bestChangeOperation(details.bestChange.operation)}
+            />
+            <BestChangeFact label="Город" value={deal.city} />
+            <BestChangeFact label="Дата сделки" value={details.dealAt ?? 'Не указана'} />
+            <BestChangeFact
+              label="Количество"
+              value={formatOptional(details.bestChange.qtyUsdt, formatUsdt)}
+            />
+            <BestChangeFact
+              label="Курс биржи"
+              value={formatOptional(details.bestChange.marketRateRub, formatRate)}
+            />
+            <BestChangeFact
+              label="Курс клиента"
+              value={formatOptional(details.bestChange.clientRateRub, formatRate)}
+            />
+            <BestChangeFact
+              label="Спред за USDT"
+              value={formatOptional(details.bestChange.unitSpreadRub, formatMoneyRub)}
+            />
+            <BestChangeFact
+              label="Валовый спред"
+              value={formatOptional(details.bestChange.grossSpreadRub, formatMoneyRub)}
+            />
+            <BestChangeFact
+              label="Фонд прибыли"
+              value={formatOptional(details.bestChange.profitPoolRub, formatMoneyRub)}
+            />
+            <BestChangeFact
+              label="Доля партнёра"
+              value={formatOptional(details.bestChange.partnerShareRub, formatMoneyRub)}
+            />
+            <BestChangeFact
+              label="Прибыль SkyEx"
+              value={formatOptional(details.bestChange.skyexProfitRub, formatMoneyRub)}
+            />
+            <BestChangeFact
+              label="Комиссия CoinDrop"
+              value={formatOptional(details.bestChange.platformFeeUsdt, formatUsdt)}
+            />
+          </div>
+          {details.bestChange.originalDealId || details.bestChange.replacementDealId ? (
+            <div className={styles.correction}>
+              <strong>Исправление сделки</strong>
+              <span>
+                {details.bestChange.originalDealId ? (
+                  <>
+                    Создана вместо{' '}
+                    <Link href={`/deals/${details.bestChange.originalDealId}`}>
+                      сделки #{details.bestChange.originalDealId}
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    Заменена на{' '}
+                    <Link href={`/deals/${details.bestChange.replacementDealId}`}>
+                      сделку #{details.bestChange.replacementDealId}
+                    </Link>
+                  </>
+                )}
+              </span>
+              {details.bestChange.correctionReason ? (
+                <span>{details.bestChange.correctionReason}</span>
+              ) : null}
+              {details.bestChange.correctionActor ? (
+                <span>Исправил: {details.bestChange.correctionActor}</span>
+              ) : null}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
+
+      {details.source === 'tg_bot' &&
+      details.sourceKind &&
+      !['done', 'canceled'].includes(deal.status) ? (
+        <DealSourceActions details={details} />
+      ) : null}
+
       <section className={styles.card}>
         <h2 className={styles.cardTitle}>Денежные ноги</h2>
         <table className={styles.table}>
@@ -125,4 +210,34 @@ export default async function DealDetailsPage({
       </section>
     </div>
   );
+}
+
+function BestChangeFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className={styles.fact}>
+      <span className={styles.label}>{label}</span>
+      <span className={styles.value}>{value}</span>
+    </div>
+  );
+}
+
+function formatOptional(
+  value: number | null | undefined,
+  formatter: (amount: number) => string,
+): string {
+  return value == null ? 'Нет данных' : formatter(value);
+}
+
+function bestChangeOperation(operation: 'purchase' | 'sale' | 'unknown'): string {
+  if (operation === 'purchase') return 'Покупка';
+  if (operation === 'sale') return 'Продажа';
+  return 'Не указана';
+}
+
+function formatUsdt(value: number): string {
+  return `${value.toLocaleString('ru-RU', { maximumFractionDigits: 6 })} USDT`;
+}
+
+function formatRate(value: number): string {
+  return `${value.toLocaleString('ru-RU', { maximumFractionDigits: 6 })} ₽`;
 }

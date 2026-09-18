@@ -5,7 +5,7 @@ import type { CurrencyCode, DealStatus } from './domain';
  * и общий реестр с пагинацией.
  */
 
-export type DealType = 'Покупка' | 'Продажа';
+export type DealType = 'Покупка' | 'Продажа' | 'BestChange';
 
 export type DealAsset = 'USDT' | 'BTC' | 'ETH';
 
@@ -17,6 +17,7 @@ export interface DealItem {
   clientShortName: string;
   dealType: DealType;
   asset: DealAsset;
+  direction?: string;
   amountRub: number;
   city: string;
   status: DealStatus;
@@ -31,7 +32,7 @@ export interface DealItem {
 
 /** Направление сделки для таблицы и поиска: «USDT → RUB» */
 export function dealDirection(deal: DealItem): string {
-  return `${deal.asset} → RUB`;
+  return deal.direction ?? `${deal.asset} → RUB`;
 }
 
 /** Подпись операции для kanban-карточки: «Продажа USDT» */
@@ -75,12 +76,65 @@ export interface DealDetails {
   dealNo: string;
   createdAt: string;
   updatedAt: string;
+  dealAt?: string | null;
   source: 'tg_bot' | 'crm' | 'sheets';
+  sourceKind?:
+    | 'exchange'
+    | 'cash'
+    | 'fulfillment'
+    | 'partner'
+    | 'best_change'
+    | 'accounting_import';
   counterpartyName?: string;
   counterpartyPercent?: number;
   profitRub: number;
   comment?: string;
   tronscanUrl?: string;
+  body?: Record<string, unknown>;
+  bestChange?: BestChangeDetails | null;
   legs: DealLeg[];
   statusEvents: DealStatusEvent[];
 }
+
+export interface BestChangeDetails {
+  operation: 'purchase' | 'sale' | 'unknown';
+  qtyUsdt?: number | null;
+  marketRateRub?: number | null;
+  clientRateRub?: number | null;
+  unitSpreadRub?: number | null;
+  grossSpreadRub?: number | null;
+  profitPoolRub?: number | null;
+  partnerShareRub?: number | null;
+  skyexProfitRub?: number | null;
+  platformFeeUsdt?: number | null;
+  originalDealId?: string | null;
+  replacementDealId?: string | null;
+  correctionReason?: string | null;
+  correctionActor?: string | null;
+}
+
+export interface ExchangeSourceEditPayload {
+  exchange: {
+    operationId: number;
+    recvCode: string;
+    recvAmount: number;
+    payCode: string;
+    payAmount: number;
+    rate: number;
+    note?: string;
+  };
+}
+
+export interface CashSourceEditPayload {
+  cash: {
+    city: string;
+    amount?: number;
+    inAmount?: number;
+    outAmount?: number;
+    comment?: string;
+    contact1?: string;
+    contact2?: string;
+  };
+}
+
+export type DealSourceEditPayload = ExchangeSourceEditPayload | CashSourceEditPayload;

@@ -19,8 +19,9 @@
 }
 
 .rows {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  column-gap: 24px;
 }
 
 .row {
@@ -64,4 +65,16 @@
   font-weight: 600;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1200px) {
+  .rows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .rows {
+    grid-template-columns: 1fr;
+  }
 }
