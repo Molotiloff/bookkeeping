@@ -24,6 +24,7 @@ export function DealsRealtimeRefresh({
     let disposed = false;
     let socket: WebSocket | null = null;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let failedConnections = 0;
 
     const refresh = () => {
       const now = Date.now();
@@ -39,6 +40,9 @@ export function DealsRealtimeRefresh({
       if (!endpoint || disposed) return;
 
       socket = new WebSocket(endpoint);
+      socket.onopen = () => {
+        failedConnections = 0;
+      };
       socket.onmessage = ({ data }) => {
         try {
           const event = JSON.parse(String(data)) as { type?: unknown };
@@ -49,8 +53,12 @@ export function DealsRealtimeRefresh({
           // Ignore malformed messages and keep the connection alive.
         }
       };
-      socket.onclose = () => {
-        if (!disposed) reconnectTimer = setTimeout(connect, 2_000);
+      socket.onclose = ({ code }) => {
+        if (disposed || code === 1000 || code === 1008) return;
+        failedConnections += 1;
+        if (failedConnections >= 5) return;
+        const delay = Math.min(2_000 * 2 ** (failedConnections - 1), 30_000);
+        reconnectTimer = setTimeout(connect, delay);
       };
     };
 

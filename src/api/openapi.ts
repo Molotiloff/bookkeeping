@@ -38,23 +38,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/telegram": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Login With Telegram */
-        post: operations["login_with_telegram_api_v1_auth_telegram_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/auth/telegram/oidc": {
         parameters: {
             query?: never;
@@ -1286,23 +1269,6 @@ export interface components {
             comment?: string | null;
             replacement?: components["schemas"]["SettlementReplacementRequest"] | null;
         };
-        /** TelegramLoginRequest */
-        TelegramLoginRequest: {
-            /** Id */
-            id: number;
-            /** First Name */
-            first_name?: string | null;
-            /** Last Name */
-            last_name?: string | null;
-            /** Username */
-            username?: string | null;
-            /** Photo Url */
-            photo_url?: string | null;
-            /** Auth Date */
-            auth_date: number;
-            /** Hash */
-            hash: string;
-        };
         /** TelegramOidcLoginRequest */
         TelegramOidcLoginRequest: {
             /** Code */
@@ -1379,30 +1345,6 @@ export interface operations {
                     "application/json": components["schemas"]["MetricsResponse"];
                 };
             };
-        };
-    };
-    login_with_telegram_api_v1_auth_telegram_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["TelegramLoginRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LoginResponse"];
-                };
-            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -1419,15 +1361,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

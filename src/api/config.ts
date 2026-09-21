@@ -18,6 +18,7 @@ export function getApiRuntimeConfig(): ApiRuntimeConfig {
     process.env.NEXT_PUBLIC_CRM_API_BASE_URL ??
     '';
   const backendBaseUrl = baseUrl.replace(/\/api\/v1\/?$/, '');
+  const frontendOrigin = (process.env.CRM_FRONTEND_ORIGIN ?? '').replace(/\/+$/, '');
   const explicitUseMocks = readBoolean(process.env.NEXT_PUBLIC_USE_MOCKS);
   const explicitUseApi = readBoolean(process.env.CRM_USE_API);
 
@@ -26,7 +27,7 @@ export function getApiRuntimeConfig(): ApiRuntimeConfig {
     wsUrl:
       process.env.CRM_WS_URL ??
       process.env.NEXT_PUBLIC_CRM_WS_URL ??
-      backendBaseUrl.replace(/^http/, 'ws') + '/ws',
+      (frontendOrigin || backendBaseUrl).replace(/^http/, 'ws') + '/ws',
     openApiUrl:
       process.env.CRM_OPENAPI_URL ??
       (backendBaseUrl ? `${backendBaseUrl}/openapi.json` : ''),
