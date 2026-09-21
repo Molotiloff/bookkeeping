@@ -55,7 +55,6 @@ export type ApiClientDetails = Schemas['ClientDto'];
 export type ApiBalancesSnapshot = Schemas['BalancesSnapshotResponse'];
 export type ApiDashboard = Schemas['DashboardResponse'];
 export type ApiUser = Schemas['ApiUser'];
-export type TelegramLoginPayload = Schemas['TelegramLoginRequest'];
 export type TelegramLoginResponse = Schemas['LoginResponse'];
 
 export function adaptClientsPage(data: ApiClientsPage): ClientsPageData {

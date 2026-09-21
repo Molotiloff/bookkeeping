@@ -14,7 +14,7 @@ import { ManualCashPanel } from '@/components/main/ManualCashPanel';
 import { ShadowReportPanel } from '@/components/main/ShadowReportPanel';
 
 export default async function MainPage() {
-  await requireRouteAccess('/');
+  const user = await requireRouteAccess('/');
   const data = await mainDashboardService.getDashboard();
   const [manualCash, shadowReport] = await Promise.all([
     mainDashboardService.getManualCash(),
@@ -51,6 +51,7 @@ export default async function MainPage() {
         snapshot={manualCash}
         today={dateInputValue(data.dateLabel)}
         submissionKey={`crm:${randomUUID()}`}
+        canEdit={['accountant', 'owner', 'admin'].includes(user.role)}
       />
       <SystemMetricsSection metrics={data.systemMetrics} />
       <DashboardFooter lastUpdatedLabel={data.lastUpdatedLabel} />

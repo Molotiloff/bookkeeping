@@ -55,6 +55,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/telegram/oidc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Login With Telegram Oidc */
+        post: operations["login_with_telegram_oidc_api_v1_auth_telegram_oidc_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/me": {
         parameters: {
             query?: never;
@@ -149,6 +166,23 @@ export interface paths {
         };
         /** Dashboard */
         get: operations["dashboard_api_v1_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/dashboard/shadow-reports/{report_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Dashboard Shadow Report */
+        get: operations["dashboard_shadow_report_api_v1_dashboard_shadow_reports__report_id__get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -737,6 +771,60 @@ export interface components {
             /** Reportid */
             reportId?: number | null;
         };
+        /** DashboardShadowDifferenceDto */
+        DashboardShadowDifferenceDto: {
+            /** Path */
+            path: string;
+            /** Sheet */
+            sheet: string | null;
+            /** Database */
+            database: string | null;
+            /** Absolutedelta */
+            absoluteDelta: string | null;
+            /** Relativedelta */
+            relativeDelta: string | null;
+            /** Classification */
+            classification: string;
+        };
+        /** DashboardShadowReportDto */
+        DashboardShadowReportDto: {
+            /** Id */
+            id: number;
+            /**
+             * Businessdate
+             * Format: date
+             */
+            businessDate: string;
+            /** Primarysource */
+            primarySource: string;
+            /** Status */
+            status: string;
+            /** Comparedfields */
+            comparedFields: number;
+            /** Mismatchcount */
+            mismatchCount: number;
+            /** Absolutetolerance */
+            absoluteTolerance: string;
+            /** Relativetolerance */
+            relativeTolerance: string;
+            /**
+             * Sheetsdataasof
+             * Format: date-time
+             */
+            sheetsDataAsOf: string;
+            /**
+             * Dbdataasof
+             * Format: date-time
+             */
+            dbDataAsOf: string;
+            /**
+             * Createdat
+             * Format: date-time
+             */
+            createdAt: string;
+            /** Differences */
+            differences: components["schemas"]["DashboardShadowDifferenceDto"][];
+        };
         /** DashboardSystemMetricDto */
         DashboardSystemMetricDto: {
             /** Id */
@@ -1215,6 +1303,17 @@ export interface components {
             /** Hash */
             hash: string;
         };
+        /** TelegramOidcLoginRequest */
+        TelegramOidcLoginRequest: {
+            /** Code */
+            code: string;
+            /** Code Verifier */
+            code_verifier: string;
+            /** Redirect Uri */
+            redirect_uri: string;
+            /** Nonce */
+            nonce: string;
+        };
         /**
          * UserRole
          * @enum {string}
@@ -1329,6 +1428,66 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login_with_telegram_oidc_api_v1_auth_telegram_oidc_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TelegramOidcLoginRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -1589,6 +1748,64 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    dashboard_shadow_report_api_v1_dashboard_shadow_reports__report_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                report_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardShadowReportDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

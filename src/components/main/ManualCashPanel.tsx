@@ -7,7 +7,14 @@ import styles from './ManualCashPanel.module.css';
 
 const INITIAL: ManualCashActionState = {};
 
-export function ManualCashPanel({ snapshot, today, submissionKey }: { snapshot: ManualCashSnapshot; today: string; submissionKey: string }) {
+interface ManualCashPanelProps {
+  snapshot: ManualCashSnapshot;
+  today: string;
+  submissionKey: string;
+  canEdit: boolean;
+}
+
+export function ManualCashPanel({ snapshot, today, submissionKey, canEdit }: ManualCashPanelProps) {
   const reversals = new Map(
     snapshot.moves
       .filter((move) => move.reversalOfId !== null)
@@ -17,8 +24,8 @@ export function ManualCashPanel({ snapshot, today, submissionKey }: { snapshot: 
   return <section className={styles.card}>
     <div className={styles.heading}><div><h2>RUB Москва</h2><p>Ручные кассовые счета</p></div></div>
     <div className={styles.balances}>{snapshot.accounts.map(account => <div key={account.code}><span>{account.name}</span><strong>{money(account.balance)}</strong></div>)}</div>
-    <RecordForm key={submissionKey} today={today} idempotencyKey={`${submissionKey}:record`} />
-    <div className={styles.moves}>{moves.map(move => <Move key={move.id} move={move} reversal={reversals.get(move.id)} idempotencyKey={`${submissionKey}:reverse:${move.id}`} />)}</div>
+    {canEdit ? <RecordForm key={submissionKey} today={today} idempotencyKey={`${submissionKey}:record`} /> : null}
+    <div className={styles.moves}>{moves.map(move => <Move key={move.id} move={move} reversal={reversals.get(move.id)} idempotencyKey={`${submissionKey}:reverse:${move.id}`} canEdit={canEdit} />)}</div>
   </section>;
 }
 
@@ -42,13 +49,13 @@ function RecordForm({ today, idempotencyKey: initialIdempotencyKey }: { today: s
     </form>;
 }
 
-function Move({ move, reversal, idempotencyKey }: { move: ManualCashSnapshot['moves'][number]; reversal?: ManualCashSnapshot['moves'][number]; idempotencyKey: string }) {
+function Move({ move, reversal, idempotencyKey, canEdit }: { move: ManualCashSnapshot['moves'][number]; reversal?: ManualCashSnapshot['moves'][number]; idempotencyKey: string; canEdit: boolean }) {
   const action = reverseManualCashAction.bind(null, move.id);
   const [state, submit, pending] = useActionState(action, INITIAL);
   return <div className={styles.move}>
     <div><strong>{move.accountCode === 'moscow_poets' ? 'Поэты' : 'BS'} · {label(move.operation)}{move.reversed ? ' · Отменено' : ''}</strong><span>{move.effectiveAt} · {move.comment} · {move.actorName}</span>{reversal ? <span>Сторно: {reversal.comment} · {reversal.actorName}</span> : null}</div>
     <b className={move.reversed ? styles.reversedAmount : undefined}>{move.operation === 'outflow' ? '−' : move.operation === 'inflow' ? '+' : ''}{money(move.amount)}</b>
-    {!move.reversed && !state.success && ['inflow', 'outflow'].includes(move.operation) ? <form action={submit} className={styles.reverse}><input type="hidden" name="idempotencyKey" value={idempotencyKey} /><input name="comment" placeholder="Причина сторно" required /><button disabled={pending}>Сторно</button></form> : null}
+    {canEdit && !move.reversed && !state.success && ['inflow', 'outflow'].includes(move.operation) ? <form action={submit} className={styles.reverse}><input type="hidden" name="idempotencyKey" value={idempotencyKey} /><input name="comment" placeholder="Причина сторно" required /><button disabled={pending}>Сторно</button></form> : null}
     <Message state={state} />
   </div>;
 }

@@ -6,12 +6,12 @@ export interface NavItem {
   href: string;
   label: string;
   icon: IconName;
-  /** Роли, которым виден пункт. По ТЗ кассир и менеджер не видят отчёты и статистику. */
+  /** Роли, которым виден пункт навигации. */
   roles: UserRole[];
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Главная', icon: 'home', roles: [...ROLES.accountantPlus] },
+  { href: '/', label: 'Главная', icon: 'home', roles: [...ROLES.managerPlus] },
   { href: '/deals', label: 'Сделки', icon: 'deals', roles: [...ROLES.all] },
   { href: '/clients', label: 'Клиенты', icon: 'clients', roles: [...ROLES.all] },
   { href: '/balances', label: 'Балансы', icon: 'wallet', roles: [...ROLES.all] },

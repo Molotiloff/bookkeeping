@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PUBLIC_PATHS = new Set(['/login', '/api/auth/telegram/callback']);
+const PUBLIC_PATHS = new Set([
+  '/login',
+  '/api/auth/telegram/oidc/start',
+  '/api/auth/telegram/oidc/callback',
+]);
 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;

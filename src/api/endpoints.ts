@@ -20,7 +20,6 @@ function withQuery(path: string, params?: QueryParams): string {
 
 export const crmApi = {
   auth: {
-    telegram: '/auth/telegram',
     me: '/me',
   },
   dashboard: {

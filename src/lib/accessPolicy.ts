@@ -19,7 +19,7 @@ export const ROLES = {
 } as const satisfies Record<string, readonly UserRole[]>;
 
 export const routeAccess: Record<RouteKey, readonly UserRole[]> = {
-  '/': ROLES.accountantPlus,
+  '/': ROLES.managerPlus,
   '/deals': ROLES.all,
   '/clients': ROLES.all,
   '/balances': ROLES.all,
