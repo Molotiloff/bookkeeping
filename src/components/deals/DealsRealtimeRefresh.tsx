@@ -19,7 +19,7 @@ export function DealsRealtimeRefresh({
   const lastRefreshAt = useRef(0);
 
   useEffect(() => {
-    if (pathname !== '/' && !pathname.startsWith('/deals')) return;
+    if (!pathname.startsWith('/deals')) return;
 
     let disposed = false;
     let socket: WebSocket | null = null;

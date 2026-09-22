@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useEffect, useRef } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { recordManualCashAction, reverseManualCashAction, type ManualCashActionState } from '@/app/manualCashActions';
 import type { ManualCashSnapshot } from '@/types/manualCash';
 import styles from './ManualCashPanel.module.css';
@@ -24,7 +24,7 @@ export function ManualCashPanel({ snapshot, today, submissionKey, canEdit }: Man
   return <section className={styles.card}>
     <div className={styles.heading}><div><h2>RUB Москва</h2><p>Ручные кассовые счета</p></div></div>
     <div className={styles.balances}>{snapshot.accounts.map(account => <div key={account.code}><span>{account.name}</span><strong>{money(account.balance)}</strong></div>)}</div>
-    {canEdit ? <RecordForm key={submissionKey} today={today} idempotencyKey={`${submissionKey}:record`} /> : null}
+    {canEdit ? <RecordForm today={today} idempotencyKey={`${submissionKey}:record`} /> : null}
     <div className={styles.moves}>{moves.map(move => <Move key={move.id} move={move} reversal={reversals.get(move.id)} idempotencyKey={`${submissionKey}:reverse:${move.id}`} canEdit={canEdit} />)}</div>
   </section>;
 }
@@ -32,13 +32,14 @@ export function ManualCashPanel({ snapshot, today, submissionKey, canEdit }: Man
 function RecordForm({ today, idempotencyKey: initialIdempotencyKey }: { today: string; idempotencyKey: string }) {
   const [state, submit, pending] = useActionState(recordManualCashAction, INITIAL);
   const formRef = useRef<HTMLFormElement>(null);
+  const [idempotencyKey] = useState(initialIdempotencyKey);
   useEffect(() => {
     if (state.success) {
       formRef.current?.reset();
     }
   }, [state.success]);
   return <form ref={formRef} action={submit} className={styles.form}>
-      <input type="hidden" name="idempotencyKey" value={state.nextIdempotencyKey ?? initialIdempotencyKey} />
+      <input type="hidden" name="idempotencyKey" value={state.nextIdempotencyKey ?? idempotencyKey} />
       <select name="accountCode" required><option value="moscow_poets">Поэты</option><option value="moscow_bs">BS</option></select>
       <select name="operation" required><option value="inflow">Приход</option><option value="outflow">Расход</option></select>
       <input name="amount" inputMode="decimal" placeholder="Сумма, ₽" required />
