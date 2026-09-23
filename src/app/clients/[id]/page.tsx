@@ -63,16 +63,12 @@ export default async function ClientDetailsPage({
             <h2 className={styles.cardTitle}>Статистика</h2>
             <div className={styles.facts}>
               <div className={styles.fact}>
-                <span className={styles.label}>Сделок</span>
+                <span className={styles.label}>Операций</span>
                 <span className={styles.value}>{client.dealsCount}</span>
               </div>
               <div className={styles.fact}>
                 <span className={styles.label}>Оборот</span>
                 <span className={styles.value}>{formatRub(client.turnoverRub)}</span>
-              </div>
-              <div className={styles.fact}>
-                <span className={styles.label}>Прибыль</span>
-                <span className={styles.value}>{formatRub(client.totalProfitRub)}</span>
               </div>
               <div className={styles.fact}>
                 <span className={styles.label}>Средний чек</span>
@@ -122,7 +118,7 @@ export default async function ClientDetailsPage({
       </section>
 
       <section className={styles.card}>
-        <h2 className={styles.cardTitle}>Последние сделки</h2>
+        <h2 className={styles.cardTitle}>Последние операции</h2>
         {client.recentDeals.map((deal) => (
           <div key={deal.id} className={styles.dealRow}>
             <div>

@@ -25,7 +25,7 @@ export function ClientsView({ data }: { data: ClientsPageData }) {
     );
   }, [data.clients, query]);
 
-  const selected = data.clients.find((client) => client.id === selectedId) ?? null;
+  const selected = filtered.find((client) => client.id === selectedId) ?? null;
 
   const handleSelect = (clientId: string) => setSelectedId(clientId);
 
@@ -36,8 +36,9 @@ export function ClientsView({ data }: { data: ClientsPageData }) {
 
       <div className={`${styles.grid} ${selected ? '' : styles.gridNoPanel}`}>
         <ClientsTable
+          key={query}
           clients={filtered}
-          totalClients={data.totalClients}
+          totalClients={filtered.length}
           selectedId={selectedId}
           onSelect={handleSelect}
         />

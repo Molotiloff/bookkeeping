@@ -106,11 +106,10 @@ function ClientBalances({ client }: { client: Client }) {
 
 function ClientStats({ client }: { client: Client }) {
   const cells = [
-    { label: 'Сделок всего', value: String(client.dealsCount) },
+    { label: 'Операций всего', value: String(client.dealsCount) },
     { label: 'Оборот', value: formatRub(client.turnoverRub) },
     { label: 'Объём покупки', value: formatRub(client.purchaseVolumeRub) },
     { label: 'Объём продажи', value: formatRub(client.saleVolumeRub) },
-    { label: 'Прибыль', value: formatRub(client.totalProfitRub) },
     { label: 'Средний чек', value: formatRub(client.averageCheckRub) },
   ];
 
@@ -137,7 +136,7 @@ function ClientRecentDeals({ client }: { client: Client }) {
 
   return (
     <section className={styles.section}>
-      <h3 className={styles.sectionTitle}>Последние сделки</h3>
+      <h3 className={styles.sectionTitle}>Последние операции</h3>
       <ul className={styles.dealsList}>
         {client.recentDeals.map((deal) => (
           <li key={deal.id}>

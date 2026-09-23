@@ -1,4 +1,4 @@
-import type { ApiClient } from '@/api/httpClient';
+import { ApiError, type ApiClient } from '@/api/httpClient';
 import { crmApi } from '@/api/endpoints';
 import type {
   IAccountingService,
@@ -109,11 +109,51 @@ export class ApiClientsService implements IClientsService {
   constructor(private readonly api: ApiClient) {}
 
   async getClientsPage(): Promise<ClientsPageData> {
-    return adaptClientsPage(await this.api.get<ApiClientsPage>(crmApi.clients.list()));
+    const pageSize = 500;
+    const firstPage = await this.api.get<ApiClientsPage>(crmApi.clients.list({ limit: pageSize }));
+    const clients = [...firstPage.clients];
+    for (let offset = pageSize; offset < firstPage.totalClients; offset += pageSize) {
+      const page = await this.api.get<ApiClientsPage>(
+        crmApi.clients.list({ limit: pageSize, offset }),
+      );
+      if (page.clients.length === 0) break;
+      clients.push(...page.clients);
+    }
+
+    const snapshot = adaptClientsPage({
+      ...firstPage,
+      clients,
+      totalClients: clients.length,
+    });
+    const groups = new Set(snapshot.clients.map((client) => client.comment).filter(Boolean));
+    const metricValues: Record<string, number> = {
+      total: snapshot.clients.length,
+      active: snapshot.clients.filter((client) =>
+        client.balances.some((balance) => balance.amount !== 0),
+      ).length,
+      groups: groups.size,
+      transactions: snapshot.clients.reduce((sum, client) => sum + client.dealsCount, 0),
+      turnover: Math.round(
+        snapshot.clients.reduce((sum, client) => sum + client.turnoverRub, 0),
+      ),
+    };
+
+    return {
+      ...snapshot,
+      metrics: snapshot.metrics.map((metric) => ({
+        ...metric,
+        value: metricValues[metric.id] ?? metric.value,
+      })),
+    };
   }
 
   async getClientById(id: string): Promise<Client | null> {
-    return adaptClient(await this.api.get<ApiClientDetails>(crmApi.clients.byId(id)));
+    try {
+      return adaptClient(await this.api.get<ApiClientDetails>(crmApi.clients.byId(id)));
+    } catch (error) {
+      if (error instanceof ApiError && error.status === 404) return null;
+      throw error;
+    }
   }
 }
 

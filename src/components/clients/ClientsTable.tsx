@@ -28,6 +28,8 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
   };
 
   const totalPages = Math.max(1, Math.ceil(totalClients / pageSize));
+  const visibleClients = clients.slice((page - 1) * pageSize, page * pageSize);
+  const rangeStart = totalClients === 0 ? 0 : (page - 1) * pageSize + 1;
   const rangeEnd = Math.min(page * pageSize, totalClients);
   const pageNumbers =
     totalPages <= 5 ? Array.from({ length: totalPages }, (_, i) => i + 1) : [1, 2, 3, null, totalPages];
@@ -42,13 +44,13 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
             <tr>
               <th className={styles.firstHead}>Клиент</th>
               <th>Telegram</th>
-              <th className={styles.num}>Сделок</th>
+              <th className={styles.num}>Операций</th>
               <th className={styles.num}>Оборот</th>
               <th className={styles.lastHead}>Менеджер</th>
             </tr>
           </thead>
           <tbody>
-            {clients.map((client) => (
+            {visibleClients.map((client) => (
               <tr
                 key={client.id}
                 className={`${styles.row} ${client.id === selectedId ? styles.rowSelected : ''}`}
@@ -135,7 +137,7 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
 
         <div className={styles.pagination}>
           <span className={styles.range}>
-            {(page - 1) * pageSize + 1}–{rangeEnd} из {totalClients.toLocaleString('ru-RU')}
+            {rangeStart}–{rangeEnd} из {totalClients.toLocaleString('ru-RU')}
           </span>
           <button
             type="button"

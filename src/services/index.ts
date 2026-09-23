@@ -16,7 +16,6 @@ import { MockMainDashboardService } from './MainDashboardService';
 import { MockDealsService } from './DealsService';
 import { MockChartDataService } from './ChartDataService';
 import { MockUserService } from './UserService';
-import { MockClientsService } from './ClientsService';
 import { MockAccountingService } from './AccountingService';
 import { MockAttendanceService } from './AttendanceService';
 import { MockTurnoverService } from './TurnoverService';
@@ -32,7 +31,7 @@ import {
 /**
  * Composition root: единственное место, где выбираются реализации сервисов.
  *
- * Остальные экраны могут работать на mock-данных. Балансы всегда читаются
+ * Остальные экраны могут работать на mock-данных. Клиенты и балансы всегда читаются
  * из CRM API. Для подключения нужен адрес API:
  * - CRM_API_BASE_URL=http://localhost:8000/api/v1
  * Остальные экраны переключаются через CRM_USE_API=true.
@@ -64,9 +63,7 @@ export const dealsService: IDealsService = api
   : new MockDealsService();
 export const chartDataService: IChartDataService = new MockChartDataService();
 export const userService: IUserService = api ? new ApiUserService(api) : new MockUserService();
-export const clientsService: IClientsService = api
-  ? new ApiClientsService(api)
-  : new MockClientsService();
+export const clientsService: IClientsService = new ApiClientsService(api ?? createApiClient());
 export const accountingService: IAccountingService = new MockAccountingService();
 export const attendanceService: IAttendanceService = new MockAttendanceService();
 export const balancesService: IBalancesService = new ApiBalancesService(api ?? createApiClient());
