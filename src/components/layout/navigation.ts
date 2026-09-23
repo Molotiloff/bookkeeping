@@ -1,9 +1,9 @@
 import type { IconName } from '@/components/ui/Icon';
 import type { UserRole } from '@/types/domain';
-import { ROLES } from '@/lib/accessPolicy';
+import { routeAccess, type RouteKey } from '@/lib/accessPolicy';
 
 export interface NavItem {
-  href: string;
+  href: RouteKey;
   label: string;
   icon: IconName;
   /** Роли, которым виден пункт навигации. */
@@ -11,14 +11,14 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Главная', icon: 'home', roles: [...ROLES.managerPlus] },
-  { href: '/deals', label: 'Сделки', icon: 'deals', roles: [...ROLES.all] },
-  { href: '/clients', label: 'Клиенты', icon: 'clients', roles: [...ROLES.all] },
-  { href: '/balances', label: 'Балансы', icon: 'wallet', roles: [...ROLES.all] },
-  { href: '/accounting', label: 'Бухгалтерия', icon: 'accounting', roles: [...ROLES.accountantPlus] },
-  { href: '/expenses', label: 'Расходы', icon: 'expenses', roles: [...ROLES.managerPlus] },
-  { href: '/attendance', label: 'Посещаемость', icon: 'attendance', roles: [...ROLES.managerPlus] },
-  { href: '/turnover', label: 'Оборот', icon: 'pie', roles: [...ROLES.ownerPlus] },
+  { href: '/', label: 'Главная', icon: 'home', roles: [...routeAccess['/']] },
+  { href: '/deals', label: 'Сделки', icon: 'deals', roles: [...routeAccess['/deals']] },
+  { href: '/clients', label: 'Клиенты', icon: 'clients', roles: [...routeAccess['/clients']] },
+  { href: '/balances', label: 'Балансы', icon: 'wallet', roles: [...routeAccess['/balances']] },
+  { href: '/accounting', label: 'Бухгалтерия', icon: 'accounting', roles: [...routeAccess['/accounting']] },
+  { href: '/expenses', label: 'Расходы', icon: 'expenses', roles: [...routeAccess['/expenses']] },
+  { href: '/attendance', label: 'Посещаемость', icon: 'attendance', roles: [...routeAccess['/attendance']] },
+  { href: '/turnover', label: 'Оборот', icon: 'pie', roles: [...routeAccess['/turnover']] },
 ];
 
 export function navItemsForRole(role: UserRole): NavItem[] {

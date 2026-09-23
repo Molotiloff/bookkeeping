@@ -8,3 +8,24 @@
   min-width: 0;
   padding: 22px 26px 32px;
 }
+
+@media (max-width: 800px) {
+  .shell {
+    display: block;
+  }
+
+  .main {
+    padding: 16px 14px 32px;
+    overflow-wrap: anywhere;
+  }
+
+  .main > * {
+    min-width: 0;
+  }
+
+  .main input,
+  .main select,
+  .main textarea {
+    font-size: 16px;
+  }
+}

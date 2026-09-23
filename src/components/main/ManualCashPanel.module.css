@@ -6,4 +6,4 @@
 .error { color: var(--delta-down) !important; }.success { color: var(--delta-up) !important; }
 .reversedAmount { color: var(--text-muted); text-decoration: line-through; }
 @media (max-width: 1000px) { .form { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 600px) { .balances,.form { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .balances,.form { grid-template-columns: 1fr; } .balances div,.reverse { flex-wrap: wrap; } .reverse input { flex-basis: 100%; } .move { grid-template-columns: minmax(0, 1fr); } .move b { overflow-wrap: anywhere; } }

@@ -125,3 +125,19 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 560px) {
+  .title {
+    font-size: 23px;
+  }
+
+  .card {
+    min-width: 0;
+    padding: 16px;
+  }
+
+  .balanceRow,
+  .dealRow {
+    flex-wrap: wrap;
+  }
+}

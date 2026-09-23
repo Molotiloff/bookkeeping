@@ -56,3 +56,14 @@
   margin-top: auto;
   padding-top: 16px;
 }
+
+@media (max-width: 560px) {
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .rowValue {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}

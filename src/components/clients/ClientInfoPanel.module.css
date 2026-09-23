@@ -275,3 +275,21 @@
 .allDealsLink:hover {
   color: var(--accent-strong);
 }
+
+@media (max-width: 640px) {
+  .panel {
+    padding: 16px;
+    min-width: 0;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dealRow {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      'id info'
+      'amount time';
+  }
+}
