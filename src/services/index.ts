@@ -19,7 +19,6 @@ import { MockUserService } from './UserService';
 import { MockClientsService } from './ClientsService';
 import { MockAccountingService } from './AccountingService';
 import { MockAttendanceService } from './AttendanceService';
-import { MockBalancesService } from './BalancesService';
 import { MockTurnoverService } from './TurnoverService';
 import { MockExpensesService } from './ExpensesService';
 import {
@@ -33,27 +32,27 @@ import {
 /**
  * Composition root: единственное место, где выбираются реализации сервисов.
  *
- * По умолчанию фронт работает на mock-данных. Реальный CRM API включается
- * явно через env:
+ * Остальные экраны могут работать на mock-данных. Балансы всегда читаются
+ * из CRM API. Для подключения нужен адрес API:
  * - CRM_API_BASE_URL=http://localhost:8000/api/v1
- * - CRM_USE_API=true
+ * Остальные экраны переключаются через CRM_USE_API=true.
  *
  * Для браузерных сценариев позже можно использовать NEXT_PUBLIC_CRM_API_BASE_URL
  * и auth-сессию вместо server-only CRM_API_TOKEN.
  */
 
 const config = getApiRuntimeConfig();
-const api = config.useMocks
-  ? null
-  : new ApiClient({
-      baseUrl: config.baseUrl,
-      getHeaders: async () => {
-        const { cookies } = await import('next/headers');
-        const cookieHeader = (await cookies()).toString();
-        return cookieHeader ? { Cookie: cookieHeader } : null;
-      },
-      getToken: () => process.env.CRM_API_TOKEN ?? null,
-    });
+const createApiClient = () =>
+  new ApiClient({
+    baseUrl: config.baseUrl,
+    getHeaders: async () => {
+      const { cookies } = await import('next/headers');
+      const cookieHeader = (await cookies()).toString();
+      return cookieHeader ? { Cookie: cookieHeader } : null;
+    },
+    getToken: () => process.env.CRM_API_TOKEN ?? null,
+  });
+const api = config.useMocks ? null : createApiClient();
 
 export const mainDashboardService: IMainDashboardService = api
   ? new ApiMainDashboardService(api)
@@ -70,8 +69,6 @@ export const clientsService: IClientsService = api
   : new MockClientsService();
 export const accountingService: IAccountingService = new MockAccountingService();
 export const attendanceService: IAttendanceService = new MockAttendanceService();
-export const balancesService: IBalancesService = api
-  ? new ApiBalancesService(api)
-  : new MockBalancesService();
+export const balancesService: IBalancesService = new ApiBalancesService(api ?? createApiClient());
 export const turnoverService: ITurnoverService = new MockTurnoverService();
 export const expensesService: IExpensesService = new MockExpensesService();

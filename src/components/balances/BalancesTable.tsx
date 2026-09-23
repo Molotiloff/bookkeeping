@@ -17,6 +17,10 @@ export function BalancesTable({ clients }: BalancesTableProps) {
 
   const totalBalance = clients.reduce((sum, client) => sum + client.balance, 0);
   const totalRub = clients.reduce((sum, client) => sum + client.balanceRub, 0);
+  const singleCurrency = clients[0]?.currency;
+  const balanceTotal = singleCurrency && clients.every((client) => client.currency === singleCurrency)
+    ? formatCrypto(totalBalance, singleCurrency)
+    : '—';
 
   return (
     <section className={styles.card}>
@@ -51,7 +55,7 @@ export function BalancesTable({ clients }: BalancesTableProps) {
             <tr className={styles.totalRow}>
               <td className={styles.totalLabel}>Итого</td>
               <td className={styles.totalDash}>—</td>
-              <td className={styles.totalValue}>{formatCrypto(totalBalance, 'USDT')}</td>
+              <td className={styles.totalValue}>{balanceTotal}</td>
               <td className={styles.totalValue}>{formatMoneyRub(totalRub)}</td>
               <td />
             </tr>
