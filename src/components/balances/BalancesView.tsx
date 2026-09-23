@@ -9,11 +9,16 @@ import { InfoAlert } from '@/components/ui/InfoAlert';
 import { nextSortState, type SortState } from './SortButton';
 import styles from './BalancesView.module.css';
 
+const SUMMARY_CURRENCIES = new Set(['USD', 'USDT', 'USDW', 'EUR', 'RUB', 'ALL']);
+
 /** Фильтр по валюте, поиск и сортировка работают на клиенте поверх снапшота */
 export function BalancesView({ snapshot }: { snapshot: BalancesSnapshot }) {
   const [currency, setCurrency] = useState<CurrencyFilterValue>('ALL');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortState>({ key: 'balanceRub', direction: 'desc' });
+  const visibleSummaries = snapshot.summaries.filter((summary) =>
+    SUMMARY_CURRENCIES.has(summary.code),
+  );
 
   const currencies = useMemo(
     () => [...new Set(snapshot.clients.map((client) => client.currency))].sort(),
@@ -50,7 +55,7 @@ export function BalancesView({ snapshot }: { snapshot: BalancesSnapshot }) {
       />
 
       <div className={styles.summaryGrid}>
-        {snapshot.summaries.map((summary) => (
+        {visibleSummaries.map((summary) => (
           <BalanceSummaryCard key={summary.code} summary={summary} />
         ))}
       </div>
