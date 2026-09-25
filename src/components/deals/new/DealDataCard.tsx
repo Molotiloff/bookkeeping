@@ -41,9 +41,12 @@ export function DealDataCard({ context, dealType, values, errors, onFieldChange 
                       onChange={(event) => onFieldChange(field.name, event.target.value)}
                       aria-label={field.label}
                     >
+                      {field.optionsFrom === 'clients' ? <option value="">Выберите клиента</option> : null}
                       {fieldOptions(field, context).map((option) => (
                         <option key={option} value={option}>
-                          {option}
+                          {field.optionsFrom === 'clients'
+                            ? context.clients.find((client) => client.id === option)?.name ?? option
+                            : option}
                         </option>
                       ))}
                     </select>

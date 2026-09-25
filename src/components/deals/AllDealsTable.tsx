@@ -50,7 +50,9 @@ export function AllDealsTable({ deals }: { deals: DealItem[] }) {
                 <td className={styles.clientCol}>{deal.clientName}</td>
                 <td>{deal.dealType}</td>
                 <td>{dealDirection(deal)}</td>
-                <td className={styles.amountCol}>{formatRub(deal.amountRub)}</td>
+                <td className={styles.amountCol}>
+                  {deal.transferAmount ?? formatRub(deal.amountRub)}
+                </td>
                 <td>{deal.city}</td>
                 <td>
                   <StatusBadge status={deal.status} />

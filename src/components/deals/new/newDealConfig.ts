@@ -14,6 +14,7 @@ export const NEW_DEAL_TYPES: { type: NewDealType; label: string; icon: IconName 
   { type: 'withdrawal', label: 'Выдача', icon: 'expenses' },
   { type: 'delivery', label: 'Доставка', icon: 'plane' },
   { type: 'transfer_city', label: 'Перестановка', icon: 'shuffle' },
+  { type: 'client_transfer', label: 'Перевод', icon: 'repeat' },
   { type: 'conversion', label: 'Конвертация', icon: 'repeat' },
   { type: 'yuan', label: 'Юань', icon: 'yuan' },
   { type: 'invoice', label: 'Инвойс', icon: 'file-text' },
@@ -27,7 +28,7 @@ export interface FieldConfig {
   /** Суффикс в поле: валюта, RUB, % ('currency' — подставить выбранную валюту) */
   suffix?: string;
   /** Источник опций селекта из контекста */
-  optionsFrom?: 'currencies' | 'cities';
+  optionsFrom?: 'currencies' | 'cities' | 'clients' | 'transferCurrencies';
   placeholder?: string;
   /** Обязательное числовое поле (> 0) для валидации */
   required?: boolean;
@@ -64,6 +65,11 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'RUB', required: true },
     { name: 'feePercent', label: 'Комиссия', kind: 'number', suffix: '%', defaultValue: '0.5' },
   ],
+  client_transfer: [
+    { name: 'toClientId', label: 'Получатель', kind: 'select', optionsFrom: 'clients', required: true },
+    { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'transferCurrencies', defaultValue: 'RUB' },
+    { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
+  ],
   conversion: [
     { name: 'fromCurrency', label: 'Из валюты', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
     { name: 'toCurrency', label: 'В валюту', kind: 'select', optionsFrom: 'currencies', defaultValue: 'ETH' },
@@ -89,6 +95,8 @@ export function hasReceipt(type: NewDealType): boolean {
 
 export function fieldOptions(field: FieldConfig, context: NewDealContext): string[] {
   if (field.optionsFrom === 'cities') return context.cities;
+  if (field.optionsFrom === 'clients') return context.clients.map((client) => client.id);
+  if (field.optionsFrom === 'transferCurrencies') return ['RUB', 'USDT', 'USD', 'USDW', 'EUR', 'EUR500', 'THB'];
   return CURRENCIES;
 }
 
@@ -97,6 +105,8 @@ export function defaultValues(type: NewDealType, context: NewDealContext): Recor
   for (const field of TYPE_FIELDS[type]) {
     if (field.defaultValue !== undefined) {
       values[field.name] = field.defaultValue;
+    } else if (field.optionsFrom === 'clients') {
+      values[field.name] = '';
     } else if (field.kind === 'select') {
       values[field.name] = fieldOptions(field, context)[0];
     } else {
@@ -179,6 +189,14 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
         rubRow('fee', 'Комиссия', fee),
         rubRow('total', 'К получению', amount - fee),
       ];
+    }
+    case 'client_transfer': {
+      const amount = num(values, 'amount');
+      return [{
+        key: 'amount', label: 'К переводу',
+        text: `${amount.toLocaleString('ru-RU', { maximumFractionDigits: 8 })} ${values.currency ?? 'RUB'}`,
+        value: amount,
+      }];
     }
     case 'conversion': {
       const quantity = num(values, 'quantity');

@@ -1,7 +1,7 @@
 import type { IDealsService } from './interfaces';
 import type { Deal } from '@/types/domain';
 import type { DealDetails, DealItem, DealSourceEditPayload, DealsPageData } from '@/types/deals';
-import type { NewDealContext } from '@/types/newDeal';
+import type { ClientTransferRequest, NewDealContext } from '@/types/newDeal';
 
 /** Сделки kanban-доски и первой страницы реестра — как в утверждённом референсе */
 const REFERENCE_DEALS: DealItem[] = [
@@ -231,6 +231,10 @@ export class MockDealsService implements IDealsService {
       },
       defaultCounterpartyPercent: 0.5,
     };
+  }
+
+  async createClientTransfer(_payload: ClientTransferRequest): Promise<DealDetails> {
+    throw new Error('Переводы доступны только при подключённом CRM API');
   }
 
   async editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails> {

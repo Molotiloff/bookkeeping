@@ -10,6 +10,7 @@ export type NewDealType =
   | 'withdrawal'
   | 'delivery'
   | 'transfer_city'
+  | 'client_transfer'
   | 'conversion'
   | 'yuan'
   | 'invoice'
@@ -55,6 +56,22 @@ export interface TransferCityDealFields {
   feePercent: number;
 }
 
+export interface ClientTransferFields {
+  toClientId: string;
+  currency: string;
+  amount: number;
+}
+
+export interface ClientTransferRequest {
+  fromClientId: number;
+  toClientId: number;
+  amount: string;
+  currency: string;
+  idempotencyKey: string;
+  comment: string | null;
+  allowNegative: boolean;
+}
+
 export interface ConversionDealFields {
   fromCurrency: string;
   toCurrency: string;
@@ -86,6 +103,7 @@ export interface CreateDealPayload {
     | CashOperationFields
     | DeliveryDealFields
     | TransferCityDealFields
+    | ClientTransferFields
     | ConversionDealFields
     | YuanDealFields
     | InvoiceDealFields

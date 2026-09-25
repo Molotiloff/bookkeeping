@@ -75,7 +75,7 @@ export function BaseDealFormCard({
           </span>
         </div>
 
-        <div className={controls.field}>
+        {dealType !== 'client_transfer' ? <div className={controls.field}>
           <span className={controls.label}>Контрагент</span>
           <span className={controls.control}>
             <select
@@ -92,9 +92,9 @@ export function BaseDealFormCard({
             </select>
             <Icon name="chevron-down" size={14} className={controls.chevron} />
           </span>
-        </div>
+        </div> : null}
 
-        <div className={controls.field}>
+        {dealType !== 'client_transfer' ? <div className={controls.field}>
           <span className={controls.label}>Процент КТ</span>
           <span className={controls.control}>
             <input
@@ -107,23 +107,25 @@ export function BaseDealFormCard({
             />
             <span className={controls.suffix}>%</span>
           </span>
-        </div>
+        </div> : null}
       </div>
 
       <div className={styles.bottomGrid}>
         <div className={controls.field}>
           <span className={styles.clientLabelRow}>
-            <span className={controls.label}>Клиент</span>
-            <button type="button" className={styles.newClientButton} onClick={handleNewClient}>
-              + Новый
-            </button>
+            <span className={controls.label}>{dealType === 'client_transfer' ? 'Отправитель' : 'Клиент'}</span>
+            {dealType !== 'client_transfer' ? (
+              <button type="button" className={styles.newClientButton} onClick={handleNewClient}>
+                + Новый
+              </button>
+            ) : null}
           </span>
           <span className={controls.control}>
             <select
               className={`${controls.input} ${controls.select}`}
               value={base.clientId}
               onChange={(event) => onBaseChange({ clientId: event.target.value })}
-              aria-label="Клиент"
+              aria-label={dealType === 'client_transfer' ? 'Отправитель' : 'Клиент'}
             >
               <option value="">Выберите клиента</option>
               {context.clients.map((client) => (

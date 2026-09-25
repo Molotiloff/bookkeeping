@@ -2,7 +2,7 @@ import { InfoAlert } from '@/components/ui/InfoAlert';
 import type { CalcRow } from './newDealConfig';
 import styles from './AutoCalcCard.module.css';
 
-export function AutoCalcCard({ rows }: { rows: CalcRow[] }) {
+export function AutoCalcCard({ rows, showRateNotice = true }: { rows: CalcRow[]; showRateNotice?: boolean }) {
   return (
     <section className={styles.card}>
       <h2 className={styles.heading}>Авто расчёт</h2>
@@ -22,11 +22,11 @@ export function AutoCalcCard({ rows }: { rows: CalcRow[] }) {
         ))}
       </dl>
 
-      <div className={styles.alertWrap}>
+      {showRateNotice ? <div className={styles.alertWrap}>
         <InfoAlert>
           Курс компании берётся с главной страницы и фиксируется при создании сделки.
         </InfoAlert>
-      </div>
+      </div> : null}
     </section>
   );
 }

@@ -5,9 +5,9 @@ import type { CurrencyCode, DealStatus } from './domain';
  * и общий реестр с пагинацией.
  */
 
-export type DealType = 'Покупка' | 'Продажа' | 'BestChange';
+export type DealType = 'Покупка' | 'Продажа' | 'BestChange' | 'Перевод';
 
-export type DealAsset = 'USDT' | 'BTC' | 'ETH';
+export type DealAsset = 'RUB' | 'USDT' | 'USD' | 'USDW' | 'EUR' | 'THB' | 'BTC' | 'ETH';
 
 export interface DealItem {
   id: string;
@@ -19,6 +19,7 @@ export interface DealItem {
   asset: DealAsset;
   direction?: string;
   amountRub: number;
+  transferAmount?: string | null;
   city: string;
   status: DealStatus;
   /** Плашка «на откуп» для balance_check, считается backend поверх act-остатка */
@@ -84,7 +85,8 @@ export interface DealDetails {
     | 'fulfillment'
     | 'partner'
     | 'best_change'
-    | 'accounting_import';
+    | 'accounting_import'
+    | 'client_transfer';
   counterpartyName?: string;
   counterpartyPercent?: number;
   profitRub: number;

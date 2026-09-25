@@ -1,7 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClientTransfer } from '@/app/deals/new/actions';
 import type { CreateDealPayload, NewDealContext, NewDealType } from '@/types/newDeal';
 import { NewDealHeader } from './NewDealHeader';
 import { BaseDealFormCard, type BaseFormState } from './BaseDealFormCard';
@@ -36,10 +37,17 @@ export function NewDealView({ context }: { context: NewDealContext }) {
       ) as Record<NewDealType, Record<string, string>>,
   );
   const [errors, setErrors] = useState<string[]>([]);
+  const [submitError, setSubmitError] = useState('');
+  const [confirmNegative, setConfirmNegative] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const transferKey = useRef<string | null>(null);
 
   const values = valuesByType[dealType];
 
   const handleFieldChange = (name: string, value: string) => {
+    transferKey.current = null;
+    setConfirmNegative(false);
+    setSubmitError('');
     setValuesByType((prev) => {
       const next = { ...prev[dealType], [name]: value };
       // Смена валюты фиксирует соответствующий курс компании
@@ -55,14 +63,47 @@ export function NewDealView({ context }: { context: NewDealContext }) {
   const handleTypeChange = (type: NewDealType) => {
     setDealType(type);
     setErrors([]);
+    setConfirmNegative(false);
+    setSubmitError('');
+    transferKey.current = null;
   };
 
   const calcRows = useMemo(() => calculateDeal(dealType, values), [dealType, values]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async (allowNegative = false) => {
+    if (submitting) return;
     const invalid = invalidFields(dealType, values);
+    if (dealType === 'client_transfer' && !base.clientId) invalid.push('fromClientId');
+    if (dealType === 'client_transfer' && base.clientId === values.toClientId) {
+      setSubmitError('Отправитель и получатель должны быть разными клиентами');
+      return;
+    }
     if (invalid.length > 0) {
       setErrors(invalid);
+      setSubmitError('Выберите отправителя и получателя, укажите положительную сумму');
+      return;
+    }
+
+    if (dealType === 'client_transfer') {
+      setSubmitting(true);
+      setSubmitError('');
+      transferKey.current ??= crypto.randomUUID();
+      const result = await createClientTransfer({
+        fromClientId: Number(base.clientId),
+        toClientId: Number(values.toClientId),
+        amount: values.amount.trim().replace(',', '.'),
+        currency: values.currency,
+        idempotencyKey: transferKey.current,
+        comment: base.comment.trim() || null,
+        allowNegative,
+      });
+      setSubmitting(false);
+      if (result.ok) {
+        router.push(`/deals/${result.dealId}`);
+        return;
+      }
+      setSubmitError(result.message);
+      setConfirmNegative(result.insufficient);
       return;
     }
 
@@ -86,17 +127,42 @@ export function NewDealView({ context }: { context: NewDealContext }) {
 
   return (
     <>
-      <NewDealHeader onSubmit={handleSubmit} />
+      <NewDealHeader onSubmit={() => void handleSubmit()} />
 
       <BaseDealFormCard
         context={context}
         base={base}
-        onBaseChange={(patch) => setBase((prev) => ({ ...prev, ...patch }))}
+        onBaseChange={(patch) => {
+          transferKey.current = null;
+          setConfirmNegative(false);
+          setSubmitError('');
+          setBase((prev) => ({ ...prev, ...patch }));
+        }}
         dealType={dealType}
         onDealTypeChange={handleTypeChange}
       />
 
       <DealTypeTabs active={dealType} onChange={handleTypeChange} />
+
+      {submitError ? (
+        <div className={styles.message} role="alert">
+          <span>{submitError}</span>
+          {confirmNegative ? (
+            <span className={styles.messageActions}>
+              <button type="button" disabled={submitting} onClick={() => void handleSubmit(true)}>
+                Подтвердить перевод
+              </button>
+              <button type="button" disabled={submitting} onClick={() => {
+                setConfirmNegative(false);
+                setSubmitError('Перевод отклонён');
+                transferKey.current = null;
+              }}>
+                Отклонить
+              </button>
+            </span>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className={styles.grid}>
         <DealDataCard
@@ -106,7 +172,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
           errors={errors}
           onFieldChange={handleFieldChange}
         />
-        <AutoCalcCard rows={calcRows} />
+        <AutoCalcCard rows={calcRows} showRateNotice={dealType !== 'client_transfer'} />
       </div>
     </>
   );

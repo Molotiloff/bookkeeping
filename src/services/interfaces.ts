@@ -11,7 +11,7 @@ import type { Client, ClientsPageData } from '@/types/clients';
 import type { AttendanceMonth } from '@/types/attendance';
 import type { BalancesSnapshot } from '@/types/balances';
 import type { DealDetails, DealSourceEditPayload, DealsPageData } from '@/types/deals';
-import type { NewDealContext } from '@/types/newDeal';
+import type { ClientTransferRequest, NewDealContext } from '@/types/newDeal';
 import type { TurnoverPageData } from '@/types/turnover';
 import type { DashboardShadowReport, MainDashboardData } from '@/types/mainDashboard';
 import type { ExpensesPageData } from '@/types/expenses';
@@ -46,6 +46,7 @@ export interface IDealsService {
   getDealById(id: string): Promise<DealDetails | null>;
   /** Справочники формы создания сделки: города, контрагенты, клиенты, курсы */
   getNewDealContext(): Promise<NewDealContext>;
+  createClientTransfer(payload: ClientTransferRequest): Promise<DealDetails>;
   editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails>;
   cancel(id: string, comment?: string): Promise<DealDetails>;
 }

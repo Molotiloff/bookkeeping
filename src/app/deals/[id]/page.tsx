@@ -45,26 +45,28 @@ export default async function DealDetailsPage({
           <div className={styles.facts}>
             <div className={styles.fact}>
               <span className={styles.label}>Сумма</span>
-              <span className={styles.amount}>{formatRub(deal.amountRub)}</span>
+              <span className={styles.amount}>
+                {deal.transferAmount ?? formatRub(deal.amountRub)}
+              </span>
             </div>
             <div className={styles.fact}>
               <span className={styles.label}>Направление</span>
               <span className={styles.value}>{dealDirection(deal)}</span>
             </div>
-            <div className={styles.fact}>
+            {deal.dealType !== 'Перевод' ? <div className={styles.fact}>
               <span className={styles.label}>Контрагент</span>
               <span className={styles.value}>{details.counterpartyName ?? 'Не указан'}</span>
-            </div>
-            <div className={styles.fact}>
+            </div> : null}
+            {deal.dealType !== 'Перевод' ? <div className={styles.fact}>
               <span className={styles.label}>КТ-процент</span>
               <span className={styles.value}>
                 {details.counterpartyPercent !== undefined ? `${details.counterpartyPercent}%` : 'Не указан'}
               </span>
-            </div>
-            <div className={styles.fact}>
+            </div> : null}
+            {deal.dealType !== 'Перевод' ? <div className={styles.fact}>
               <span className={styles.label}>Прибыль</span>
               <span className={styles.value}>{formatRub(details.profitRub)}</span>
-            </div>
+            </div> : null}
             <div className={styles.fact}>
               <span className={styles.label}>Источник</span>
               <span className={styles.value}>{details.source}</span>
