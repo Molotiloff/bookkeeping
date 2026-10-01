@@ -32,8 +32,6 @@ export interface SaleDealFields {
   quantity: number;
   /** Выход (клиенту), RUB */
   clientAmount: number;
-  /** Ссылка на чек / TxID (Tronscan) */
-  txUrl?: string;
 }
 
 export type PurchaseDealFields = SaleDealFields;
@@ -70,6 +68,20 @@ export interface ClientTransferRequest {
   idempotencyKey: string;
   comment: string | null;
   allowNegative: boolean;
+}
+
+export interface ExchangeDealRequest {
+  dealType: 'sale' | 'purchase';
+  clientId: number;
+  city: string;
+  recvCode: string;
+  recvAmount: string;
+  payCode: string;
+  payAmount: string;
+  idempotencyKey: string;
+  comment: string | null;
+  referrerClientId?: number | null;
+  referrerPercent?: number;
 }
 
 export interface ConversionDealFields {
@@ -115,7 +127,7 @@ export interface CreateDealPayload {
 export interface NewDealContext {
   cities: string[];
   counterparties: { id: string; name: string }[];
-  clients: { id: string; name: string }[];
+  clients: { id: string; name: string; chatId?: string }[];
   /** Курсы компании с главной страницы, RUB за единицу */
   companyRates: Record<string, number>;
   defaultCounterpartyPercent: number;

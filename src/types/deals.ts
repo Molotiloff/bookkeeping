@@ -7,7 +7,7 @@ import type { CurrencyCode, DealStatus } from './domain';
 
 export type DealType = 'Покупка' | 'Продажа' | 'BestChange' | 'Перевод';
 
-export type DealAsset = 'RUB' | 'USDT' | 'USD' | 'USDW' | 'EUR' | 'THB' | 'BTC' | 'ETH';
+export type DealAsset = 'RUB' | 'USDT' | 'USD' | 'USDW' | 'EUR' | 'EUR500' | 'THB' | 'BTC' | 'ETH';
 
 export interface DealItem {
   id: string;
@@ -79,6 +79,7 @@ export interface DealDetails {
   updatedAt: string;
   dealAt?: string | null;
   source: 'tg_bot' | 'crm' | 'sheets';
+  requestChatPosted?: boolean | null;
   sourceKind?:
     | 'exchange'
     | 'cash'

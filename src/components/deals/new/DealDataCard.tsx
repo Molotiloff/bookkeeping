@@ -2,7 +2,7 @@
 
 import { Icon } from '@/components/ui/Icon';
 import type { NewDealContext, NewDealType } from '@/types/newDeal';
-import { TYPE_FIELDS, fieldOptions, hasReceipt, type FieldConfig } from './newDealConfig';
+import { TYPE_FIELDS, fieldOptions, type FieldConfig } from './newDealConfig';
 import controls from './formControls.module.css';
 import styles from './DealDataCard.module.css';
 
@@ -74,28 +74,6 @@ export function DealDataCard({ context, dealType, values, errors, onFieldChange 
           );
         })}
 
-        {hasReceipt(dealType) ? (
-          <div className={controls.field}>
-            <span className={controls.label}>Чек / TxID (если расчёты в USDT)</span>
-            <div className={styles.receiptBox}>
-              <span className={styles.receiptTitle}>
-                <Icon name="paperclip" size={14} />
-                Прикрепить чек или вставить ссылку
-              </span>
-              <span className={styles.receiptHint}>
-                Поддерживаются ссылки от <span className={styles.receiptLink}>Tronscan</span>
-              </span>
-              <input
-                type="text"
-                className={`${controls.input} ${styles.receiptInput}`}
-                placeholder="Вставьте ссылку на транзакцию"
-                value={values.txUrl ?? ''}
-                onChange={(event) => onFieldChange('txUrl', event.target.value)}
-                aria-label="Ссылка на транзакцию"
-              />
-            </div>
-          </div>
-        ) : null}
       </div>
     </section>
   );

@@ -3,12 +3,14 @@
 import { Icon } from '@/components/ui/Icon';
 import type { NewDealContext, NewDealType } from '@/types/newDeal';
 import { NEW_DEAL_TYPES } from './newDealConfig';
+import { SearchableSelect } from './SearchableSelect';
 import controls from './formControls.module.css';
 import styles from './BaseDealFormCard.module.css';
 
 export interface BaseFormState {
   city: string;
   counterpartyId: string;
+  referrerClientId: string;
   counterpartyPercent: string;
   clientId: string;
   comment: string;
@@ -76,22 +78,16 @@ export function BaseDealFormCard({
         </div>
 
         {dealType !== 'client_transfer' ? <div className={controls.field}>
-          <span className={controls.label}>Контрагент</span>
-          <span className={controls.control}>
-            <select
-              className={`${controls.input} ${controls.select}`}
-              value={base.counterpartyId}
-              onChange={(event) => onBaseChange({ counterpartyId: event.target.value })}
-              aria-label="Контрагент"
-            >
-              {context.counterparties.map((counterparty) => (
-                <option key={counterparty.id} value={counterparty.id}>
-                  {counterparty.name}
-                </option>
-              ))}
-            </select>
-            <Icon name="chevron-down" size={14} className={controls.chevron} />
-          </span>
+          <span className={controls.label}>{['sale', 'purchase'].includes(dealType) ? 'КТ (чат клиента)' : 'Контрагент'}</span>
+          <SearchableSelect
+            value={['sale', 'purchase'].includes(dealType) ? base.referrerClientId : base.counterpartyId}
+            options={['sale', 'purchase'].includes(dealType) ? context.clients : context.counterparties}
+            onChange={(id) => onBaseChange(
+              ['sale', 'purchase'].includes(dealType) ? { referrerClientId: id } : { counterpartyId: id },
+            )}
+            placeholder="Начните вводить имя"
+            label="Контрагент"
+          />
         </div> : null}
 
         {dealType !== 'client_transfer' ? <div className={controls.field}>
@@ -120,22 +116,13 @@ export function BaseDealFormCard({
               </button>
             ) : null}
           </span>
-          <span className={controls.control}>
-            <select
-              className={`${controls.input} ${controls.select}`}
-              value={base.clientId}
-              onChange={(event) => onBaseChange({ clientId: event.target.value })}
-              aria-label={dealType === 'client_transfer' ? 'Отправитель' : 'Клиент'}
-            >
-              <option value="">Выберите клиента</option>
-              {context.clients.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {client.name}
-                </option>
-              ))}
-            </select>
-            <Icon name="chevron-down" size={14} className={controls.chevron} />
-          </span>
+          <SearchableSelect
+            value={base.clientId}
+            options={context.clients}
+            onChange={(id) => onBaseChange({ clientId: id })}
+            placeholder="Начните вводить клиента"
+            label={dealType === 'client_transfer' ? 'Отправитель' : 'Клиент'}
+          />
         </div>
 
         <div className={controls.field}>

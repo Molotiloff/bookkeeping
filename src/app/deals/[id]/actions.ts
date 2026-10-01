@@ -10,6 +10,20 @@ export interface DealActionState {
   success?: string;
 }
 
+export async function writeDealToTableAction(
+  dealId: string,
+  _previous: DealActionState,
+): Promise<DealActionState> {
+  try {
+    await dealsService.writeToTable(dealId);
+    revalidatePath(`/deals/${dealId}`);
+    revalidatePath('/deals');
+    return { success: 'Заявка занесена в таблицу, сделка завершена' };
+  } catch (error) {
+    return { error: actionError(error) };
+  }
+}
+
 export async function editDealSourceAction(
   dealId: string,
   _previous: DealActionState,

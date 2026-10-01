@@ -179,9 +179,12 @@ export default async function DealDetailsPage({
         </section>
       ) : null}
 
-      {details.source === 'tg_bot' &&
-      details.sourceKind &&
-      !['done', 'canceled'].includes(deal.status) ? (
+      {details.sourceKind && !['done', 'canceled'].includes(deal.status) && (
+        details.source === 'tg_bot' || (
+          details.source === 'crm' && details.sourceKind === 'exchange' &&
+          deal.status === 'new' && ['Продажа', 'Покупка'].includes(deal.dealType)
+        )
+      ) ? (
         <DealSourceActions details={details} />
       ) : null}
 

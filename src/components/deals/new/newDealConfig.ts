@@ -28,7 +28,7 @@ export interface FieldConfig {
   /** Суффикс в поле: валюта, RUB, % ('currency' — подставить выбранную валюту) */
   suffix?: string;
   /** Источник опций селекта из контекста */
-  optionsFrom?: 'currencies' | 'cities' | 'clients' | 'transferCurrencies';
+  optionsFrom?: 'currencies' | 'exchangeCurrencies' | 'cities' | 'clients' | 'transferCurrencies';
   placeholder?: string;
   /** Обязательное числовое поле (> 0) для валидации */
   required?: boolean;
@@ -36,17 +36,23 @@ export interface FieldConfig {
 }
 
 const CURRENCIES = ['USDT', 'BTC', 'ETH'];
+const EXCHANGE_CURRENCIES = ['EUR', 'USD', 'USDT', 'EUR500', 'THB', 'USDW'];
 
 const SALE_FIELDS: FieldConfig[] = [
-  { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
-  { name: 'companyRate', label: 'Вход (курс компании)', kind: 'number', suffix: 'RUB', required: true, defaultValue: '90.25' },
-  { name: 'quantity', label: 'Количество', kind: 'number', suffix: 'currency', required: true, defaultValue: '3000' },
-  { name: 'clientAmount', label: 'Выход (клиенту)', kind: 'number', suffix: 'RUB', required: true, defaultValue: '270000' },
+  { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'exchangeCurrencies', defaultValue: 'USDT' },
+  { name: 'clientAmount', label: 'Получаем', kind: 'number', suffix: 'RUB', required: true },
+  { name: 'quantity', label: 'Отдаём', kind: 'number', suffix: 'currency', required: true },
+];
+
+const PURCHASE_FIELDS: FieldConfig[] = [
+  { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'exchangeCurrencies', defaultValue: 'USDT' },
+  { name: 'quantity', label: 'Получаем', kind: 'number', suffix: 'currency', required: true },
+  { name: 'clientAmount', label: 'Отдаём', kind: 'number', suffix: 'RUB', required: true },
 ];
 
 export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
   sale: SALE_FIELDS,
-  purchase: SALE_FIELDS,
+  purchase: PURCHASE_FIELDS,
   deposit: [
     { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
@@ -89,14 +95,11 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
 };
 
 /** У продажи и покупки есть блок «Чек / TxID» */
-export function hasReceipt(type: NewDealType): boolean {
-  return type === 'sale' || type === 'purchase';
-}
-
 export function fieldOptions(field: FieldConfig, context: NewDealContext): string[] {
   if (field.optionsFrom === 'cities') return context.cities;
   if (field.optionsFrom === 'clients') return context.clients.map((client) => client.id);
   if (field.optionsFrom === 'transferCurrencies') return ['RUB', 'USDT', 'USD', 'USDW', 'EUR', 'EUR500', 'THB'];
+  if (field.optionsFrom === 'exchangeCurrencies') return EXCHANGE_CURRENCIES;
   return CURRENCIES;
 }
 
@@ -113,7 +116,6 @@ export function defaultValues(type: NewDealType, context: NewDealContext): Recor
       values[field.name] = '';
     }
   }
-  if (hasReceipt(type)) values.txUrl = '';
   return values;
 }
 
@@ -138,25 +140,21 @@ function rubRow(key: string, label: string, value: number, tone?: 'up' | 'down')
 export function calculateDeal(type: NewDealType, values: Record<string, string>): CalcRow[] {
   switch (type) {
     case 'sale': {
-      const buyTotal = num(values, 'quantity') * num(values, 'companyRate');
-      const sellTotal = num(values, 'clientAmount');
-      const spread = sellTotal - buyTotal;
+      const foreign = num(values, 'quantity');
+      const rub = num(values, 'clientAmount');
       return [
-        rubRow('buyTotal', 'Сумма покупки', buyTotal),
-        rubRow('sellTotal', 'Сумма продажи', sellTotal),
-        rubRow('spread', 'Спред', spread),
-        rubRow('profit', 'Прибыль', -spread, -spread >= 0 ? 'up' : 'down'),
+        rubRow('receivedRub', 'Получаем', rub),
+        { key: 'paidForeign', label: 'Отдаём', text: `${foreign} ${values.currency}`, value: foreign },
+        rubRow('rate', 'Курс RUB за 1', foreign > 0 ? rub / foreign : 0),
       ];
     }
     case 'purchase': {
-      const buyTotal = num(values, 'clientAmount');
-      const sellTotal = num(values, 'quantity') * num(values, 'companyRate');
-      const profit = sellTotal - buyTotal;
+      const foreign = num(values, 'quantity');
+      const rub = num(values, 'clientAmount');
       return [
-        rubRow('buyTotal', 'Сумма покупки', buyTotal),
-        rubRow('sellTotal', 'Сумма продажи', sellTotal),
-        rubRow('spread', 'Спред', profit),
-        rubRow('profit', 'Прибыль', profit, profit >= 0 ? 'up' : 'down'),
+        { key: 'receivedForeign', label: 'Получаем', text: `${foreign} ${values.currency}`, value: foreign },
+        rubRow('paidRub', 'Отдаём', rub),
+        rubRow('rate', 'Курс RUB за 1', foreign > 0 ? rub / foreign : 0),
       ];
     }
     case 'deposit':
@@ -241,7 +239,6 @@ export function parseFields(
   for (const field of TYPE_FIELDS[type]) {
     result[field.name] = field.kind === 'number' ? num(values, field.name) : (values[field.name] ?? '');
   }
-  if (hasReceipt(type) && values.txUrl) result.txUrl = values.txUrl;
   return result as unknown as CreateDealPayload['fields'];
 }
 

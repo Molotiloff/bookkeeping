@@ -2,8 +2,8 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientTransfer } from '@/app/deals/new/actions';
-import type { CreateDealPayload, NewDealContext, NewDealType } from '@/types/newDeal';
+import { createClientTransfer, createExchange } from '@/app/deals/new/actions';
+import type { NewDealContext, NewDealType } from '@/types/newDeal';
 import { NewDealHeader } from './NewDealHeader';
 import { BaseDealFormCard, type BaseFormState } from './BaseDealFormCard';
 import { DealTypeTabs } from './DealTypeTabs';
@@ -15,7 +15,6 @@ import {
   calculateDeal,
   defaultValues,
   invalidFields,
-  parseFields,
 } from './newDealConfig';
 import styles from './NewDealView.module.css';
 
@@ -26,7 +25,8 @@ export function NewDealView({ context }: { context: NewDealContext }) {
   const [base, setBase] = useState<BaseFormState>({
     city: context.cities[0] ?? '',
     counterpartyId: context.counterparties[0]?.id ?? '',
-    counterpartyPercent: context.defaultCounterpartyPercent.toFixed(2),
+    referrerClientId: '',
+    counterpartyPercent: '0.00',
     clientId: '',
     comment: '',
   });
@@ -74,13 +74,29 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     if (submitting) return;
     const invalid = invalidFields(dealType, values);
     if (dealType === 'client_transfer' && !base.clientId) invalid.push('fromClientId');
+    if ((dealType === 'sale' || dealType === 'purchase') && !base.clientId) invalid.push('clientId');
     if (dealType === 'client_transfer' && base.clientId === values.toClientId) {
       setSubmitError('Отправитель и получатель должны быть разными клиентами');
       return;
     }
+    if (dealType === 'sale' || dealType === 'purchase') {
+      const percent = Number.parseFloat(base.counterpartyPercent.replace(',', '.'));
+      if (!Number.isFinite(percent) || percent < 0 || percent > 100) {
+        setSubmitError('Процент КТ должен быть от 0 до 100');
+        return;
+      }
+      if (percent > 0 && !base.referrerClientId) {
+        setSubmitError('Для процента КТ выберите чат клиента-КТ');
+        return;
+      }
+      if (base.referrerClientId && base.referrerClientId === base.clientId) {
+        setSubmitError('Клиент и КТ должны быть разными чатами');
+        return;
+      }
+    }
     if (invalid.length > 0) {
       setErrors(invalid);
-      setSubmitError('Выберите отправителя и получателя, укажите положительную сумму');
+      setSubmitError('Выберите клиента и укажите положительные суммы');
       return;
     }
 
@@ -107,22 +123,38 @@ export function NewDealView({ context }: { context: NewDealContext }) {
       return;
     }
 
-    const payload: CreateDealPayload = {
-      base: {
+    if (dealType === 'sale' || dealType === 'purchase') {
+      setSubmitting(true);
+      setSubmitError('');
+      transferKey.current ??= crypto.randomUUID();
+      const foreign = values.quantity.trim().replace(',', '.');
+      const rub = values.clientAmount.trim().replace(',', '.');
+      const result = await createExchange({
+        dealType,
+        clientId: Number(base.clientId),
         city: base.city,
-        counterpartyId: base.counterpartyId,
-        counterpartyPercent: Number.parseFloat(base.counterpartyPercent.replace(',', '.')) || 0,
-        clientId: base.clientId || null,
-        comment: base.comment,
-      },
-      type: dealType,
-      fields: parseFields(dealType, values),
-      calculations: Object.fromEntries(calcRows.map((row) => [row.key, row.value])),
-    };
+        recvCode: dealType === 'sale' ? 'RUB' : values.currency,
+        recvAmount: dealType === 'sale' ? rub : foreign,
+        payCode: dealType === 'sale' ? values.currency : 'RUB',
+        payAmount: dealType === 'sale' ? foreign : rub,
+        idempotencyKey: transferKey.current,
+        comment: base.comment.trim() || null,
+        referrerClientId: base.referrerClientId ? Number(base.referrerClientId) : null,
+        referrerPercent: Number.parseFloat(base.counterpartyPercent.replace(',', '.')) || 0,
+      });
+      setSubmitting(false);
+      if (result.ok) {
+        if (!result.requestChatPosted) {
+          window.alert('Сделка создана, но отправку в чат заявок не удалось подтвердить. Проверьте Telegram и не создавайте сделку повторно.');
+        }
+        router.push(`/deals/${result.dealId}`);
+      } else {
+        setSubmitError(result.message);
+      }
+      return;
+    }
 
-    // TODO: отправить payload в API создания сделки
-    console.log('create deal payload', payload);
-    router.push('/deals');
+    setSubmitError('Этот тип сделки пока не подключён к CRM. Сейчас доступны покупка, продажа и перевод.');
   };
 
   return (
@@ -172,7 +204,9 @@ export function NewDealView({ context }: { context: NewDealContext }) {
           errors={errors}
           onFieldChange={handleFieldChange}
         />
-        <AutoCalcCard rows={calcRows} showRateNotice={dealType !== 'client_transfer'} />
+        <AutoCalcCard rows={calcRows} showRateNotice={
+          !['client_transfer', 'sale', 'purchase'].includes(dealType)
+        } />
       </div>
     </>
   );

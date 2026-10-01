@@ -2,7 +2,19 @@
 
 import { ApiError } from '@/api/httpClient';
 import { dealsService } from '@/services';
-import type { ClientTransferRequest } from '@/types/newDeal';
+import type { ClientTransferRequest, ExchangeDealRequest } from '@/types/newDeal';
+
+export async function createExchange(payload: ExchangeDealRequest): Promise<
+  | { ok: true; dealId: string; requestChatPosted: boolean }
+  | { ok: false; message: string }
+> {
+  try {
+    const created = await dealsService.createExchange(payload);
+    return { ok: true, dealId: created.deal.id, requestChatPosted: created.requestChatPosted === true };
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : 'Не удалось создать обмен' };
+  }
+}
 
 export async function createClientTransfer(payload: ClientTransferRequest): Promise<
   | { ok: true; dealId: string }

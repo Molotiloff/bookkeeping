@@ -5,6 +5,7 @@ import type { FormEvent } from 'react';
 import {
   cancelDealAction,
   editDealSourceAction,
+  writeDealToTableAction,
   type DealActionState,
 } from '@/app/deals/[id]/actions';
 import type { DealDetails } from '@/types/deals';
@@ -18,6 +19,9 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
   const cancelAction = cancelDealAction.bind(null, details.deal.id);
   const [editState, submitEdit, editing] = useActionState(editAction, INITIAL_STATE);
   const [cancelState, submitCancel, canceling] = useActionState(cancelAction, INITIAL_STATE);
+  const [tableState, submitTable, writingTable] = useActionState(
+    writeDealToTableAction.bind(null, details.deal.id), INITIAL_STATE,
+  );
   const body = details.body ?? {};
   const requestKind = text(body.request_kind);
   const isExchange = details.sourceKind === 'exchange';
@@ -33,11 +37,22 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
       <div className={styles.headingRow}>
         <div>
           <h2 className={styles.heading}>Управление заявкой</h2>
-          <p className={styles.meta}>{isExchange ? 'Обмен из Telegram' : 'Кассовая заявка из Telegram'}</p>
+          <p className={styles.meta}>{isExchange ? 'Обменная заявка' : 'Кассовая заявка из Telegram'}</p>
         </div>
       </div>
 
-      <form action={submitEdit} className={styles.form}>
+      {isExchange && details.deal.status === 'new' &&
+       ['Продажа', 'Покупка'].includes(details.deal.dealType) ? (
+        <form action={submitTable} className={styles.formFooter}>
+          <ActionMessage state={tableState} />
+          <button type="submit" className={styles.primaryButton} disabled={writingTable}>
+            <Icon name="check-circle" size={16} />
+            {writingTable ? 'Заносим…' : 'Занести в таблицу'}
+          </button>
+        </form>
+      ) : null}
+
+      {details.source === 'tg_bot' ? <form action={submitEdit} className={styles.form}>
         <input type="hidden" name="sourceKind" value={details.sourceKind} />
         <input type="hidden" name="requestKind" value={requestKind} />
         {isExchange ? <ExchangeFields body={body} /> : <CashFields body={body} requestKind={requestKind} city={details.deal.city} />}
@@ -52,9 +67,9 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
             {editing ? 'Сохраняем…' : 'Сохранить изменения'}
           </button>
         </div>
-      </form>
+      </form> : null}
 
-      <form action={submitCancel} className={styles.cancelRow} onSubmit={confirmCancel}>
+      {details.source === 'tg_bot' ? <form action={submitCancel} className={styles.cancelRow} onSubmit={confirmCancel}>
         <label className={styles.cancelComment}>
           <span>Причина отмены</span>
           <input name="cancelComment" placeholder="Необязательно" />
@@ -64,7 +79,7 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
           <Icon name="x-circle" size={16} />
           {canceling ? 'Отменяем…' : 'Отменить заявку'}
         </button>
-      </form>
+      </form> : null}
     </section>
   );
 }
