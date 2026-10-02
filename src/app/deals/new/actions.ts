@@ -2,7 +2,19 @@
 
 import { ApiError } from '@/api/httpClient';
 import { dealsService } from '@/services';
-import type { ClientTransferRequest, ExchangeDealRequest } from '@/types/newDeal';
+import type { CashDealRequest, ClientTransferRequest, ExchangeDealRequest } from '@/types/newDeal';
+
+export async function createCash(payload: CashDealRequest): Promise<
+  | { ok: true; dealId: string; requestChatPosted: boolean }
+  | { ok: false; message: string }
+> {
+  try {
+    const created = await dealsService.createCash(payload);
+    return { ok: true, dealId: created.deal.id, requestChatPosted: created.requestChatPosted === true };
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : 'Не удалось создать кассовую заявку' };
+  }
+}
 
 export async function createExchange(payload: ExchangeDealRequest): Promise<
   | { ok: true; dealId: string; requestChatPosted: boolean }

@@ -32,7 +32,7 @@ import type {
   ReverseManualCashPayload,
 } from '@/types/manualCash';
 import type { DashboardShadowReport, MainDashboardData } from '@/types/mainDashboard';
-import type { ClientTransferRequest, ExchangeDealRequest, NewDealContext } from '@/types/newDeal';
+import type { CashDealRequest, ClientTransferRequest, ExchangeDealRequest, NewDealContext } from '@/types/newDeal';
 import type { TurnoverPageData } from '@/types/turnover';
 import {
   adaptBalancesSnapshot,
@@ -102,6 +102,10 @@ export class ApiDealsService implements IDealsService {
 
   createExchange(payload: ExchangeDealRequest): Promise<DealDetails> {
     return this.api.post(crmApi.deals.exchanges, payload);
+  }
+
+  createCash(payload: CashDealRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.cash, payload);
   }
 
   writeToTable(id: string): Promise<DealDetails> {

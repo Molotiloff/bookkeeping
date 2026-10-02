@@ -77,7 +77,7 @@ export function BaseDealFormCard({
           </span>
         </div>
 
-        {dealType !== 'client_transfer' ? <div className={controls.field}>
+        {!['client_transfer', 'deposit', 'withdrawal'].includes(dealType) ? <div className={controls.field}>
           <span className={controls.label}>{['sale', 'purchase'].includes(dealType) ? 'КТ (чат клиента)' : 'Контрагент'}</span>
           <SearchableSelect
             value={['sale', 'purchase'].includes(dealType) ? base.referrerClientId : base.counterpartyId}
@@ -90,7 +90,7 @@ export function BaseDealFormCard({
           />
         </div> : null}
 
-        {dealType !== 'client_transfer' ? <div className={controls.field}>
+        {!['client_transfer', 'deposit', 'withdrawal'].includes(dealType) ? <div className={controls.field}>
           <span className={controls.label}>Процент КТ</span>
           <span className={controls.control}>
             <input

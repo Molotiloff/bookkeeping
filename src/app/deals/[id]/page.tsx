@@ -22,6 +22,14 @@ export default async function DealDetailsPage({
   }
 
   const { deal } = details;
+  const cashCurrency = details.sourceKind === 'cash'
+    ? String(details.body?.currency ?? deal.asset).toUpperCase()
+    : null;
+  const requestedCashAmount = cashCurrency ? finiteAmount(details.body?.amount) : null;
+  const settledCashAmount = cashCurrency && deal.status === 'done'
+    ? finiteAmount(details.body?.settled_qty)
+    : null;
+  const displayedCashAmount = settledCashAmount ?? requestedCashAmount;
 
   return (
     <div className={styles.page}>
@@ -44,11 +52,24 @@ export default async function DealDetailsPage({
           <h2 className={styles.cardTitle}>Параметры сделки</h2>
           <div className={styles.facts}>
             <div className={styles.fact}>
-              <span className={styles.label}>Сумма</span>
+              <span className={styles.label}>
+                {settledCashAmount !== null ? 'Фактически проведено' : 'Сумма'}
+              </span>
               <span className={styles.amount}>
-                {deal.transferAmount ?? formatRub(deal.amountRub)}
+                {cashCurrency && displayedCashAmount !== null
+                  ? formatCashAmount(displayedCashAmount, cashCurrency)
+                  : deal.transferAmount ?? formatRub(deal.amountRub)}
               </span>
             </div>
+            {cashCurrency && settledCashAmount !== null && requestedCashAmount !== null
+              && settledCashAmount !== requestedCashAmount ? (
+              <div className={styles.fact}>
+                <span className={styles.label}>Сумма заявки</span>
+                <span className={styles.value}>
+                  {formatCashAmount(requestedCashAmount, cashCurrency)}
+                </span>
+              </div>
+            ) : null}
             <div className={styles.fact}>
               <span className={styles.label}>Направление</span>
               <span className={styles.value}>{dealDirection(deal)}</span>
@@ -181,8 +202,11 @@ export default async function DealDetailsPage({
 
       {details.sourceKind && !['done', 'canceled'].includes(deal.status) && (
         details.source === 'tg_bot' || (
-          details.source === 'crm' && details.sourceKind === 'exchange' &&
-          deal.status === 'new' && ['Продажа', 'Покупка'].includes(deal.dealType)
+          details.source === 'crm' && (
+            (details.sourceKind === 'exchange' && deal.status === 'new' &&
+              ['Продажа', 'Покупка'].includes(deal.dealType)) ||
+            details.sourceKind === 'cash'
+          )
         )
       ) ? (
         <DealSourceActions details={details} />
@@ -231,6 +255,17 @@ function formatOptional(
   formatter: (amount: number) => string,
 ): string {
   return value == null ? 'Нет данных' : formatter(value);
+}
+
+function finiteAmount(value: unknown): number | null {
+  if (value === null || value === undefined || value === '') return null;
+  const amount = Number(value);
+  return Number.isFinite(amount) && amount >= 0 ? amount : null;
+}
+
+function formatCashAmount(amount: number, currency: string): string {
+  if (currency === 'RUB') return formatMoneyRub(amount);
+  return `${amount.toLocaleString('ru-RU', { maximumFractionDigits: 8 })} ${currency}`;
 }
 
 function bestChangeOperation(operation: 'purchase' | 'sale' | 'unknown'): string {

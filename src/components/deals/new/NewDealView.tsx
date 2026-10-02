@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClientTransfer, createExchange } from '@/app/deals/new/actions';
+import { createCash, createClientTransfer, createExchange } from '@/app/deals/new/actions';
 import type { NewDealContext, NewDealType } from '@/types/newDeal';
 import { NewDealHeader } from './NewDealHeader';
 import { BaseDealFormCard, type BaseFormState } from './BaseDealFormCard';
@@ -74,7 +74,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     if (submitting) return;
     const invalid = invalidFields(dealType, values);
     if (dealType === 'client_transfer' && !base.clientId) invalid.push('fromClientId');
-    if ((dealType === 'sale' || dealType === 'purchase') && !base.clientId) invalid.push('clientId');
+    if (['sale', 'purchase', 'deposit', 'withdrawal'].includes(dealType) && !base.clientId) invalid.push('clientId');
     if (dealType === 'client_transfer' && base.clientId === values.toClientId) {
       setSubmitError('Отправитель и получатель должны быть разными клиентами');
       return;
@@ -154,7 +154,41 @@ export function NewDealView({ context }: { context: NewDealContext }) {
       return;
     }
 
-    setSubmitError('Этот тип сделки пока не подключён к CRM. Сейчас доступны покупка, продажа и перевод.');
+    if (dealType === 'deposit' || dealType === 'withdrawal') {
+      const time = values.time.trim();
+      if (time && !/^([01]\d|2[0-3]):[0-5]\d$/.test(time)) {
+        setErrors(['time']);
+        setSubmitError('Укажите время в формате ЧЧ:ММ');
+        return;
+      }
+      setSubmitting(true);
+      setSubmitError('');
+      transferKey.current ??= crypto.randomUUID();
+      const result = await createCash({
+        dealType,
+        clientId: Number(base.clientId),
+        city: base.city,
+        currency: values.currency,
+        amount: values.amount.trim().replace(',', '.'),
+        idempotencyKey: transferKey.current,
+        comment: base.comment.trim() || null,
+        time: time || null,
+        contact1: values.contact1.trim() || null,
+        contact2: values.contact2.trim() || null,
+      });
+      setSubmitting(false);
+      if (result.ok) {
+        if (!result.requestChatPosted) {
+          window.alert('Заявка создана, но отправку в чат предстоящих сделок не удалось подтвердить. Проверьте Telegram и не создавайте заявку повторно.');
+        }
+        router.push(`/deals/${result.dealId}`);
+      } else {
+        setSubmitError(result.message);
+      }
+      return;
+    }
+
+    setSubmitError('Этот тип сделки пока не подключён к CRM. Сейчас доступны покупка, продажа, внесение, выдача и перевод.');
   };
 
   return (
@@ -205,7 +239,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
           onFieldChange={handleFieldChange}
         />
         <AutoCalcCard rows={calcRows} showRateNotice={
-          !['client_transfer', 'sale', 'purchase'].includes(dealType)
+          !['client_transfer', 'sale', 'purchase', 'deposit', 'withdrawal'].includes(dealType)
         } />
       </div>
     </>

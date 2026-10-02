@@ -34,6 +34,7 @@ export const crmApi = {
     list: (params?: QueryParams) => withQuery('/deals', params),
     create: '/deals',
     exchanges: '/deals/exchanges',
+    cash: '/deals/cash',
     clientTransfers: '/deals/client-transfers',
     schema: '/deals/schema',
     byId: (id: string | number) => `/deals/${id}`,

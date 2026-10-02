@@ -1,6 +1,6 @@
 import type { IconName } from '@/components/ui/Icon';
 import type { CreateDealPayload, NewDealContext, NewDealType } from '@/types/newDeal';
-import { formatCrypto, formatMoneyRub } from '@/lib/format';
+import { formatMoneyRub } from '@/lib/format';
 
 /**
  * Конфигурация формы создания сделки: табы типов, наборы полей
@@ -28,7 +28,7 @@ export interface FieldConfig {
   /** Суффикс в поле: валюта, RUB, % ('currency' — подставить выбранную валюту) */
   suffix?: string;
   /** Источник опций селекта из контекста */
-  optionsFrom?: 'currencies' | 'exchangeCurrencies' | 'cities' | 'clients' | 'transferCurrencies';
+  optionsFrom?: 'currencies' | 'exchangeCurrencies' | 'cashCurrencies' | 'cities' | 'clients' | 'transferCurrencies';
   placeholder?: string;
   /** Обязательное числовое поле (> 0) для валидации */
   required?: boolean;
@@ -37,6 +37,7 @@ export interface FieldConfig {
 
 const CURRENCIES = ['USDT', 'BTC', 'ETH'];
 const EXCHANGE_CURRENCIES = ['EUR', 'USD', 'USDT', 'EUR500', 'THB', 'USDW'];
+const CASH_CURRENCIES = ['RUB', 'EUR', 'EUR500', 'USD', 'USDW', 'THB'];
 
 const SALE_FIELDS: FieldConfig[] = [
   { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'exchangeCurrencies', defaultValue: 'USDT' },
@@ -54,12 +55,18 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
   sale: SALE_FIELDS,
   purchase: PURCHASE_FIELDS,
   deposit: [
-    { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
+    { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'cashCurrencies', defaultValue: 'RUB' },
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
+    { name: 'time', label: 'Время', kind: 'text', placeholder: 'ЧЧ:ММ' },
+    { name: 'contact1', label: 'Принимает', kind: 'text', placeholder: '@username или телефон' },
+    { name: 'contact2', label: 'Выдает', kind: 'text', placeholder: '@username или телефон' },
   ],
   withdrawal: [
-    { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
+    { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'cashCurrencies', defaultValue: 'RUB' },
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
+    { name: 'time', label: 'Время', kind: 'text', placeholder: 'ЧЧ:ММ' },
+    { name: 'contact1', label: 'Выдает', kind: 'text', placeholder: '@username или телефон' },
+    { name: 'contact2', label: 'Принимает', kind: 'text', placeholder: '@username или телефон' },
   ],
   delivery: [
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'RUB', required: true },
@@ -100,6 +107,7 @@ export function fieldOptions(field: FieldConfig, context: NewDealContext): strin
   if (field.optionsFrom === 'clients') return context.clients.map((client) => client.id);
   if (field.optionsFrom === 'transferCurrencies') return ['RUB', 'USDT', 'USD', 'USDW', 'EUR', 'EUR500', 'THB'];
   if (field.optionsFrom === 'exchangeCurrencies') return EXCHANGE_CURRENCIES;
+  if (field.optionsFrom === 'cashCurrencies') return CASH_CURRENCIES;
   return CURRENCIES;
 }
 
@@ -160,12 +168,12 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
     case 'deposit':
     case 'withdrawal': {
       const amount = num(values, 'amount');
-      const currency = values.currency ?? 'USDT';
+      const currency = values.currency ?? 'RUB';
       return [
         {
           key: 'amount',
           label: type === 'deposit' ? 'К внесению' : 'К выдаче',
-          text: `${formatCrypto(amount, currency === 'BTC' || currency === 'ETH' ? (currency as 'BTC' | 'ETH') : 'USDT')} ${currency}`,
+          text: `${amount.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`,
           value: amount,
         },
       ];

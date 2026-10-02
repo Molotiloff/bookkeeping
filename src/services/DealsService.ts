@@ -1,7 +1,7 @@
 import type { IDealsService } from './interfaces';
 import type { Deal } from '@/types/domain';
 import type { DealDetails, DealItem, DealSourceEditPayload, DealsPageData } from '@/types/deals';
-import type { ClientTransferRequest, ExchangeDealRequest, NewDealContext } from '@/types/newDeal';
+import type { CashDealRequest, ClientTransferRequest, ExchangeDealRequest, NewDealContext } from '@/types/newDeal';
 
 /** Сделки kanban-доски и первой страницы реестра — как в утверждённом референсе */
 const REFERENCE_DEALS: DealItem[] = [
@@ -239,6 +239,10 @@ export class MockDealsService implements IDealsService {
 
   async createExchange(_payload: ExchangeDealRequest): Promise<DealDetails> {
     throw new Error('Создание обмена доступно только при подключённом CRM API');
+  }
+
+  async createCash(_payload: CashDealRequest): Promise<DealDetails> {
+    throw new Error('Создание кассовой заявки доступно только при подключённом CRM API');
   }
 
   async writeToTable(_id: string): Promise<DealDetails> {

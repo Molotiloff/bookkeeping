@@ -37,7 +37,7 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
       <div className={styles.headingRow}>
         <div>
           <h2 className={styles.heading}>Управление заявкой</h2>
-          <p className={styles.meta}>{isExchange ? 'Обменная заявка' : 'Кассовая заявка из Telegram'}</p>
+          <p className={styles.meta}>{isExchange ? 'Обменная заявка' : 'Кассовая заявка'}</p>
         </div>
       </div>
 
@@ -52,7 +52,7 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
         </form>
       ) : null}
 
-      {details.source === 'tg_bot' ? <form action={submitEdit} className={styles.form}>
+      {(details.source === 'tg_bot' || (details.source === 'crm' && !isExchange)) ? <form action={submitEdit} className={styles.form}>
         <input type="hidden" name="sourceKind" value={details.sourceKind} />
         <input type="hidden" name="requestKind" value={requestKind} />
         {isExchange ? <ExchangeFields body={body} /> : <CashFields body={body} requestKind={requestKind} city={details.deal.city} />}
@@ -69,7 +69,7 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
         </div>
       </form> : null}
 
-      {(details.source === 'tg_bot' || (details.source === 'crm' && isExchange)) ?
+      {(details.source === 'tg_bot' || details.source === 'crm') ?
       <form action={submitCancel} className={styles.cancelRow} onSubmit={confirmCancel}>
         <label className={styles.cancelComment}>
           <span>Причина отмены</span>
@@ -109,8 +109,8 @@ function CashFields({ body, requestKind, city }: { body: Record<string, unknown>
       ) : (
         <Field label={`Сумма, ${text(body.currency)}`} name="amount" value={text(body.amount)} numeric />
       )}
-      <Field label="Контакт 1" name="contact1" value="" required={false} />
-      <Field label="Контакт 2" name="contact2" value="" required={false} />
+      <Field label="Контакт 1" name="contact1" value={text(body.contact1)} required={false} />
+      <Field label="Контакт 2" name="contact2" value={text(body.contact2)} required={false} />
     </>
   );
 }

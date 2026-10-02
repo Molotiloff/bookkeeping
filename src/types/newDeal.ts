@@ -84,6 +84,19 @@ export interface ExchangeDealRequest {
   referrerPercent?: number;
 }
 
+export interface CashDealRequest {
+  dealType: 'deposit' | 'withdrawal';
+  clientId: number;
+  city: string;
+  currency: string;
+  amount: string;
+  idempotencyKey: string;
+  comment: string | null;
+  time: string | null;
+  contact1: string | null;
+  contact2: string | null;
+}
+
 export interface ConversionDealFields {
   fromCurrency: string;
   toCurrency: string;
