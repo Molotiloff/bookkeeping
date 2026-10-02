@@ -50,9 +50,13 @@ const CLIENT_DEAL_TYPES = [
   'Списание',
 ] as const;
 
-export type ApiClientsPage = Schemas['ClientsPageResponse'];
-export type ApiClientDetails = Schemas['ClientDto'];
-export type ApiBalancesSnapshot = Schemas['BalancesSnapshotResponse'];
+export type ApiClientDetails = Schemas['ClientDto'] & { telegramInviteLink?: string | null };
+export type ApiClientsPage = Omit<Schemas['ClientsPageResponse'], 'clients'> & {
+  clients: ApiClientDetails[];
+};
+export type ApiBalancesSnapshot = Omit<Schemas['BalancesSnapshotResponse'], 'clients'> & {
+  clients: (Schemas['BalanceClientDto'] & { telegramInviteLink?: string | null })[];
+};
 export type ApiDashboard = Schemas['DashboardResponse'];
 export type ApiUser = Schemas['ApiUser'];
 export type TelegramLoginResponse = Schemas['LoginResponse'];

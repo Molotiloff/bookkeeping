@@ -1,21 +1,44 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { saveTelegramInviteLink } from '@/app/clients/actions';
 import type { Client } from '@/types/clients';
 import { formatCrypto, formatMoneyRub, formatRub } from '@/lib/format';
+import { telegramChatLink } from '@/lib/telegramChatLink';
 import { avatarGradient } from '@/lib/avatar';
 import { Icon } from '@/components/ui/Icon';
 import { ClientComments } from './ClientComments';
 import styles from './ClientInfoPanel.module.css';
 
-function ClientContactBlock({ client }: { client: Client }) {
-  const handleOpenTelegram = () => {
-    // TODO: открыть Telegram-чат клиента
-    console.log('open telegram', client.telegramChatId);
-  };
+function ClientContactBlock({ client, canEdit }: { client: Client; canEdit: boolean }) {
+  const router = useRouter();
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(client.telegramInviteLink ?? '');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const chatHref = telegramChatLink({
+    chatId: client.telegramChatId,
+    username: client.telegramUsername,
+    inviteLink: client.telegramInviteLink,
+  });
 
   const handleCopyChatId = () => {
-    navigator.clipboard.writeText(client.telegramChatId);
+    void navigator.clipboard.writeText(client.telegramChatId);
+  };
+
+  const handleSaveInvite = async () => {
+    setSaving(true);
+    setError('');
+    const result = await saveTelegramInviteLink(client.id, draft.trim() || null);
+    setSaving(false);
+    if (!result.ok) {
+      setError(result.message);
+      return;
+    }
+    setEditing(false);
+    router.refresh();
   };
 
   return (
@@ -24,16 +47,17 @@ function ClientContactBlock({ client }: { client: Client }) {
         <span className={styles.contactIcon}>
           <Icon name="telegram" size={13} />
         </span>
-        <span className={styles.contactValue}>{client.telegramUsername}</span>
-        <button
-          type="button"
+        <span className={styles.contactValue}>{client.telegramUsername || 'Telegram-чат'}</span>
+        {chatHref ? <a
           className={styles.contactAction}
           title="Открыть чат"
           aria-label="Открыть Telegram-чат"
-          onClick={handleOpenTelegram}
+          href={chatHref}
+          target="_blank"
+          rel="noopener noreferrer"
         >
           <Icon name="external" size={13} />
-        </button>
+        </a> : null}
       </div>
       <div className={styles.contactRow}>
         <span className={styles.contactIcon}>
@@ -50,6 +74,42 @@ function ClientContactBlock({ client }: { client: Client }) {
           <Icon name="copy" size={13} />
         </button>
       </div>
+      {canEdit ? (
+        editing ? (
+          <div className={styles.inviteEditor}>
+            <label htmlFor={`invite-${client.id}`}>Ссылка Telegram для открытия в приложении</label>
+            <input
+              id={`invite-${client.id}`}
+              type="url"
+              value={draft}
+              placeholder="https://t.me/+..."
+              onChange={(event) => setDraft(event.target.value)}
+              disabled={saving}
+            />
+            {error ? <span className={styles.inviteError} role="alert">{error}</span> : null}
+            <div className={styles.inviteActions}>
+              <button type="button" disabled={saving} onClick={() => void handleSaveInvite()}>
+                Сохранить
+              </button>
+              <button type="button" disabled={saving} onClick={() => {
+                setDraft(client.telegramInviteLink ?? '');
+                setError('');
+                setEditing(false);
+              }}>
+                Отмена
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button type="button" className={styles.inviteEditButton} onClick={() => {
+            setDraft(client.telegramInviteLink ?? '');
+            setError('');
+            setEditing(true);
+          }}>
+            {client.telegramInviteLink ? 'Изменить ссылку Telegram' : 'Добавить ссылку Telegram'}
+          </button>
+        )
+      ) : null}
     </div>
   );
 }
@@ -166,9 +226,10 @@ function ClientRecentDeals({ client }: { client: Client }) {
 interface ClientInfoPanelProps {
   client: Client;
   onClose: () => void;
+  canEditTelegramLink: boolean;
 }
 
-export function ClientInfoPanel({ client, onClose }: ClientInfoPanelProps) {
+export function ClientInfoPanel({ client, onClose, canEditTelegramLink }: ClientInfoPanelProps) {
   return (
     <aside className={styles.panel} aria-label="Информация о клиенте">
       <header className={styles.header}>
@@ -197,7 +258,7 @@ export function ClientInfoPanel({ client, onClose }: ClientInfoPanelProps) {
         </div>
       </div>
 
-      <ClientContactBlock client={client} />
+      <ClientContactBlock client={client} canEdit={canEditTelegramLink} />
       <ClientMainInfo client={client} />
       <ClientBalances client={client} />
       <ClientStats client={client} />

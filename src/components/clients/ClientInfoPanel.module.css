@@ -136,6 +136,51 @@
   color: var(--accent);
 }
 
+.inviteEditButton {
+  align-self: flex-start;
+  color: var(--accent);
+  font-size: 12px;
+  text-align: left;
+}
+
+.inviteEditButton:hover {
+  text-decoration: underline;
+}
+
+.inviteEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.inviteEditor input {
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.inviteActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: var(--accent);
+}
+
+.inviteActions button:disabled {
+  opacity: 0.5;
+}
+
+.inviteError {
+  color: var(--negative, #ef6464);
+}
+
 .section {
   padding-top: 14px;
   border-top: 1px solid var(--border);

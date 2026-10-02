@@ -34,6 +34,7 @@ export interface Client {
   initials: string;
   telegramUsername: string;
   telegramChatId: string;
+  telegramInviteLink?: string | null;
   dealsCount: number;
   turnoverRub: number;
   managerName: string;

@@ -1,10 +1,10 @@
 'use client';
 
-import type { MouseEvent } from 'react';
 import type { BalanceClient } from '@/types/balances';
 import { formatCrypto, formatMoneyRub } from '@/lib/format';
 import { avatarGradient } from '@/lib/avatar';
 import { Icon } from '@/components/ui/Icon';
+import { telegramChatLink } from '@/lib/telegramChatLink';
 import { CurrencyBadge } from './CurrencyBadge';
 import styles from './BalancesTable.module.css';
 
@@ -14,11 +14,10 @@ interface BalanceTableRowProps {
 }
 
 export function BalanceTableRow({ client, onRowClick }: BalanceTableRowProps) {
-  const handleChatClick = (event: MouseEvent) => {
-    event.stopPropagation();
-    // TODO: открыть Telegram-чат клиента (client.chatUrl / client.telegramChatId)
-    console.log('open chat', client.id, client.telegramChatId);
-  };
+  const chatHref = telegramChatLink({
+    chatId: client.telegramChatId,
+    inviteLink: client.telegramInviteLink ?? client.chatUrl,
+  });
 
   return (
     <tr className={styles.row} onClick={() => onRowClick(client.id)}>
@@ -49,15 +48,17 @@ export function BalanceTableRow({ client, onRowClick }: BalanceTableRowProps) {
       <td className={styles.amountCol}>{formatMoneyRub(client.balanceRub)}</td>
 
       <td className={styles.chatCol}>
-        <button
-          type="button"
+        {chatHref ? <a
           className={styles.chatButton}
           title="Открыть чат"
           aria-label={`Открыть чат с клиентом ${client.name}`}
-          onClick={handleChatClick}
+          href={chatHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(event) => event.stopPropagation()}
         >
           <Icon name="chat" size={16} />
-        </button>
+        </a> : null}
       </td>
     </tr>
   );

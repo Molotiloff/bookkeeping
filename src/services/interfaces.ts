@@ -59,6 +59,7 @@ export interface IClientsService {
   getClientsPage(): Promise<ClientsPageData>;
   /** Карточка клиента: балансы, сделки, комментарии */
   getClientById(id: string): Promise<Client | null>;
+  updateTelegramInviteLink(id: string, inviteLink: string | null): Promise<Client>;
 }
 
 export interface IAccountingService {

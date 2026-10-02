@@ -9,7 +9,13 @@ import { ClientInfoPanel } from './ClientInfoPanel';
 import styles from './ClientsView.module.css';
 
 /** Список + карточка: выбор клиента в таблице показывает его в правой панели */
-export function ClientsView({ data }: { data: ClientsPageData }) {
+export function ClientsView({
+  data,
+  canEditTelegramLink,
+}: {
+  data: ClientsPageData;
+  canEditTelegramLink: boolean;
+}) {
   const [query, setQuery] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(data.clients[0]?.id ?? null);
 
@@ -43,7 +49,11 @@ export function ClientsView({ data }: { data: ClientsPageData }) {
           onSelect={handleSelect}
         />
         {selected ? (
-          <ClientInfoPanel client={selected} onClose={() => setSelectedId(null)} />
+          <ClientInfoPanel
+            client={selected}
+            onClose={() => setSelectedId(null)}
+            canEditTelegramLink={canEditTelegramLink}
+          />
         ) : null}
       </div>
     </>

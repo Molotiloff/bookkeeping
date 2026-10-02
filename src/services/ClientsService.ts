@@ -102,4 +102,10 @@ export class MockClientsService implements IClientsService {
     const decodedId = decodeURIComponent(id);
     return this.buildClients().find((client) => client.id === decodedId) ?? null;
   }
+
+  async updateTelegramInviteLink(id: string, inviteLink: string | null): Promise<Client> {
+    const client = await this.getClientById(id);
+    if (!client) throw new Error('Клиент не найден');
+    return { ...client, telegramInviteLink: inviteLink };
+  }
 }

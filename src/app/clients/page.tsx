@@ -3,8 +3,8 @@ import { clientsService } from '@/services';
 import { requireRouteAccess } from '@/lib/requireRouteAccess';
 
 export default async function ClientsPage() {
-  await requireRouteAccess('/clients');
+  const user = await requireRouteAccess('/clients');
   const data = await clientsService.getClientsPage();
 
-  return <ClientsView data={data} />;
+  return <ClientsView data={data} canEditTelegramLink={user.role !== 'cashier'} />;
 }

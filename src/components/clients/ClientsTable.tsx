@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, type MouseEvent } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import type { Client } from '@/types/clients';
 import { formatRub } from '@/lib/format';
 import { avatarGradient } from '@/lib/avatar';
 import { Icon } from '@/components/ui/Icon';
+import { telegramChatLink } from '@/lib/telegramChatLink';
 import styles from './ClientsTable.module.css';
 
 const PAGE_SIZES = [10, 20, 50];
@@ -20,12 +21,6 @@ interface ClientsTableProps {
 export function ClientsTable({ clients, totalClients, selectedId, onSelect }: ClientsTableProps) {
   const [pageSize, setPageSize] = useState(10);
   const [page, setPage] = useState(1);
-
-  const handleTelegramClick = (event: MouseEvent, client: Client) => {
-    event.stopPropagation();
-    // TODO: открыть Telegram-чат клиента
-    console.log('open telegram', client.telegramChatId);
-  };
 
   const totalPages = Math.max(1, Math.ceil(totalClients / pageSize));
   const visibleClients = clients.slice((page - 1) * pageSize, page * pageSize);
@@ -50,7 +45,13 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
             </tr>
           </thead>
           <tbody>
-            {visibleClients.map((client) => (
+            {visibleClients.map((client) => {
+              const chatHref = telegramChatLink({
+                chatId: client.telegramChatId,
+                username: client.telegramUsername,
+                inviteLink: client.telegramInviteLink,
+              });
+              return (
               <tr
                 key={client.id}
                 className={`${styles.row} ${client.id === selectedId ? styles.rowSelected : ''}`}
@@ -84,15 +85,17 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
                       <span className={styles.telegramUsername}>{client.telegramUsername}</span>
                       <span className={styles.telegramChatId}>{client.telegramChatId}</span>
                     </div>
-                    <button
-                      type="button"
+                    {chatHref ? <a
                       className={styles.telegramOpen}
                       title="Открыть чат"
                       aria-label={`Открыть Telegram-чат с ${client.name}`}
-                      onClick={(event) => handleTelegramClick(event, client)}
+                      href={chatHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(event) => event.stopPropagation()}
                     >
                       <Icon name="external" size={13} />
-                    </button>
+                    </a> : null}
                   </div>
                 </td>
 
@@ -100,7 +103,8 @@ export function ClientsTable({ clients, totalClients, selectedId, onSelect }: Cl
                 <td className={`${styles.num} ${styles.turnover}`}>{formatRub(client.turnoverRub)}</td>
                 <td className={styles.lastCol}>{client.managerName}</td>
               </tr>
-            ))}
+              );
+            })}
             {clients.length === 0 ? (
               <tr>
                 <td colSpan={5} className={styles.emptyCell}>

@@ -47,6 +47,7 @@ export const crmApi = {
     list: (params?: QueryParams) => withQuery('/clients', params),
     create: '/clients',
     byId: (id: string | number) => `/clients/${id}`,
+    telegramInviteLink: (id: string | number) => `/clients/${id}/telegram-invite-link`,
     comments: (id: string | number) => `/clients/${id}/comments`,
     deleteComment: (commentId: string | number) => `/comments/${commentId}`,
   },

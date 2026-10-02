@@ -171,6 +171,14 @@ export class ApiClientsService implements IClientsService {
       throw error;
     }
   }
+
+  async updateTelegramInviteLink(id: string, inviteLink: string | null): Promise<Client> {
+    const updated = await this.api.patch<ApiClientDetails>(
+      crmApi.clients.telegramInviteLink(id),
+      { telegramInviteLink: inviteLink },
+    );
+    return adaptClient(updated);
+  }
 }
 
 export class ApiAccountingService implements IAccountingService {

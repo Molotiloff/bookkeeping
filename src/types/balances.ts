@@ -20,6 +20,7 @@ export interface BalanceClient {
   avatarColor?: string;
   chatUrl?: string;
   telegramChatId?: string;
+  telegramInviteLink?: string | null;
 }
 
 export interface CurrencySummary {

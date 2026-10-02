@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { clientsService } from '@/services';
 import { requireRouteAccess } from '@/lib/requireRouteAccess';
 import { formatCrypto, formatRub } from '@/lib/format';
+import { telegramChatLink } from '@/lib/telegramChatLink';
 import styles from './page.module.css';
 
 export default async function ClientDetailsPage({
@@ -17,6 +18,11 @@ export default async function ClientDetailsPage({
   if (!client) {
     notFound();
   }
+  const chatHref = telegramChatLink({
+    chatId: client.telegramChatId,
+    username: client.telegramUsername,
+    inviteLink: client.telegramInviteLink,
+  });
 
   return (
     <div className={styles.page}>
@@ -28,7 +34,12 @@ export default async function ClientDetailsPage({
         <div>
           <h1 className={styles.title}>{client.name}</h1>
           <p className={styles.subtitle}>
-            {client.clientNumber} · {client.telegramUsername} · {client.telegramChatId}
+            {client.clientNumber} · {client.telegramUsername ? `${client.telegramUsername} · ` : ''}
+            {chatHref ? (
+              <a href={chatHref} target="_blank" rel="noopener noreferrer" className={styles.chatLink}>
+                {client.telegramChatId} ↗
+              </a>
+            ) : client.telegramChatId}
           </p>
         </div>
       </header>
