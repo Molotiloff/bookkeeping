@@ -69,7 +69,8 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
         </div>
       </form> : null}
 
-      {details.source === 'tg_bot' ? <form action={submitCancel} className={styles.cancelRow} onSubmit={confirmCancel}>
+      {(details.source === 'tg_bot' || (details.source === 'crm' && isExchange)) ?
+      <form action={submitCancel} className={styles.cancelRow} onSubmit={confirmCancel}>
         <label className={styles.cancelComment}>
           <span>Причина отмены</span>
           <input name="cancelComment" placeholder="Необязательно" />
