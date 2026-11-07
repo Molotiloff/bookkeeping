@@ -4,21 +4,135 @@ import { revalidatePath } from 'next/cache';
 import { ApiError } from '@/api/httpClient';
 import { dealsService } from '@/services';
 import type { DealSourceEditPayload } from '@/types/deals';
+import type { DealStatus } from '@/types/domain';
+import type { SettlementReviewRequest, TransferAdjustmentRequest } from '@/types/dealManagement';
+import { positiveDecimal } from '@/lib/dealManagement';
 
 export interface DealActionState {
   error?: string;
   success?: string;
+  insufficient?: boolean;
+}
+
+function refreshDeal(id: string) {
+  for (const path of [`/deals/${id}`, '/deals', '/balances', '/clients']) revalidatePath(path);
+}
+
+export async function postInvoiceAction(id: string, received: string, paid: string, _previous: DealActionState, form: FormData): Promise<DealActionState> {
+  void _previous;
+  try {
+    await dealsService.postInvoice(id, { expectedReceivedUsdt: received, expectedPaidUsdt: paid, allowLoss: form.get('allowLoss') === 'on' });
+    refreshDeal(id);
+    revalidatePath('/');
+    return { success: 'Инвойс проведён. Движение кассы и прибыль учтены один раз.' };
+  } catch (error) { return { error: actionError(error) }; }
+}
+
+export async function cancelInvoiceAction(id: string, _previous: DealActionState, form: FormData): Promise<DealActionState> {
+  void _previous;
+  try {
+    await dealsService.cancelInvoice(id, optionalText(form, 'comment') ?? null);
+    refreshDeal(id);
+    return { success: 'Новый инвойс отменён без движения денег' };
+  } catch (error) { return { error: actionError(error) }; }
+}
+
+export async function readyCashAction(id: string, _previous: DealActionState): Promise<DealActionState> {
+  void _previous;
+  try {
+    await dealsService.markCashReady(id);
+    refreshDeal(id);
+    return { success: 'Заявка готова к расчёту. Проведение — командой из кассового чата.' };
+  } catch (error) { return { error: actionError(error) }; }
+}
+
+export async function changeStatusAction(
+  id: string, expectedOldStatus: DealStatus, _previous: DealActionState, form: FormData,
+): Promise<DealActionState> {
+  void _previous;
+  try {
+    const status = requiredText(form, 'status') as DealStatus;
+    if (!['balance_check', 'awaiting_payment', 'in_delivery'].includes(status)) throw new Error('Недоступное действие');
+    const watch = optionalText(form, 'paymentWatchId');
+    await dealsService.changeStatus(id, {
+      status, expectedOldStatus, comment: optionalText(form, 'comment'),
+      payload: watch ? { paymentWatchId: watch } : {},
+    });
+    refreshDeal(id);
+    return { success: 'Статус обновлён' };
+  } catch (error) { return { error: actionError(error) }; }
+}
+
+export async function adjustTransferAction(
+  id: string, payload: TransferAdjustmentRequest,
+): Promise<DealActionState> {
+  try {
+    if (payload.newAmount !== null) positiveDecimal(payload.newAmount);
+    positiveDecimal(payload.expectedAmount);
+    await dealsService.adjustTransfer(id, payload);
+    refreshDeal(id);
+    return { success: payload.newAmount === null ? 'Перевод отменён, балансы пересчитаны' : 'Перевод исправлен, новые чеки отправлены' };
+  } catch (error) {
+    return {
+      error: actionError(error),
+      insufficient: error instanceof ApiError && error.status === 409 && error.message.includes('Недостаточно средств'),
+    };
+  }
+}
+
+export async function resolveSettlementAction(
+  dealId: string, settlementId: number, _previous: DealActionState, form: FormData,
+): Promise<DealActionState> {
+  void _previous;
+  try {
+    const resolution = requiredText(form, 'resolution');
+    if (resolution !== 'accept_actual' && resolution !== 'amend_unposted') throw new Error('Недоступное решение');
+    const payload: SettlementReviewRequest = { resolution, comment: requiredText(form, 'comment') };
+    await dealsService.resolveSettlement(settlementId, payload);
+    refreshDeal(dealId);
+    return { success: 'Решение сохранено' };
+  } catch (error) { return { error: actionError(error) }; }
+}
+
+export async function reorderQueueAction(
+  itemId: number, beforeItemId: number | null, _previous: DealActionState,
+): Promise<DealActionState> {
+  void _previous;
+  try {
+    await dealsService.reorderFulfillment(itemId, beforeItemId);
+    revalidatePath('/deals');
+    return { success: 'Порядок очереди изменён' };
+  } catch (error) { return { error: actionError(error) }; }
 }
 
 export async function writeDealToTableAction(
   dealId: string,
   _previous: DealActionState,
 ): Promise<DealActionState> {
+  void _previous;
   try {
     await dealsService.writeToTable(dealId);
     revalidatePath(`/deals/${dealId}`);
     revalidatePath('/deals');
     return { success: 'Заявка занесена в таблицу, сделка завершена' };
+  } catch (error) {
+    return { error: actionError(error) };
+  }
+}
+
+export async function payReferrerSpreadAction(
+  dealId: string,
+  payload: import('@/types/referrerSpread').ReferrerSpreadPayRequest,
+  _previous: DealActionState,
+): Promise<DealActionState> {
+  void _previous;
+  try {
+    await dealsService.payReferrerSpread(dealId, payload);
+    revalidatePath(`/deals/${dealId}`);
+    revalidatePath('/deals');
+    revalidatePath('/balances');
+    revalidatePath('/clients');
+    return { success: 'Спред КТ зачислен на баланс RUB' };
   } catch (error) {
     return { error: actionError(error) };
   }
@@ -46,9 +160,11 @@ export async function cancelDealAction(
 ): Promise<DealActionState> {
   try {
     await dealsService.cancel(dealId, optionalText(formData, 'cancelComment'));
+    revalidatePath('/balances');
+    revalidatePath('/clients');
     revalidatePath(`/deals/${dealId}`);
     revalidatePath('/deals');
-    return { success: 'Заявка отменена, компенсация проведена' };
+    return { success: 'Заявка отменена, очередь и балансы обновлены по правилам операции' };
   } catch (error) {
     return { error: actionError(error) };
   }

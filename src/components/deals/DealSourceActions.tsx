@@ -6,11 +6,14 @@ import {
   cancelDealAction,
   editDealSourceAction,
   writeDealToTableAction,
+  payReferrerSpreadAction,
   type DealActionState,
 } from '@/app/deals/[id]/actions';
 import type { DealDetails } from '@/types/deals';
 import { Icon } from '@/components/ui/Icon';
 import styles from './DealSourceActions.module.css';
+import { sourceEditable } from '@/lib/dealManagement';
+import { readyCashAction } from '@/app/deals/[id]/actions';
 
 const INITIAL_STATE: DealActionState = {};
 
@@ -23,11 +26,23 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
     writeDealToTableAction.bind(null, details.deal.id), INITIAL_STATE,
   );
   const body = details.body ?? {};
+  const [spreadState, submitSpread, payingSpread] = useActionState(
+    payReferrerSpreadAction.bind(null, details.deal.id, {
+      expectedAmount: String(details.referrerRewardRub ?? 0),
+      referrerClientId: Number(body.referrer_client_id),
+    }), INITIAL_STATE,
+  );
+  const spreadPayment = body.referrer_spread_payment as { status?: string; amount_rub?: string } | undefined;
+  const spreadPaid = spreadPayment?.status === 'paid';
   const requestKind = text(body.request_kind);
   const isExchange = details.sourceKind === 'exchange';
+  const isFulfillment = details.sourceKind === 'fulfillment';
+  const [readyState, submitReady, readyPending] = useActionState(readyCashAction.bind(null, details.deal.id), INITIAL_STATE);
 
   const confirmCancel = (event: FormEvent<HTMLFormElement>) => {
-    if (!window.confirm('Отменить заявку и провести компенсирующие транзакции?')) {
+    if (!window.confirm(isFulfillment
+      ? 'Отменить заявку /отпр и остановить наблюдение? Если транзакций не было, баланс не изменится.'
+      : 'Отменить заявку и провести компенсирующие транзакции?')) {
       event.preventDefault();
     }
   };
@@ -37,12 +52,23 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
       <div className={styles.headingRow}>
         <div>
           <h2 className={styles.heading}>Управление заявкой</h2>
-          <p className={styles.meta}>{isExchange ? 'Обменная заявка' : 'Кассовая заявка'}</p>
+          <p className={styles.meta}>{isExchange ? 'Обменная заявка' : isFulfillment ? 'Заявка /отпр на перевод USDT' : 'Кассовая заявка'}</p>
         </div>
       </div>
 
+      {details.sourceKind === 'cash' && details.deal.status === 'new' ? (
+        <form action={submitReady} className={styles.formFooter}>
+          <ActionMessage state={readyState} />
+          <button className={styles.primaryButton} disabled={readyPending}>Готово к расчёту</button>
+        </form>
+      ) : null}
+      {details.sourceKind === 'cash' && details.deal.status === 'ready_for_cash_settlement' ? (
+        <p className={styles.meta}>Ожидаем фактическую кассовую проводку по номеру заявки. Изменение статуса не заменяет расчёт.</p>
+      ) : null}
+
+      <div className={styles.formFooter}>
       {isExchange && details.deal.status === 'new' &&
-       ['Продажа', 'Покупка'].includes(details.deal.dealType) ? (
+       ['Продажа', 'Покупка', 'Конвертация'].includes(details.deal.dealType) ? (
         <form action={submitTable} className={styles.formFooter}>
           <ActionMessage state={tableState} />
           <button type="submit" className={styles.primaryButton} disabled={writingTable}>
@@ -52,7 +78,22 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
         </form>
       ) : null}
 
-      {(details.source === 'tg_bot' || (details.source === 'crm' && !isExchange)) ? <form action={submitEdit} className={styles.form}>
+      {isExchange && ['Продажа', 'Покупка'].includes(details.deal.dealType)
+        && details.deal.status !== 'canceled' && (details.referrerRewardRub ?? 0) > 0 ? (
+        <form action={submitSpread} className={styles.formFooter} onSubmit={(event) => {
+          if (!window.confirm(`Зачислить КТ ${details.referrerRewardRub} RUB на баланс?`)) event.preventDefault();
+        }}>
+          <ActionMessage state={spreadState} />
+          <button type="submit" className={styles.primaryButton} disabled={payingSpread || spreadPaid}>
+            {spreadPaid ? `Спред КТ переведён: ${spreadPayment?.amount_rub} RUB` : payingSpread ? 'Переводим…' : 'Перевести спред КТ'}
+          </button>
+        </form>
+      ) : null}
+
+      </div>
+      {spreadPayment?.status === 'reversed' ? <p className={styles.meta}>Спред КТ возвращён при отмене сделки: {spreadPayment.amount_rub} RUB</p> : null}
+
+      {sourceEditable(details) ? <form action={submitEdit} className={styles.form}>
         <input type="hidden" name="sourceKind" value={details.sourceKind} />
         <input type="hidden" name="requestKind" value={requestKind} />
         {isExchange ? <ExchangeFields body={body} /> : <CashFields body={body} requestKind={requestKind} city={details.deal.city} />}
@@ -69,7 +110,7 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
         </div>
       </form> : null}
 
-      {(details.source === 'tg_bot' || details.source === 'crm') ?
+      {!['done', 'canceled'].includes(details.deal.status) && (details.source === 'tg_bot' || details.source === 'crm') ?
       <form action={submitCancel} className={styles.cancelRow} onSubmit={confirmCancel}>
         <label className={styles.cancelComment}>
           <span>Причина отмены</span>
@@ -100,7 +141,8 @@ function ExchangeFields({ body }: { body: Record<string, unknown> }) {
 function CashFields({ body, requestKind, city }: { body: Record<string, unknown>; requestKind: string; city: string }) {
   return (
     <>
-      <Field label="Город" name="city" value={city} />
+      <input type="hidden" name="city" value={city} />
+      <p className={styles.meta}>Город: {city}. Перенос заявки в другой город пока недоступен.</p>
       {requestKind === 'fx' ? (
         <>
           <Field label={`Принимаем, ${text(body.in_code)}`} name="inAmount" value={text(body.in_amount)} numeric />

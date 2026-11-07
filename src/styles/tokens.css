@@ -7,18 +7,18 @@
 :root,
 :root[data-theme='light'] {
   /* Поверхности */
-  --bg: #f3f6fb;
+  --bg: #f3f6fa;
   --surface: #ffffff;
-  --surface-hover: #f7fafd;
+  --surface-hover: #f5f8fd;
   --sidebar-bg: #ffffff;
-  --border: #e6ebf3;
-  --border-strong: #d7dfec;
-  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.05);
+  --border: #dfe6f0;
+  --border-strong: #c7d3e3;
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.03), 0 8px 26px rgba(16, 24, 40, 0.035);
 
   /* Текст */
   --text-primary: #101828;
   --text-secondary: #5b6b83;
-  --text-muted: #8a97ad;
+  --text-muted: #697991;
   --text-on-accent: #ffffff;
 
   /* Акценты */
@@ -76,18 +76,18 @@
 
 :root[data-theme='dark'] {
   /* Поверхности: глубокий navy, sidebar темнее фона */
-  --bg: #0d1424;
-  --surface: #131b2e;
-  --surface-hover: #182238;
-  --sidebar-bg: #0a101d;
-  --border: rgba(151, 165, 200, 0.14);
-  --border-strong: rgba(151, 165, 200, 0.24);
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+  --bg: #0b1220;
+  --surface: #121c2e;
+  --surface-hover: #1a2940;
+  --sidebar-bg: #0a1120;
+  --border: rgba(151, 165, 200, 0.19);
+  --border-strong: rgba(151, 165, 200, 0.32);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.2), 0 12px 32px rgba(0, 0, 0, 0.14);
 
   /* Текст — без чрезмерного контраста */
   --text-primary: #e9edf7;
-  --text-secondary: #a3adc7;
-  --text-muted: #6c7794;
+  --text-secondary: #b4bfd4;
+  --text-muted: #8a99b1;
   --text-on-accent: #ffffff;
 
   /* Акценты: фиолетовый, синий, cyan */
@@ -136,6 +136,6 @@
   --att-weekend: #ef4444;
 
   /* Аккуратный glassmorphism: полупрозрачная поверхность + мягкая внутренняя подсветка */
-  --glass-bg: rgba(19, 27, 46, 0.62);
-  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --glass-bg: var(--surface);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.035);
 }

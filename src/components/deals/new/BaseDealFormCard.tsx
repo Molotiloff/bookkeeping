@@ -12,6 +12,7 @@ export interface BaseFormState {
   counterpartyId: string;
   referrerClientId: string;
   counterpartyPercent: string;
+  referrerSpreadRub: string;
   clientId: string;
   comment: string;
 }
@@ -77,32 +78,34 @@ export function BaseDealFormCard({
           </span>
         </div>
 
-        {!['client_transfer', 'deposit', 'withdrawal'].includes(dealType) ? <div className={controls.field}>
-          <span className={controls.label}>{['sale', 'purchase'].includes(dealType) ? 'КТ (чат клиента)' : 'Контрагент'}</span>
+        {!['client_transfer', 'deposit', 'withdrawal', 'invoice'].includes(dealType) ? <div className={controls.field}>
+          <span className={controls.label}>{['sale', 'purchase', 'conversion'].includes(dealType) ? 'КТ (чат клиента)' : 'Контрагент'}</span>
           <SearchableSelect
-            value={['sale', 'purchase'].includes(dealType) ? base.referrerClientId : base.counterpartyId}
-            options={['sale', 'purchase'].includes(dealType) ? context.clients : context.counterparties}
+            value={['sale', 'purchase', 'conversion'].includes(dealType) ? base.referrerClientId : base.counterpartyId}
+            options={['sale', 'purchase', 'conversion'].includes(dealType) ? context.clients : context.counterparties}
             onChange={(id) => onBaseChange(
-              ['sale', 'purchase'].includes(dealType) ? { referrerClientId: id } : { counterpartyId: id },
+              ['sale', 'purchase', 'conversion'].includes(dealType) ? { referrerClientId: id } : { counterpartyId: id },
             )}
             placeholder="Начните вводить имя"
             label="Контрагент"
           />
         </div> : null}
 
-        {!['client_transfer', 'deposit', 'withdrawal'].includes(dealType) ? <div className={controls.field}>
-          <span className={controls.label}>Процент КТ</span>
+        {!['client_transfer', 'deposit', 'withdrawal', 'invoice'].includes(dealType) ? <div className={controls.field}>
+          <span className={controls.label}>{['sale', 'purchase'].includes(dealType) ? 'Спред КТ' : 'Процент КТ'}</span>
           <span className={controls.control}>
             <input
               type="text"
               inputMode="decimal"
               className={`${controls.input} ${controls.withSuffix}`}
-              value={base.counterpartyPercent}
-              onChange={(event) => onBaseChange({ counterpartyPercent: event.target.value })}
-              aria-label="Процент КТ"
+              value={['sale', 'purchase'].includes(dealType) ? base.referrerSpreadRub : base.counterpartyPercent}
+              onChange={(event) => onBaseChange(['sale', 'purchase'].includes(dealType)
+                ? { referrerSpreadRub: event.target.value } : { counterpartyPercent: event.target.value })}
+              aria-label={['sale', 'purchase'].includes(dealType) ? 'Спред КТ' : 'Процент КТ'}
             />
-            <span className={controls.suffix}>%</span>
+            <span className={controls.suffix}>{['sale', 'purchase'].includes(dealType) ? 'RUB/ед.' : '%'}</span>
           </span>
+          {['sale', 'purchase'].includes(dealType) ? <small>0,10 = 10 копеек за единицу валюты</small> : null}
         </div> : null}
       </div>
 

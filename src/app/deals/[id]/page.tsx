@@ -6,6 +6,9 @@ import { requireRouteAccess } from '@/lib/requireRouteAccess';
 import { formatMoney, formatMoneyRub, formatRub } from '@/lib/format';
 import { dealDirection, dealOperation } from '@/types/deals';
 import { DealSourceActions } from '@/components/deals/DealSourceActions';
+import { DealManagementPanel } from '@/components/deals/DealManagementPanel';
+import { InvoicePanel } from '@/components/deals/InvoicePanel';
+import { canManageDeals } from '@/lib/dealManagement';
 import styles from './page.module.css';
 
 export default async function DealDetailsPage({
@@ -13,7 +16,7 @@ export default async function DealDetailsPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requireRouteAccess('/deals');
+  const user = await requireRouteAccess('/deals');
   const { id } = await params;
   const details = await dealsService.getDealById(id);
 
@@ -22,6 +25,11 @@ export default async function DealDetailsPage({
   }
 
   const { deal } = details;
+  const canManage = canManageDeals(user.role);
+  const settlements = canManage && ['exchange', 'fulfillment'].includes(details.sourceKind ?? '')
+    ? await dealsService.getSettlements(id) : [];
+  const spreadPayment = details.body?.referrer_spread_payment as
+    { status?: string; amount_rub?: string } | undefined;
   const cashCurrency = details.sourceKind === 'cash'
     ? String(details.body?.currency ?? deal.asset).toUpperCase()
     : null;
@@ -58,7 +66,7 @@ export default async function DealDetailsPage({
               <span className={styles.amount}>
                 {cashCurrency && displayedCashAmount !== null
                   ? formatCashAmount(displayedCashAmount, cashCurrency)
-                  : deal.transferAmount ?? formatRub(deal.amountRub)}
+                  : deal.exchangeAmount ?? deal.transferAmount ?? formatRub(deal.amountRub)}
               </span>
             </div>
             {cashCurrency && settledCashAmount !== null && requestedCashAmount !== null
@@ -74,17 +82,31 @@ export default async function DealDetailsPage({
               <span className={styles.label}>Направление</span>
               <span className={styles.value}>{dealDirection(deal)}</span>
             </div>
-            {deal.dealType !== 'Перевод' ? <div className={styles.fact}>
+            {!['Перевод', 'Инвойс'].includes(deal.dealType) ? <div className={styles.fact}>
               <span className={styles.label}>Контрагент</span>
               <span className={styles.value}>{details.counterpartyName ?? 'Не указан'}</span>
             </div> : null}
-            {deal.dealType !== 'Перевод' ? <div className={styles.fact}>
-              <span className={styles.label}>КТ-процент</span>
+            {!['Перевод', 'Инвойс'].includes(deal.dealType) ? <div className={styles.fact}>
+              <span className={styles.label}>{['Продажа', 'Покупка'].includes(deal.dealType) && details.body?.referrer_spread_rub !== undefined ? 'Спред КТ' : 'КТ-процент'}</span>
               <span className={styles.value}>
-                {details.counterpartyPercent !== undefined ? `${details.counterpartyPercent}%` : 'Не указан'}
+                {['Продажа', 'Покупка'].includes(deal.dealType) && details.body?.referrer_spread_rub !== undefined
+                  ? `${String(details.body.referrer_spread_rub)} RUB/ед.`
+                  : details.counterpartyPercent != null ? `${details.counterpartyPercent}%` : 'Не указан'}
               </span>
             </div> : null}
-            {deal.dealType !== 'Перевод' ? <div className={styles.fact}>
+            {details.referrerRewardRub != null ? <div className={styles.fact}>
+              <span className={styles.label}>Вознаграждение КТ (расчёт)</span>
+              <span className={styles.value}>{formatMoneyRub(details.referrerRewardRub)}</span>
+            </div> : null}
+            {spreadPayment?.status === 'paid' || spreadPayment?.status === 'reversed' ? (
+              <div className={styles.fact}>
+                <span className={styles.label}>
+                  {spreadPayment.status === 'paid' ? 'Спред КТ выплачен' : 'Спред КТ возвращён при отмене'}
+                </span>
+                <span className={styles.value}>{spreadPayment.amount_rub} RUB</span>
+              </div>
+            ) : null}
+            {!['Перевод', 'Инвойс'].includes(deal.dealType) ? <div className={styles.fact}>
               <span className={styles.label}>Прибыль</span>
               <span className={styles.value}>{formatRub(details.profitRub)}</span>
             </div> : null}
@@ -200,17 +222,22 @@ export default async function DealDetailsPage({
         </section>
       ) : null}
 
-      {details.sourceKind && !['done', 'canceled'].includes(deal.status) && (
+      {canManage && ((details.sourceKind === 'exchange' && ['Продажа', 'Покупка'].includes(deal.dealType)
+        && (details.referrerRewardRub ?? 0) > 0 && deal.status === 'done') ||
+        (details.sourceKind && !['done', 'canceled'].includes(deal.status) && (
         details.source === 'tg_bot' || (
           details.source === 'crm' && (
-            (details.sourceKind === 'exchange' && deal.status === 'new' &&
-              ['Продажа', 'Покупка'].includes(deal.dealType)) ||
+            (details.sourceKind === 'exchange' &&
+              ['Продажа', 'Покупка', 'Конвертация'].includes(deal.dealType)) ||
             details.sourceKind === 'cash'
           )
         )
-      ) ? (
+      ))) ? (
         <DealSourceActions details={details} />
       ) : null}
+
+      {details.sourceKind === 'invoice' ? <InvoicePanel details={details} canManage={canManage} /> : null}
+      {canManage ? <DealManagementPanel details={details} settlements={settlements} /> : null}
 
       <section className={styles.card}>
         <h2 className={styles.cardTitle}>Денежные ноги</h2>

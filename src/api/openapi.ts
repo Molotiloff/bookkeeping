@@ -106,6 +106,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/clients/{client_id}/telegram-invite-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Client Telegram Invite Link */
+        patch: operations["update_client_telegram_invite_link_api_v1_clients__client_id__telegram_invite_link_patch"];
+        trace?: never;
+    };
     "/api/v1/clients/{client_id}/transactions": {
         parameters: {
             query?: never;
@@ -242,6 +259,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/deals/invoices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Invoice */
+        post: operations["create_invoice_api_v1_deals_invoices_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/invoice/post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Post Invoice */
+        post: operations["post_invoice_api_v1_deals__deal_id__invoice_post_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/invoice/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Cancel Invoice */
+        post: operations["cancel_invoice_api_v1_deals__deal_id__invoice_cancel_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/schema": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Deal Form Context */
+        get: operations["get_deal_form_context_api_v1_deals_schema_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/deals": {
         parameters: {
             query?: never;
@@ -254,6 +339,57 @@ export interface paths {
         put?: never;
         /** Create Deal */
         post: operations["create_deal_api_v1_deals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/client-transfers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Client Transfer */
+        post: operations["create_client_transfer_api_v1_deals_client_transfers_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/exchanges": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Exchange Deal */
+        post: operations["create_exchange_deal_api_v1_deals_exchanges_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/cash": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Cash Deal */
+        post: operations["create_cash_deal_api_v1_deals_cash_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -276,6 +412,91 @@ export interface paths {
         head?: never;
         /** Update Deal */
         patch: operations["update_deal_api_v1_deals__deal_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/transfer-adjustment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Adjust Client Transfer */
+        post: operations["adjust_client_transfer_api_v1_deals__deal_id__transfer_adjustment_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/cash-ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Mark Cash Deal Ready */
+        post: operations["mark_cash_deal_ready_api_v1_deals__deal_id__cash_ready_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Deal Settlements */
+        get: operations["list_deal_settlements_api_v1_deals__deal_id__settlements_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/table": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Write Exchange Deal To Table */
+        post: operations["write_exchange_deal_to_table_api_v1_deals__deal_id__table_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deals/{deal_id}/referrer-spread": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Pay Referrer Spread */
+        post: operations["pay_referrer_spread_api_v1_deals__deal_id__referrer_spread_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/deals/{deal_id}/status": {
@@ -433,6 +654,8 @@ export interface components {
             initials: string;
             /** Telegramchatid */
             telegramChatId?: string | null;
+            /** Telegraminvitelink */
+            telegramInviteLink?: string | null;
         };
         /** BalancesSnapshotResponse */
         BalancesSnapshotResponse: {
@@ -471,6 +694,28 @@ export interface components {
             correctionReason?: string | null;
             /** Correctionactor */
             correctionActor?: string | null;
+        };
+        /** CashDealCreateRequest */
+        CashDealCreateRequest: {
+            dealType: components["schemas"]["DealType"];
+            /** Clientid */
+            clientId: number;
+            /** City */
+            city: string;
+            /** Currency */
+            currency: string;
+            /** Amount */
+            amount: number | string;
+            /** Idempotencykey */
+            idempotencyKey: string;
+            /** Comment */
+            comment?: string | null;
+            /** Time */
+            time?: string | null;
+            /** Contact1 */
+            contact1?: string | null;
+            /** Contact2 */
+            contact2?: string | null;
         };
         /** CashSourceEditRequest */
         CashSourceEditRequest: {
@@ -527,6 +772,8 @@ export interface components {
             telegramUsername: string;
             /** Telegramchatid */
             telegramChatId: string;
+            /** Telegraminvitelink */
+            telegramInviteLink?: string | null;
             /** Dealscount */
             dealsCount: number;
             /** Turnoverrub */
@@ -586,6 +833,11 @@ export interface components {
             /** Time */
             time: string;
         };
+        /** ClientTelegramInviteLinkUpdate */
+        ClientTelegramInviteLinkUpdate: {
+            /** Telegraminvitelink */
+            telegramInviteLink: string | null;
+        };
         /** ClientTransactionDto */
         ClientTransactionDto: {
             /** Id */
@@ -613,6 +865,40 @@ export interface components {
             items: components["schemas"]["ClientTransactionDto"][];
             /** Limit */
             limit: number;
+        };
+        /** ClientTransferAdjustRequest */
+        ClientTransferAdjustRequest: {
+            /** Newamount */
+            newAmount?: number | string | null;
+            /** Expectedamount */
+            expectedAmount: number | string;
+            /** Idempotencykey */
+            idempotencyKey: string;
+            /**
+             * Allownegative
+             * @default false
+             */
+            allowNegative: boolean;
+        };
+        /** ClientTransferCreateRequest */
+        ClientTransferCreateRequest: {
+            /** Fromclientid */
+            fromClientId: number;
+            /** Toclientid */
+            toClientId: number;
+            /** Amount */
+            amount: number | string;
+            /** Currency */
+            currency: string;
+            /** Idempotencykey */
+            idempotencyKey: string;
+            /** Comment */
+            comment?: string | null;
+            /**
+             * Allownegative
+             * @default false
+             */
+            allowNegative: boolean;
         };
         /** ClientsPageResponse */
         ClientsPageResponse: {
@@ -882,10 +1168,14 @@ export interface components {
             source: string;
             /** Sourcekind */
             sourceKind?: string | null;
+            /** Requestchatposted */
+            requestChatPosted?: boolean | null;
             /** Counterpartyname */
             counterpartyName?: string | null;
             /** Counterpartypercent */
             counterpartyPercent?: number | null;
+            /** Referrerrewardrub */
+            referrerRewardRub?: number | null;
             /** Profitrub */
             profitRub: number;
             /** Comment */
@@ -906,6 +1196,32 @@ export interface components {
             /** Statusevents */
             statusEvents?: components["schemas"]["DealStatusEventDto"][];
         };
+        /** DealFormClientDto */
+        DealFormClientDto: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Chatid */
+            chatId?: string | null;
+        };
+        /** DealFormContextDto */
+        DealFormContextDto: {
+            /** Cities */
+            cities: string[];
+            /** Counterparties */
+            counterparties: {
+                [key: string]: string;
+            }[];
+            /** Clients */
+            clients: components["schemas"]["DealFormClientDto"][];
+            /** Companyrates */
+            companyRates: {
+                [key: string]: number;
+            };
+            /** Defaultcounterpartypercent */
+            defaultCounterpartyPercent: number;
+        };
         /** DealItemDto */
         DealItemDto: {
             /** Id */
@@ -922,6 +1238,10 @@ export interface components {
             direction: string;
             /** Amountrub */
             amountRub: number;
+            /** Transferamount */
+            transferAmount?: string | null;
+            /** Exchangeamount */
+            exchangeAmount?: string | null;
             /** City */
             city: string;
             status: components["schemas"]["DealStatus"];
@@ -950,6 +1270,27 @@ export interface components {
             rate?: number | null;
             /** Status */
             status: string;
+        };
+        /** DealSettlementDto */
+        DealSettlementDto: {
+            /** Id */
+            id: number;
+            /** Dealid */
+            dealId: number;
+            /** Expected */
+            expected: string;
+            /** Actual */
+            actual: string;
+            /** Delta */
+            delta: string;
+            /** Status */
+            status: string;
+            /** Resolution */
+            resolution?: string | null;
+            /** Currency */
+            currency?: string | null;
+            /** Txhash */
+            txHash?: string | null;
         };
         /** DealSourceEditRequest */
         DealSourceEditRequest: {
@@ -987,6 +1328,7 @@ export interface components {
             payload?: {
                 [key: string]: unknown;
             };
+            expectedOldStatus?: components["schemas"]["DealStatus"] | null;
         };
         /** DealStatusSummaryDto */
         DealStatusSummaryDto: {
@@ -1000,7 +1342,7 @@ export interface components {
          * DealType
          * @enum {string}
          */
-        DealType: "sale" | "purchase" | "deposit" | "withdrawal" | "delivery" | "transfer_city" | "conversion" | "yuan" | "invoice" | "profit" | "best_change";
+        DealType: "sale" | "purchase" | "deposit" | "withdrawal" | "delivery" | "transfer_city" | "client_transfer" | "conversion" | "yuan" | "invoice" | "profit" | "best_change";
         /** DealUpdateRequest */
         DealUpdateRequest: {
             /** City */
@@ -1052,6 +1394,38 @@ export interface components {
         ErrorResponse: {
             /** Detail */
             detail: string;
+        };
+        /** ExchangeDealCreateRequest */
+        ExchangeDealCreateRequest: {
+            dealType: components["schemas"]["DealType"];
+            /** Clientid */
+            clientId: number;
+            /** City */
+            city: string;
+            /** Recvcode */
+            recvCode: string;
+            /** Recvamount */
+            recvAmount: number | string;
+            /** Paycode */
+            payCode: string;
+            /** Payamount */
+            payAmount: number | string;
+            /** Idempotencykey */
+            idempotencyKey: string;
+            /** Comment */
+            comment?: string | null;
+            /** Referrerclientid */
+            referrerClientId?: number | null;
+            /**
+             * Referrerpercent
+             * @default 0
+             */
+            referrerPercent: number | string;
+            /**
+             * Referrerspreadrub
+             * @default 0
+             */
+            referrerSpreadRub: number | string;
         };
         /** ExchangeSourceEditRequest */
         ExchangeSourceEditRequest: {
@@ -1128,6 +1502,33 @@ export interface components {
         HealthResponse: {
             /** Status */
             status: string;
+        };
+        /** InvoiceCreateRequest */
+        InvoiceCreateRequest: {
+            /** Clientid */
+            clientId: number;
+            /** City */
+            city: string;
+            /** Receivedusdt */
+            receivedUsdt: number | string;
+            /** Paidusdt */
+            paidUsdt: number | string;
+            /** Idempotencykey */
+            idempotencyKey: string;
+            /** Comment */
+            comment?: string | null;
+        };
+        /** InvoicePostRequest */
+        InvoicePostRequest: {
+            /** Expectedreceivedusdt */
+            expectedReceivedUsdt: number | string;
+            /** Expectedpaidusdt */
+            expectedPaidUsdt: number | string;
+            /**
+             * Allowloss
+             * @default false
+             */
+            allowLoss: boolean;
         };
         /** LoginResponse */
         LoginResponse: {
@@ -1223,6 +1624,13 @@ export interface components {
             queues: {
                 [key: string]: number;
             };
+        };
+        /** ReferrerSpreadPayRequest */
+        ReferrerSpreadPayRequest: {
+            /** Expectedamount */
+            expectedAmount: number | string;
+            /** Referrerclientid */
+            referrerClientId: number;
         };
         /** SettlementReplacementRequest */
         SettlementReplacementRequest: {
@@ -1519,6 +1927,77 @@ export interface operations {
             };
             /** @description Unauthorized */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_client_telegram_invite_link_api_v1_clients__client_id__telegram_invite_link_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                client_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientTelegramInviteLinkUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClientDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1972,6 +2451,273 @@ export interface operations {
             };
         };
     };
+    create_invoice_api_v1_deals_invoices_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoiceCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    post_invoice_api_v1_deals__deal_id__invoice_post_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvoicePostRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_invoice_api_v1_deals__deal_id__invoice_cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DealCancelRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_deal_form_context_api_v1_deals_schema_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealFormContextDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     list_deals_api_v1_deals_get: {
         parameters: {
             query?: {
@@ -2106,6 +2852,213 @@ export interface operations {
             };
         };
     };
+    create_client_transfer_api_v1_deals_client_transfers_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientTransferCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_exchange_deal_api_v1_deals_exchanges_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExchangeDealCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_cash_deal_api_v1_deals_cash_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CashDealCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     get_deal_api_v1_deals__deal_id__get: {
         parameters: {
             query?: never;
@@ -2176,6 +3129,376 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["DealUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    adjust_client_transfer_api_v1_deals__deal_id__transfer_adjustment_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ClientTransferAdjustRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mark_cash_deal_ready_api_v1_deals__deal_id__cash_ready_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_deal_settlements_api_v1_deals__deal_id__settlements_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealSettlementDto"][];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    write_exchange_deal_to_table_api_v1_deals__deal_id__table_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DealDetailsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    pay_referrer_spread_api_v1_deals__deal_id__referrer_spread_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                deal_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReferrerSpreadPayRequest"];
             };
         };
         responses: {

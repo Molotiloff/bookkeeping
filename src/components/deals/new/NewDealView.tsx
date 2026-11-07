@@ -2,7 +2,8 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createCash, createClientTransfer, createExchange } from '@/app/deals/new/actions';
+import { createCash, createClientTransfer, createExchange, createInvoice } from '@/app/deals/new/actions';
+import { invoiceProfit } from '@/lib/invoice';
 import type { NewDealContext, NewDealType } from '@/types/newDeal';
 import { NewDealHeader } from './NewDealHeader';
 import { BaseDealFormCard, type BaseFormState } from './BaseDealFormCard';
@@ -27,6 +28,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     counterpartyId: context.counterparties[0]?.id ?? '',
     referrerClientId: '',
     counterpartyPercent: '0.00',
+    referrerSpreadRub: '0.00',
     clientId: '',
     comment: '',
   });
@@ -68,25 +70,45 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     transferKey.current = null;
   };
 
-  const calcRows = useMemo(() => calculateDeal(dealType, values), [dealType, values]);
+  const calcRows = useMemo(() => {
+    const rows = calculateDeal(dealType, values);
+    if ((dealType === 'sale' || dealType === 'purchase') && base.referrerClientId) {
+      const quantity = Number(values.quantity?.replace(',', '.') ?? '0');
+      const spread = Number(base.referrerSpreadRub.replace(',', '.'));
+      const reward = quantity * spread;
+      if (Number.isFinite(reward) && reward >= 0) {
+        rows.push({
+          key: 'referrerReward', label: 'Вознаграждение КТ (расчёт)', value: reward,
+          text: `${reward.toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} RUB`,
+        });
+      }
+    }
+    return rows;
+  }, [dealType, values, base.referrerClientId, base.referrerSpreadRub]);
 
   const handleSubmit = async (allowNegative = false) => {
     if (submitting) return;
     const invalid = invalidFields(dealType, values);
     if (dealType === 'client_transfer' && !base.clientId) invalid.push('fromClientId');
-    if (['sale', 'purchase', 'deposit', 'withdrawal'].includes(dealType) && !base.clientId) invalid.push('clientId');
+    if (['sale', 'purchase', 'conversion', 'deposit', 'withdrawal', 'invoice'].includes(dealType) && !base.clientId) invalid.push('clientId');
     if (dealType === 'client_transfer' && base.clientId === values.toClientId) {
       setSubmitError('Отправитель и получатель должны быть разными клиентами');
       return;
     }
-    if (dealType === 'sale' || dealType === 'purchase') {
-      const percent = Number.parseFloat(base.counterpartyPercent.replace(',', '.'));
-      if (!Number.isFinite(percent) || percent < 0 || percent > 100) {
-        setSubmitError('Процент КТ должен быть от 0 до 100');
+    if (dealType === 'conversion' && values.fromCurrency === values.toCurrency) {
+      setErrors(['fromCurrency', 'toCurrency']);
+      setSubmitError('Выберите разные валюты для конвертации');
+      return;
+    }
+    if (dealType === 'sale' || dealType === 'purchase' || dealType === 'conversion') {
+      const hasSpread = dealType === 'sale' || dealType === 'purchase';
+      const reward = Number((hasSpread ? base.referrerSpreadRub : base.counterpartyPercent).replace(',', '.'));
+      if (!Number.isFinite(reward) || reward < 0 || (!hasSpread && reward > 100)) {
+        setSubmitError(hasSpread ? 'Спред КТ должен быть неотрицательным числом в RUB за единицу валюты' : 'Процент КТ должен быть от 0 до 100');
         return;
       }
-      if (percent > 0 && !base.referrerClientId) {
-        setSubmitError('Для процента КТ выберите чат клиента-КТ');
+      if (reward > 0 && !base.referrerClientId) {
+        setSubmitError('Для вознаграждения КТ выберите чат клиента-КТ');
         return;
       }
       if (base.referrerClientId && base.referrerClientId === base.clientId) {
@@ -97,6 +119,23 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     if (invalid.length > 0) {
       setErrors(invalid);
       setSubmitError('Выберите клиента и укажите положительные суммы');
+      return;
+    }
+
+    if (dealType === 'invoice') {
+      try { invoiceProfit(values.receivedUsdt, values.paidUsdt); }
+      catch (error) { setSubmitError((error as Error).message); return; }
+      setSubmitting(true);
+      setSubmitError('');
+      transferKey.current ??= crypto.randomUUID();
+      try {
+        const result = await createInvoice({ clientId: Number(base.clientId), city: base.city,
+          receivedUsdt: values.receivedUsdt.trim().replace(',', '.'), paidUsdt: values.paidUsdt.trim().replace(',', '.'),
+          idempotencyKey: transferKey.current, comment: base.comment.trim() || null });
+        if (result.ok) router.push(`/deals/${result.dealId}`);
+        else setSubmitError(result.message);
+      } catch { setSubmitError('Не удалось получить ответ сервера. Повторите запрос с теми же данными.'); }
+      finally { setSubmitting(false); }
       return;
     }
 
@@ -123,24 +162,25 @@ export function NewDealView({ context }: { context: NewDealContext }) {
       return;
     }
 
-    if (dealType === 'sale' || dealType === 'purchase') {
+    if (dealType === 'sale' || dealType === 'purchase' || dealType === 'conversion') {
       setSubmitting(true);
       setSubmitError('');
       transferKey.current ??= crypto.randomUUID();
       const foreign = values.quantity.trim().replace(',', '.');
-      const rub = values.clientAmount.trim().replace(',', '.');
+      const rub = (values.clientAmount ?? '').trim().replace(',', '.');
       const result = await createExchange({
         dealType,
         clientId: Number(base.clientId),
         city: base.city,
-        recvCode: dealType === 'sale' ? 'RUB' : values.currency,
+        recvCode: dealType === 'conversion' ? values.fromCurrency : dealType === 'sale' ? 'RUB' : values.currency,
         recvAmount: dealType === 'sale' ? rub : foreign,
-        payCode: dealType === 'sale' ? values.currency : 'RUB',
-        payAmount: dealType === 'sale' ? foreign : rub,
+        payCode: dealType === 'conversion' ? values.toCurrency : dealType === 'sale' ? values.currency : 'RUB',
+        payAmount: dealType === 'conversion' ? values.payAmount.trim().replace(',', '.') : dealType === 'sale' ? foreign : rub,
         idempotencyKey: transferKey.current,
         comment: base.comment.trim() || null,
         referrerClientId: base.referrerClientId ? Number(base.referrerClientId) : null,
-        referrerPercent: Number.parseFloat(base.counterpartyPercent.replace(',', '.')) || 0,
+        referrerPercent: dealType === 'conversion' ? Number.parseFloat(base.counterpartyPercent.replace(',', '.')) || 0 : 0,
+        referrerSpreadRub: dealType === 'conversion' ? '0' : base.referrerSpreadRub.trim().replace(',', '.') || '0',
       });
       setSubmitting(false);
       if (result.ok) {
@@ -188,7 +228,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
       return;
     }
 
-    setSubmitError('Этот тип сделки пока не подключён к CRM. Сейчас доступны покупка, продажа, внесение, выдача и перевод.');
+    setSubmitError('Этот тип сделки пока не подключён к CRM. Сейчас доступны покупка, продажа, конвертация, внесение, выдача и перевод.');
   };
 
   return (
@@ -239,7 +279,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
           onFieldChange={handleFieldChange}
         />
         <AutoCalcCard rows={calcRows} showRateNotice={
-          !['client_transfer', 'sale', 'purchase', 'deposit', 'withdrawal'].includes(dealType)
+          !['client_transfer', 'sale', 'purchase', 'conversion', 'deposit', 'withdrawal', 'invoice'].includes(dealType)
         } />
       </div>
     </>

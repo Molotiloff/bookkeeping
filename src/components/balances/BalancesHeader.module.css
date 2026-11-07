@@ -4,17 +4,18 @@
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .title {
-  font-size: 21px;
-  font-weight: 700;
-  letter-spacing: -0.015em;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
 }
 
 .subtitle {
-  margin-top: 2px;
+  margin-top: 6px;
   font-size: 13px;
   color: var(--text-muted);
 }

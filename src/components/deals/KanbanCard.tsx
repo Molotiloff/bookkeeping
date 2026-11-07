@@ -24,7 +24,7 @@ export function KanbanCard({ deal, onClick }: KanbanCardProps) {
       </span>
       <span className={styles.cardOperation}>{dealOperation(deal)}</span>
       {deal.insufficientUsdt ? <span className={styles.cardOperation}>Недостаточно USDT</span> : null}
-      <span className={styles.cardAmount}>{formatRub(deal.amountRub)}</span>
+      <span className={styles.cardAmount}>{deal.exchangeAmount ?? deal.transferAmount ?? formatRub(deal.amountRub)}</span>
       <span className={styles.cardFooter}>
         <span>{deal.city}</span>
         <span>{deal.updatedLabel}</span>

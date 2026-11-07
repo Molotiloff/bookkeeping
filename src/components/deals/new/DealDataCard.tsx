@@ -15,6 +15,7 @@ interface DealDataCardProps {
 }
 
 function resolveSuffix(field: FieldConfig, values: Record<string, string>): string | undefined {
+  if (field.suffix === 'fromCurrency' || field.suffix === 'toCurrency') return values[field.suffix];
   if (field.suffix === 'currency') return values.currency ?? values.fromCurrency;
   return field.suffix;
 }
@@ -23,6 +24,7 @@ export function DealDataCard({ context, dealType, values, errors, onFieldChange 
   return (
     <section className={styles.card}>
       <h2 className={styles.heading}>Данные сделки</h2>
+      {dealType === 'invoice' ? <p>Разница учитывается в кассе как прибыль. Клиентский кошелёк не меняется. Кто, кому и за что платит, укажите в комментарии.</p> : null}
 
       <div className={styles.fields}>
         {TYPE_FIELDS[dealType].map((field) => {

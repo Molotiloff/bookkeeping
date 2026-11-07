@@ -1,14 +1,13 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px 18px;
+  gap: 8px;
+  min-width: 0;
+  padding: 20px 21px;
   background: var(--glass-bg);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: var(--shadow-card), var(--glass-inset);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   transition: background-color 0.25s ease, border-color 0.25s ease;
 }
 
@@ -37,12 +36,12 @@
 }
 
 .value {
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.035em;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .change {

@@ -11,6 +11,7 @@ import type { Client, ClientsPageData } from '@/types/clients';
 import type { AttendanceMonth } from '@/types/attendance';
 import type { BalancesSnapshot } from '@/types/balances';
 import type { DealDetails, DealSourceEditPayload, DealsPageData } from '@/types/deals';
+import type { DealSettlement, DealStatusChangeRequest, FulfillmentQueue, SettlementReviewRequest, TransferAdjustmentRequest } from '@/types/dealManagement';
 import type { CashDealRequest, ClientTransferRequest, ExchangeDealRequest, NewDealContext } from '@/types/newDeal';
 import type { TurnoverPageData } from '@/types/turnover';
 import type { DashboardShadowReport, MainDashboardData } from '@/types/mainDashboard';
@@ -38,6 +39,9 @@ export interface IMainDashboardService {
 }
 
 export interface IDealsService {
+  createInvoice(payload: import('@/types/newDeal').InvoiceDealRequest): Promise<DealDetails>;
+  postInvoice(id: string, payload: import('@/types/newDeal').InvoicePostRequest): Promise<DealDetails>;
+  cancelInvoice(id: string, comment: string | null): Promise<DealDetails>;
   /** Компактный список активных сделок для дашборда «Главная» */
   getActiveDeals(): Promise<Deal[]>;
   /** Полные данные страницы «Сделки»: сводка, kanban и реестр */
@@ -50,8 +54,16 @@ export interface IDealsService {
   createExchange(payload: ExchangeDealRequest): Promise<DealDetails>;
   createCash(payload: CashDealRequest): Promise<DealDetails>;
   writeToTable(id: string): Promise<DealDetails>;
+  payReferrerSpread(id: string, payload: import('@/types/referrerSpread').ReferrerSpreadPayRequest): Promise<DealDetails>;
   editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails>;
   cancel(id: string, comment?: string): Promise<DealDetails>;
+  markCashReady(id: string): Promise<DealDetails>;
+  changeStatus(id: string, payload: DealStatusChangeRequest): Promise<DealDetails>;
+  adjustTransfer(id: string, payload: TransferAdjustmentRequest): Promise<DealDetails>;
+  getSettlements(id: string): Promise<DealSettlement[]>;
+  resolveSettlement(id: number, payload: SettlementReviewRequest): Promise<void>;
+  getFulfillments(): Promise<FulfillmentQueue>;
+  reorderFulfillment(id: number, beforeItemId: number | null): Promise<void>;
 }
 
 export interface IClientsService {

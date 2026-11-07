@@ -57,6 +57,18 @@ function generateArchiveDeals(count: number): DealItem[] {
 
 /** Мок-реализация сделок: компактный список для дашборда + данные страницы «Сделки» */
 export class MockDealsService implements IDealsService {
+  async createInvoice(): Promise<never> { throw new Error('Инвойсы доступны только с CRM API'); }
+  async postInvoice(): Promise<never> { throw new Error('Инвойсы доступны только с CRM API'); }
+  async cancelInvoice(): Promise<never> { throw new Error('Инвойсы доступны только с CRM API'); }
+  async markCashReady(): Promise<never> { throw new Error('Управление доступно только с CRM API'); }
+  async changeStatus(): Promise<never> { throw new Error('Управление доступно только с CRM API'); }
+  async adjustTransfer(): Promise<never> { throw new Error('Управление доступно только с CRM API'); }
+  async getSettlements() { return []; }
+  async resolveSettlement(): Promise<never> { throw new Error('Управление доступно только с CRM API'); }
+  async getFulfillments() {
+    return { items: [], queuedQty: '0', usdtFact: null, queueShortageQty: null, onchainLiquidQty: null };
+  }
+  async reorderFulfillment(): Promise<never> { throw new Error('Управление доступно только с CRM API'); }
   private async allDeals(): Promise<DealItem[]> {
     return [...REFERENCE_DEALS, ...generateArchiveDeals(50 - REFERENCE_DEALS.length)];
   }
@@ -234,19 +246,29 @@ export class MockDealsService implements IDealsService {
   }
 
   async createClientTransfer(_payload: ClientTransferRequest): Promise<DealDetails> {
+    void _payload;
     throw new Error('Переводы доступны только при подключённом CRM API');
   }
 
   async createExchange(_payload: ExchangeDealRequest): Promise<DealDetails> {
+    void _payload;
     throw new Error('Создание обмена доступно только при подключённом CRM API');
   }
 
   async createCash(_payload: CashDealRequest): Promise<DealDetails> {
+    void _payload;
     throw new Error('Создание кассовой заявки доступно только при подключённом CRM API');
   }
 
   async writeToTable(_id: string): Promise<DealDetails> {
+    void _id;
     throw new Error('Запись в таблицу доступна только при подключённом CRM API');
+  }
+
+  async payReferrerSpread(_id: string, payload: import('@/types/referrerSpread').ReferrerSpreadPayRequest): Promise<DealDetails> {
+    void _id;
+    void payload;
+    throw new Error('Перевод спреда КТ доступен только при подключённом CRM API');
   }
 
   async editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails> {

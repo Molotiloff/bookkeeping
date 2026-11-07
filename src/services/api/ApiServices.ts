@@ -25,6 +25,7 @@ import type { AttendanceMonth } from '@/types/attendance';
 import type { BalancesSnapshot } from '@/types/balances';
 import type { Client, ClientsPageData } from '@/types/clients';
 import type { DealDetails, DealSourceEditPayload, DealsPageData } from '@/types/deals';
+import type { DealSettlement, DealStatusChangeRequest, FulfillmentQueue, SettlementReviewRequest, TransferAdjustmentRequest } from '@/types/dealManagement';
 import type { ExpensesPageData } from '@/types/expenses';
 import type {
   ManualCashSnapshot,
@@ -78,6 +79,15 @@ export class ApiMainDashboardService implements IMainDashboardService {
 }
 
 export class ApiDealsService implements IDealsService {
+  async createInvoice(payload: import('@/types/newDeal').InvoiceDealRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.invoices, payload);
+  }
+  async postInvoice(id: string, payload: import('@/types/newDeal').InvoicePostRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.invoicePost(id), payload);
+  }
+  async cancelInvoice(id: string, comment: string | null): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.invoiceCancel(id), { comment });
+  }
   constructor(private readonly api: ApiClient) {}
 
   getActiveDeals(): Promise<Deal[]> {
@@ -112,12 +122,44 @@ export class ApiDealsService implements IDealsService {
     return this.api.post(crmApi.deals.table(id), {});
   }
 
+  payReferrerSpread(id: string, payload: import('@/types/referrerSpread').ReferrerSpreadPayRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.referrerSpread(id), payload);
+  }
+
   editSource(id: string, payload: DealSourceEditPayload): Promise<DealDetails> {
     return this.api.patch(crmApi.deals.source(id), payload);
   }
 
   cancel(id: string, comment?: string): Promise<DealDetails> {
     return this.api.post(crmApi.deals.cancel(id), { comment: comment || null });
+  }
+
+  markCashReady(id: string): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.cashReady(id), {});
+  }
+
+  changeStatus(id: string, payload: DealStatusChangeRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.status(id), payload);
+  }
+
+  adjustTransfer(id: string, payload: TransferAdjustmentRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.transferAdjustment(id), payload);
+  }
+
+  getSettlements(id: string): Promise<DealSettlement[]> {
+    return this.api.get(crmApi.deals.settlements(id));
+  }
+
+  async resolveSettlement(id: number, payload: SettlementReviewRequest): Promise<void> {
+    await this.api.post(crmApi.settlements.resolve(id), payload);
+  }
+
+  getFulfillments(): Promise<FulfillmentQueue> {
+    return this.api.get(crmApi.fulfillments.root);
+  }
+
+  async reorderFulfillment(id: number, beforeItemId: number | null): Promise<void> {
+    await this.api.post(crmApi.fulfillments.reorder(id), { beforeItemId });
   }
 }
 

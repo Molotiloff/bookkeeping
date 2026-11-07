@@ -1,6 +1,7 @@
 import type { IconName } from '@/components/ui/Icon';
 import type { CreateDealPayload, NewDealContext, NewDealType } from '@/types/newDeal';
 import { formatMoneyRub } from '@/lib/format';
+import { invoiceProfit, invoiceUsdt } from '@/lib/invoice';
 
 /**
  * Конфигурация формы создания сделки: табы типов, наборы полей
@@ -84,24 +85,23 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'currency', required: true },
   ],
   conversion: [
-    { name: 'fromCurrency', label: 'Из валюты', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
-    { name: 'toCurrency', label: 'В валюту', kind: 'select', optionsFrom: 'currencies', defaultValue: 'ETH' },
-    { name: 'quantity', label: 'Количество', kind: 'number', suffix: 'currency', required: true },
-    { name: 'rate', label: 'Курс конвертации', kind: 'number', required: true },
+    { name: 'fromCurrency', label: 'Получаем, валюта', kind: 'select', optionsFrom: 'exchangeCurrencies', defaultValue: 'USD' },
+    { name: 'quantity', label: 'Получаем', kind: 'number', suffix: 'fromCurrency', required: true },
+    { name: 'toCurrency', label: 'Отдаём, валюта', kind: 'select', optionsFrom: 'exchangeCurrencies', defaultValue: 'USDT' },
+    { name: 'payAmount', label: 'Отдаём', kind: 'number', suffix: 'toCurrency', required: true },
   ],
   yuan: [
     { name: 'amountCny', label: 'Сумма', kind: 'number', suffix: 'CNY', required: true },
     { name: 'rate', label: 'Курс', kind: 'number', suffix: 'RUB', required: true, defaultValue: '12.4' },
   ],
   invoice: [
-    { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'RUB', required: true },
-    { name: 'currency', label: 'Валюта', kind: 'select', optionsFrom: 'currencies', defaultValue: 'USDT' },
-    { name: 'feePercent', label: 'Комиссия', kind: 'number', suffix: '%', defaultValue: '2' },
+    { name: 'receivedUsdt', label: 'USDT получили', kind: 'number', suffix: 'USDT', required: true },
+    { name: 'paidUsdt', label: 'USDT отдали', kind: 'number', suffix: 'USDT', required: true },
   ],
   profit: [{ name: 'amount', label: 'Прибыль', kind: 'number', suffix: 'RUB', required: true }],
 };
 
-/** У продажи и покупки есть блок «Чек / TxID» */
+/** Варианты выбора полей формы. */
 export function fieldOptions(field: FieldConfig, context: NewDealContext): string[] {
   if (field.optionsFrom === 'cities') return context.cities;
   if (field.optionsFrom === 'clients') return context.clients.map((client) => client.id);
@@ -206,12 +206,13 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
     }
     case 'conversion': {
       const quantity = num(values, 'quantity');
-      const result = quantity * num(values, 'rate');
-      const from = values.fromCurrency ?? 'USDT';
-      const to = values.toCurrency ?? 'ETH';
+      const result = num(values, 'payAmount');
+      const from = values.fromCurrency ?? 'USD';
+      const to = values.toCurrency ?? 'USDT';
       return [
-        { key: 'give', label: 'Отдаём', text: `${quantity.toLocaleString('ru-RU')} ${from}`, value: quantity },
-        { key: 'receive', label: 'Получаем', text: `${result.toLocaleString('ru-RU', { maximumFractionDigits: 6 })} ${to}`, value: result },
+        { key: 'receive', label: 'Получаем', text: `${quantity.toLocaleString('ru-RU', { maximumFractionDigits: 8 })} ${from}`, value: quantity },
+        { key: 'give', label: 'Отдаём', text: `${result.toLocaleString('ru-RU', { maximumFractionDigits: 8 })} ${to}`, value: result },
+        { key: 'rate', label: `Курс ${to} за 1 ${from}`, text: (quantity > 0 ? result / quantity : 0).toLocaleString('ru-RU', { maximumFractionDigits: 8 }), value: quantity > 0 ? result / quantity : 0 },
       ];
     }
     case 'yuan': {
@@ -223,12 +224,13 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
       ];
     }
     case 'invoice': {
-      const amount = num(values, 'amount');
-      const fee = (amount * num(values, 'feePercent')) / 100;
+      let profit: string;
+      try { profit = invoiceProfit(values.receivedUsdt ?? '', values.paidUsdt ?? ''); }
+      catch { return []; }
       return [
-        rubRow('amount', 'Сумма инвойса', amount),
-        rubRow('fee', 'Комиссия', fee),
-        rubRow('total', 'Итого', amount + fee),
+        { key: 'receivedUsdt', label: 'Получили от партнёра', text: invoiceUsdt(values.receivedUsdt?.replace(',', '.') || '0'), value: num(values, 'receivedUsdt') },
+        { key: 'paidUsdt', label: 'Отдали клиенту', text: invoiceUsdt(values.paidUsdt?.replace(',', '.') || '0'), value: num(values, 'paidUsdt') },
+        { key: 'profitUsdt', label: profit.startsWith('-') ? 'Убыток' : 'Прибыль', text: invoiceUsdt(profit), value: Number(profit), tone: profit.startsWith('-') ? 'down' : 'up' },
       ];
     }
     case 'profit': {

@@ -5,7 +5,7 @@ import type { CurrencyCode, DealStatus } from './domain';
  * и общий реестр с пагинацией.
  */
 
-export type DealType = 'Покупка' | 'Продажа' | 'BestChange' | 'Перевод';
+export type DealType = 'Покупка' | 'Продажа' | 'BestChange' | 'Перевод' | 'Конвертация';
 
 export type DealAsset = 'RUB' | 'USDT' | 'USD' | 'USDW' | 'EUR' | 'EUR500' | 'THB' | 'BTC' | 'ETH';
 
@@ -20,6 +20,7 @@ export interface DealItem {
   direction?: string;
   amountRub: number;
   transferAmount?: string | null;
+  exchangeAmount?: string | null;
   city: string;
   status: DealStatus;
   /** Плашка «на откуп» для balance_check, считается backend поверх act-остатка */
@@ -29,6 +30,7 @@ export interface DealItem {
   createdBy: string;
   /** Показывать ли сделку на kanban-доске текущих сделок */
   onKanban: boolean;
+  allowedNextStatuses?: DealStatus[];
 }
 
 /** Направление сделки для таблицы и поиска: «USDT → RUB» */
@@ -38,6 +40,7 @@ export function dealDirection(deal: DealItem): string {
 
 /** Подпись операции для kanban-карточки: «Продажа USDT» */
 export function dealOperation(deal: DealItem): string {
+  if (deal.dealType === 'Конвертация') return `Конвертация ${dealDirection(deal)}`;
   return `${deal.dealType} ${deal.asset}`;
 }
 
@@ -81,6 +84,7 @@ export interface DealDetails {
   source: 'tg_bot' | 'crm' | 'sheets';
   requestChatPosted?: boolean | null;
   sourceKind?:
+    | 'invoice'
     | 'exchange'
     | 'cash'
     | 'fulfillment'
@@ -90,9 +94,12 @@ export interface DealDetails {
     | 'client_transfer';
   counterpartyName?: string;
   counterpartyPercent?: number;
+  referrerRewardRub?: number | null;
   profitRub: number;
   comment?: string;
   tronscanUrl?: string;
+  paymentWatchId?: string | null;
+  paymentWatchStatus?: string | null;
   body?: Record<string, unknown>;
   bestChange?: BestChangeDetails | null;
   legs: DealLeg[];

@@ -6,7 +6,8 @@
 .main {
   flex: 1;
   min-width: 0;
-  padding: 22px 26px 32px;
+  padding: 30px clamp(20px, 2.5vw, 44px) 48px;
+  background: radial-gradient(circle at 48% -240px, var(--accent-soft), transparent 560px);
 }
 
 @media (max-width: 800px) {

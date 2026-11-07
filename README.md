@@ -1,6 +1,20 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Checks
+
+```bash
+pnpm test
+pnpm typecheck
+pnpm exec eslint . --max-warnings 0
+pnpm build
+```
+
+`pnpm test` uses Node's built-in test runner with TypeScript stripping (Node 22.6+).
+Deal-management actions require API mode (`CRM_USE_API=true`); mock mode does not
+simulate financial mutations. Telegram cards, receipts and balances are handled
+by the shared backend workflows.
+
+## Development
 
 First, run the development server:
 

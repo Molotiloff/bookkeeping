@@ -71,7 +71,7 @@ export interface ClientTransferRequest {
 }
 
 export interface ExchangeDealRequest {
-  dealType: 'sale' | 'purchase';
+  dealType: 'sale' | 'purchase' | 'conversion';
   clientId: number;
   city: string;
   recvCode: string;
@@ -82,6 +82,7 @@ export interface ExchangeDealRequest {
   comment: string | null;
   referrerClientId?: number | null;
   referrerPercent?: number;
+  referrerSpreadRub?: string;
 }
 
 export interface CashDealRequest {
@@ -101,7 +102,7 @@ export interface ConversionDealFields {
   fromCurrency: string;
   toCurrency: string;
   quantity: number;
-  rate: number;
+  payAmount: number;
 }
 
 export interface YuanDealFields {
@@ -110,9 +111,23 @@ export interface YuanDealFields {
 }
 
 export interface InvoiceDealFields {
-  amount: number;
-  currency: string;
-  feePercent: number;
+  receivedUsdt: number;
+  paidUsdt: number;
+}
+
+export interface InvoiceDealRequest {
+  clientId: number;
+  city: string;
+  receivedUsdt: string;
+  paidUsdt: string;
+  idempotencyKey: string;
+  comment: string | null;
+}
+
+export interface InvoicePostRequest {
+  expectedReceivedUsdt: string;
+  expectedPaidUsdt: string;
+  allowLoss: boolean;
 }
 
 export interface ProfitDealFields {

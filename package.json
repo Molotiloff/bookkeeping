@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && node scripts/prepare-standalone.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "start": "next start",
     "lint": "eslint",
     "generate:api": "openapi-typescript http://127.0.0.1:8000/openapi.json -o src/api/openapi.ts"
