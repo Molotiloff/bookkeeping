@@ -13,7 +13,6 @@ import type { DealDetails } from '@/types/deals';
 import { Icon } from '@/components/ui/Icon';
 import styles from './DealSourceActions.module.css';
 import { sourceEditable } from '@/lib/dealManagement';
-import { readyCashAction } from '@/app/deals/[id]/actions';
 
 const INITIAL_STATE: DealActionState = {};
 
@@ -37,7 +36,6 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
   const requestKind = text(body.request_kind);
   const isExchange = details.sourceKind === 'exchange';
   const isFulfillment = details.sourceKind === 'fulfillment';
-  const [readyState, submitReady, readyPending] = useActionState(readyCashAction.bind(null, details.deal.id), INITIAL_STATE);
 
   const confirmCancel = (event: FormEvent<HTMLFormElement>) => {
     if (!window.confirm(isFulfillment
@@ -56,14 +54,8 @@ export function DealSourceActions({ details }: { details: DealDetails }) {
         </div>
       </div>
 
-      {details.sourceKind === 'cash' && details.deal.status === 'new' ? (
-        <form action={submitReady} className={styles.formFooter}>
-          <ActionMessage state={readyState} />
-          <button className={styles.primaryButton} disabled={readyPending}>Готово к расчёту</button>
-        </form>
-      ) : null}
-      {details.sourceKind === 'cash' && details.deal.status === 'ready_for_cash_settlement' ? (
-        <p className={styles.meta}>Ожидаем фактическую кассовую проводку по номеру заявки. Изменение статуса не заменяет расчёт.</p>
+      {details.sourceKind === 'cash' && ['dep', 'wd'].includes(requestKind) && ['new', 'ready_for_cash_settlement'].includes(details.deal.status) ? (
+        <p className={styles.meta}>Проведите заявку сразу валютной командой в чате кассы, указав её номер. Для внесения сумма положительная, для выдачи отрицательная. Дополнительное подтверждение готовности не требуется.</p>
       ) : null}
 
       <div className={styles.formFooter}>
