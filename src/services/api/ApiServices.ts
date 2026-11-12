@@ -79,6 +79,12 @@ export class ApiMainDashboardService implements IMainDashboardService {
 }
 
 export class ApiDealsService implements IDealsService {
+  async createDelivery(payload: import('@/types/newDeal').DeliveryDealRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.deliveries, payload);
+  }
+  async transitionDelivery(id: string, payload: import('@/types/newDeal').DeliveryTransitionRequest): Promise<DealDetails> {
+    return this.api.post(crmApi.deals.deliveryStatus(id), payload);
+  }
   async createInvoice(payload: import('@/types/newDeal').InvoiceDealRequest): Promise<DealDetails> {
     return this.api.post(crmApi.deals.invoices, payload);
   }

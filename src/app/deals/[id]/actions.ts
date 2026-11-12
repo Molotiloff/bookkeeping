@@ -18,6 +18,22 @@ function refreshDeal(id: string) {
   for (const path of [`/deals/${id}`, '/deals', '/balances', '/clients']) revalidatePath(path);
 }
 
+export async function deliveryStatusAction(
+  id: string, amount: string, reward: string, courierClientId: number,
+  _previous: DealActionState, form: FormData,
+): Promise<DealActionState> {
+  void _previous;
+  try {
+    const status = requiredText(form, 'status');
+    if (status !== 'in_delivery' && status !== 'done' && status !== 'canceled') throw new Error('Недоступное действие');
+    await dealsService.transitionDelivery(id, { status, expectedAmount: amount, expectedRewardRub: reward, expectedCourierClientId: courierClientId });
+    refreshDeal(id);
+    revalidatePath('/expenses');
+    revalidatePath('/');
+    return { success: status === 'done' ? 'Доставка завершена. Сумма списана с клиента и кассы, вознаграждение начислено курьеру.' : status === 'canceled' ? 'Доставка отменена без проводок.' : 'Доставка передана курьеру.' };
+  } catch (error) { return { error: actionError(error) }; }
+}
+
 export async function postInvoiceAction(id: string, received: string, paid: string, _previous: DealActionState, form: FormData): Promise<DealActionState> {
   void _previous;
   try {

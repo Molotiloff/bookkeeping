@@ -57,6 +57,8 @@ function generateArchiveDeals(count: number): DealItem[] {
 
 /** Мок-реализация сделок: компактный список для дашборда + данные страницы «Сделки» */
 export class MockDealsService implements IDealsService {
+  async createDelivery(): Promise<never> { throw new Error('Доставки доступны только с CRM API'); }
+  async transitionDelivery(): Promise<never> { throw new Error('Доставки доступны только с CRM API'); }
   async createInvoice(): Promise<never> { throw new Error('Инвойсы доступны только с CRM API'); }
   async postInvoice(): Promise<never> { throw new Error('Инвойсы доступны только с CRM API'); }
   async cancelInvoice(): Promise<never> { throw new Error('Инвойсы доступны только с CRM API'); }
@@ -219,6 +221,7 @@ export class MockDealsService implements IDealsService {
 
   async getNewDealContext(): Promise<NewDealContext> {
     return {
+      couriers: [],
       cities: ['Екатеринбург', 'Челябинск', 'Москва', 'Санкт-Петербург', 'Тюмень', 'Краснодар', 'Новосибирск', 'Уфа'],
       counterparties: [
         { id: 'ct-1', name: 'Алексей М' },

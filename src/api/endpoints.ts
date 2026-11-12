@@ -36,6 +36,8 @@ export const crmApi = {
     exchanges: '/deals/exchanges',
     cash: '/deals/cash',
     invoices: '/deals/invoices',
+    deliveries: '/deals/deliveries',
+    deliveryStatus: (id: string) => `/deals/${encodeURIComponent(id)}/delivery/status`,
     invoicePost: (id: string) => `/deals/${id}/invoice/post`,
     invoiceCancel: (id: string) => `/deals/${id}/invoice/cancel`,
     clientTransfers: '/deals/client-transfers',

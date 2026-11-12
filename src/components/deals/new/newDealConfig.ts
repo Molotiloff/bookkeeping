@@ -29,7 +29,7 @@ export interface FieldConfig {
   /** Суффикс в поле: валюта, RUB, % ('currency' — подставить выбранную валюту) */
   suffix?: string;
   /** Источник опций селекта из контекста */
-  optionsFrom?: 'currencies' | 'exchangeCurrencies' | 'cashCurrencies' | 'cities' | 'clients' | 'transferCurrencies';
+  optionsFrom?: 'currencies' | 'exchangeCurrencies' | 'cashCurrencies' | 'cities' | 'clients' | 'transferCurrencies' | 'couriers';
   placeholder?: string;
   /** Обязательное числовое поле (> 0) для валидации */
   required?: boolean;
@@ -71,7 +71,10 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
   ],
   delivery: [
     { name: 'amount', label: 'Сумма', kind: 'number', suffix: 'RUB', required: true },
-    { name: 'feePercent', label: 'Комиссия', kind: 'number', suffix: '%', defaultValue: '1' },
+    { name: 'courierTgUserId', label: 'Курьер (Telegram)', kind: 'select', optionsFrom: 'couriers', required: true },
+    { name: 'courierClientId', label: 'Чат с балансом курьера', kind: 'select', optionsFrom: 'clients', required: true },
+    { name: 'rewardRub', label: 'Вознаграждение курьера', kind: 'number', suffix: 'RUB', defaultValue: '0' },
+    { name: 'address', label: 'Адрес доставки', kind: 'text', placeholder: 'Адрес, контакты и ориентиры' },
   ],
   transfer_city: [
     { name: 'fromCity', label: 'Из города', kind: 'select', optionsFrom: 'cities' },
@@ -103,6 +106,7 @@ export const TYPE_FIELDS: Record<NewDealType, FieldConfig[]> = {
 
 /** Варианты выбора полей формы. */
 export function fieldOptions(field: FieldConfig, context: NewDealContext): string[] {
+  if (field.optionsFrom === 'couriers') return context.couriers.map((courier) => courier.id);
   if (field.optionsFrom === 'cities') return context.cities;
   if (field.optionsFrom === 'clients') return context.clients.map((client) => client.id);
   if (field.optionsFrom === 'transferCurrencies') return ['RUB', 'USDT', 'USD', 'USDW', 'EUR', 'EUR500', 'THB'];
@@ -116,7 +120,7 @@ export function defaultValues(type: NewDealType, context: NewDealContext): Recor
   for (const field of TYPE_FIELDS[type]) {
     if (field.defaultValue !== undefined) {
       values[field.name] = field.defaultValue;
-    } else if (field.optionsFrom === 'clients') {
+    } else if (field.optionsFrom === 'clients' || field.optionsFrom === 'couriers') {
       values[field.name] = '';
     } else if (field.kind === 'select') {
       values[field.name] = fieldOptions(field, context)[0];
@@ -180,11 +184,9 @@ export function calculateDeal(type: NewDealType, values: Record<string, string>)
     }
     case 'delivery': {
       const amount = num(values, 'amount');
-      const fee = (amount * num(values, 'feePercent')) / 100;
       return [
-        rubRow('amount', 'Сумма', amount),
-        rubRow('fee', 'Комиссия', fee),
-        rubRow('total', 'Итого к оплате', amount + fee),
+        rubRow('amount', 'К доставке (с клиента и кассы)', amount),
+        rubRow('reward', 'К начислению курьеру после доставки', num(values, 'rewardRub')),
       ];
     }
     case 'transfer_city': {

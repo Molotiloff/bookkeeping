@@ -84,6 +84,7 @@ export interface DealDetails {
   source: 'tg_bot' | 'crm' | 'sheets';
   requestChatPosted?: boolean | null;
   sourceKind?:
+    | 'delivery'
     | 'invoice'
     | 'exchange'
     | 'cash'

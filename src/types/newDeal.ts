@@ -44,7 +44,29 @@ export interface CashOperationFields {
 
 export interface DeliveryDealFields {
   amount: number;
-  feePercent: number;
+  courierTgUserId: string;
+  courierClientId: string;
+  rewardRub: number;
+  address: string;
+}
+
+export interface DeliveryDealRequest {
+  clientId: number;
+  city: string;
+  amount: string;
+  courierTgUserId: number;
+  courierClientId: number;
+  rewardRub: string;
+  address: string;
+  comment: string | null;
+  idempotencyKey: string;
+}
+
+export interface DeliveryTransitionRequest {
+  status: 'in_delivery' | 'done' | 'canceled';
+  expectedAmount: string;
+  expectedRewardRub: string;
+  expectedCourierClientId: number;
 }
 
 export interface TransferCityDealFields {
@@ -153,6 +175,7 @@ export interface CreateDealPayload {
 
 /** Справочники формы — приходят из сервиса сделок */
 export interface NewDealContext {
+  couriers: { id: string; name: string; clientId: string | null }[];
   cities: string[];
   counterparties: { id: string; name: string }[];
   clients: { id: string; name: string; chatId?: string }[];

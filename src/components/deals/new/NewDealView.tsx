@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createCash, createClientTransfer, createExchange, createInvoice } from '@/app/deals/new/actions';
+import { createCash, createClientTransfer, createDelivery, createExchange, createInvoice } from '@/app/deals/new/actions';
 import { invoiceProfit } from '@/lib/invoice';
 import type { NewDealContext, NewDealType } from '@/types/newDeal';
 import { NewDealHeader } from './NewDealHeader';
@@ -52,6 +52,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     setSubmitError('');
     setValuesByType((prev) => {
       const next = { ...prev[dealType], [name]: value };
+      if (name === 'courierTgUserId') next.courierClientId = context.couriers.find((courier) => courier.id === value)?.clientId ?? '';
       // Смена валюты фиксирует соответствующий курс компании
       if (name === 'currency' && TYPE_FIELDS[dealType].some((f) => f.name === 'companyRate')) {
         const rate = context.companyRates[value];
@@ -90,7 +91,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     if (submitting) return;
     const invalid = invalidFields(dealType, values);
     if (dealType === 'client_transfer' && !base.clientId) invalid.push('fromClientId');
-    if (['sale', 'purchase', 'conversion', 'deposit', 'withdrawal', 'invoice'].includes(dealType) && !base.clientId) invalid.push('clientId');
+    if (['sale', 'purchase', 'conversion', 'deposit', 'withdrawal', 'invoice', 'delivery'].includes(dealType) && !base.clientId) invalid.push('clientId');
     if (dealType === 'client_transfer' && base.clientId === values.toClientId) {
       setSubmitError('Отправитель и получатель должны быть разными клиентами');
       return;
@@ -119,6 +120,24 @@ export function NewDealView({ context }: { context: NewDealContext }) {
     if (invalid.length > 0) {
       setErrors(invalid);
       setSubmitError('Выберите клиента и укажите положительные суммы');
+      return;
+    }
+
+    if (dealType === 'delivery') {
+      const reward = values.rewardRub.trim().replace(',', '.');
+      if (!/^\d+(?:\.\d{1,2})?$/.test(reward)) { setSubmitError('Укажите неотрицательное вознаграждение в RUB с точностью до копеек'); return; }
+      setSubmitting(true);
+      setSubmitError('');
+      transferKey.current ??= crypto.randomUUID();
+      try {
+        const result = await createDelivery({ clientId: Number(base.clientId), city: base.city,
+          amount: values.amount.trim().replace(',', '.'), courierTgUserId: Number(values.courierTgUserId),
+          courierClientId: Number(values.courierClientId), rewardRub: reward, address: values.address.trim(),
+          comment: base.comment.trim() || null, idempotencyKey: transferKey.current });
+        if (result.ok) router.push(`/deals/${result.dealId}`);
+        else setSubmitError(result.message);
+      } catch { setSubmitError('Не удалось получить ответ сервера. Повторите запрос с теми же данными.'); }
+      finally { setSubmitting(false); }
       return;
     }
 
@@ -279,7 +298,7 @@ export function NewDealView({ context }: { context: NewDealContext }) {
           onFieldChange={handleFieldChange}
         />
         <AutoCalcCard rows={calcRows} showRateNotice={
-          !['client_transfer', 'sale', 'purchase', 'conversion', 'deposit', 'withdrawal', 'invoice'].includes(dealType)
+          !['client_transfer', 'sale', 'purchase', 'conversion', 'deposit', 'withdrawal', 'invoice', 'delivery'].includes(dealType)
         } />
       </div>
     </>

@@ -39,6 +39,8 @@ export interface IMainDashboardService {
 }
 
 export interface IDealsService {
+  createDelivery(payload: import('@/types/newDeal').DeliveryDealRequest): Promise<DealDetails>;
+  transitionDelivery(id: string, payload: import('@/types/newDeal').DeliveryTransitionRequest): Promise<DealDetails>;
   createInvoice(payload: import('@/types/newDeal').InvoiceDealRequest): Promise<DealDetails>;
   postInvoice(id: string, payload: import('@/types/newDeal').InvoicePostRequest): Promise<DealDetails>;
   cancelInvoice(id: string, comment: string | null): Promise<DealDetails>;

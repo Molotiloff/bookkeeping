@@ -8,6 +8,7 @@ import { dealDirection, dealOperation } from '@/types/deals';
 import { DealSourceActions } from '@/components/deals/DealSourceActions';
 import { DealManagementPanel } from '@/components/deals/DealManagementPanel';
 import { InvoicePanel } from '@/components/deals/InvoicePanel';
+import { DeliveryPanel } from '@/components/deals/DeliveryPanel';
 import { canManageDeals } from '@/lib/dealManagement';
 import styles from './page.module.css';
 
@@ -82,11 +83,11 @@ export default async function DealDetailsPage({
               <span className={styles.label}>Направление</span>
               <span className={styles.value}>{dealDirection(deal)}</span>
             </div>
-            {!['Перевод', 'Инвойс'].includes(deal.dealType) ? <div className={styles.fact}>
+            {!['Перевод', 'Инвойс', 'Доставка'].includes(deal.dealType) ? <div className={styles.fact}>
               <span className={styles.label}>Контрагент</span>
               <span className={styles.value}>{details.counterpartyName ?? 'Не указан'}</span>
             </div> : null}
-            {!['Перевод', 'Инвойс'].includes(deal.dealType) ? <div className={styles.fact}>
+            {!['Перевод', 'Инвойс', 'Доставка'].includes(deal.dealType) ? <div className={styles.fact}>
               <span className={styles.label}>{['Продажа', 'Покупка'].includes(deal.dealType) && details.body?.referrer_spread_rub !== undefined ? 'Спред КТ' : 'КТ-процент'}</span>
               <span className={styles.value}>
                 {['Продажа', 'Покупка'].includes(deal.dealType) && details.body?.referrer_spread_rub !== undefined
@@ -106,7 +107,7 @@ export default async function DealDetailsPage({
                 <span className={styles.value}>{spreadPayment.amount_rub} RUB</span>
               </div>
             ) : null}
-            {!['Перевод', 'Инвойс'].includes(deal.dealType) ? <div className={styles.fact}>
+            {!['Перевод', 'Инвойс', 'Доставка'].includes(deal.dealType) ? <div className={styles.fact}>
               <span className={styles.label}>Прибыль</span>
               <span className={styles.value}>{formatRub(details.profitRub)}</span>
             </div> : null}
@@ -237,6 +238,7 @@ export default async function DealDetailsPage({
       ) : null}
 
       {details.sourceKind === 'invoice' ? <InvoicePanel details={details} canManage={canManage} /> : null}
+      {details.sourceKind === 'delivery' ? <DeliveryPanel details={details} canManage={canManage} /> : null}
       {canManage ? <DealManagementPanel details={details} settlements={settlements} /> : null}
 
       <section className={styles.card}>

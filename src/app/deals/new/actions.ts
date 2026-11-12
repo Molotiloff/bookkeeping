@@ -4,6 +4,13 @@ import { ApiError } from '@/api/httpClient';
 import { dealsService } from '@/services';
 import type { CashDealRequest, ClientTransferRequest, ExchangeDealRequest } from '@/types/newDeal';
 
+export async function createDelivery(payload: import('@/types/newDeal').DeliveryDealRequest): Promise<{ ok: true; dealId: string } | { ok: false; message: string }> {
+  try {
+    const created = await dealsService.createDelivery(payload);
+    return { ok: true, dealId: created.deal.id };
+  } catch (error) { return { ok: false, message: error instanceof Error ? error.message : 'Не удалось создать доставку' }; }
+}
+
 export async function createInvoice(payload: import('@/types/newDeal').InvoiceDealRequest): Promise<{ ok: true; dealId: string } | { ok: false; message: string }> {
   try {
     const created = await dealsService.createInvoice(payload);

@@ -5,6 +5,7 @@ import type { NewDealContext, NewDealType } from '@/types/newDeal';
 import { TYPE_FIELDS, fieldOptions, type FieldConfig } from './newDealConfig';
 import controls from './formControls.module.css';
 import styles from './DealDataCard.module.css';
+import { SearchableSelect } from './SearchableSelect';
 
 interface DealDataCardProps {
   context: NewDealContext;
@@ -25,6 +26,7 @@ export function DealDataCard({ context, dealType, values, errors, onFieldChange 
     <section className={styles.card}>
       <h2 className={styles.heading}>Данные сделки</h2>
       {dealType === 'invoice' ? <p>Разница учитывается в кассе как прибыль. Клиентский кошелёк не меняется. Кто, кому и за что платит, укажите в комментарии.</p> : null}
+      {dealType === 'delivery' ? <p>После завершения сумма спишется с клиента и кассы, вознаграждение начислится на выбранный баланс курьера. Привязка менеджера к чату сохранится для следующих доставок.</p> : null}
 
       <div className={styles.fields}>
         {TYPE_FIELDS[dealType].map((field) => {
@@ -35,7 +37,15 @@ export function DealDataCard({ context, dealType, values, errors, onFieldChange 
             <div key={field.name} className={controls.field}>
               <span className={controls.label}>{field.label}</span>
               <span className={controls.control}>
-                {field.kind === 'select' ? (
+                {field.optionsFrom === 'couriers' || field.name === 'courierClientId' ? (
+                  <SearchableSelect
+                    value={values[field.name] ?? ''}
+                    options={field.optionsFrom === 'couriers' ? context.couriers : context.clients}
+                    onChange={(id) => onFieldChange(field.name, id)}
+                    label={field.label}
+                    placeholder={field.optionsFrom === 'couriers' ? 'Выберите менеджера' : 'Выберите чат с балансом'}
+                  />
+                ) : field.kind === 'select' ? (
                   <>
                     <select
                       className={`${controls.input} ${controls.select}`}
